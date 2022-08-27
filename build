@@ -1,0 +1,38 @@
+1. Instalacja debiana, jako systemu bazowego do budowania immudex. System nie
+  musi posiadać środowiska graficznego.
+
+2. Instalacja oprogramowania niezbędnego do budowania:
+  - sudo apt install debootstrap squasfs-tools xorriso isolinux syslinux-efi
+     grub-pc-bin grub-efi-amd64-bin mtools dosfstools
+
+3. Utworzenie katalogu dla budowania immudex
+  - mkdir immudex
+
+4. Pobranie pakietów rdzennych:
+  - sudo /sbin/debootstrap (--arch=i386) --arch=amd64 bullseye ~/immudex/chroot http://ftp.icm.edu.pl/debian
+
+5. Zmiana katalogu głównego, na katalog bazowy immudex.
+  - sudo chroot ~/immudex/chroot /bin/bash
+
+6. Pobranie list pakietów:
+  - (chroot)# apt update
+
+7. Instalacją jądro, programu typu init oraz pakietu live-boot
+  - (chroot)# apt install --no-install-recommends linux-image-686-pae live-boot systemd-sysv -y
+
+8. Instalacja pakietów lokalizacyjnych:
+  - (chroot)# apt install tzdata locales keyboard-configuration console-setup -y
+  Na pytania odpowiadamy domyślnie, zachwilę będziemy te pakiety po kolei
+  reconfigurować.
+
+9. Rekonfiguracja pakietów lokalizacyjnych
+  - (chroot)# dpkg-reconfigure tzdata #Europe/Warsaw
+  - (chroot)# dpkg-reconfigure locales #pl_PL.UTF-8 UTF-8
+  - (chroot)# dpkg-reconfigure keyboard-configuration 
+    #Optymalne ustawienia dla języka polskiego
+  - (chroot)# dpkg-reconfigure console-setup #latin2, reszta domyślnie
+
+10. Instalacja środowiska graficznego wraz z oprogramowaniem.
+  - (chroot)# tasksel
+    * Debian desktop enviroment
+    * Xfce
