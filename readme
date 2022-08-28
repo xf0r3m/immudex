@@ -27,4 +27,9 @@ Do dyspozycji mamy:
 
 Obraz płyty znajduje się na serwisie sourceforge.net. Poniżej znajduje się 
 odnośniki.
-  *  
+  * 64-bit:
+  * 32-bit:
+
+Domyślnym użytkownikiem jest user, dostęp to niego uzyskujemy za pomocą hasła
+user1. Możemy również skorzystać z konta superużytkownika root z hasłem toor.
+ 

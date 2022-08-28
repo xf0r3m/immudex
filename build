@@ -36,3 +36,97 @@
   - (chroot)# tasksel
     * Debian desktop enviroment
     * Xfce
+
+11. Instalacja pakietów dodatkowych.
+  - (chroot)# sudo apt install git vim firejail ufw cryptsetup lsof extlinux grub-efi-amd64 efibootmgr -y
+
+12. Instalacja konfiguracji XFCE - xfcedebian.
+  - (chroot)# cd
+    (chroot)# git clone https://github.com/xf0r3m/xfcedebian.git
+    (chroot)# cd xfcedebian
+    (chroot)# chmod +x install.sh
+    (chroot)# ./install.sh
+
+13. Instalacja katalogu .mozilla (czysty profil z zainstalowanym uBlock Orign).
+  - (chroot)# cd
+    (chroot)# git clone https://github.com/xf0r3m/immudex.git
+    (chroot)# cd immudex
+    (chroot)# tar -xzvf mozilla.tgz -C /etc/skel
+    (chroot)# chown -R root:root /etc/skel/.mozilla
+
+14. Instalacja instalatora oraz skryptu protected.
+  - (chroot)# cp immudex_install protected /usr/local/bin
+    (chroot)# chmod +x /usr/local/bin/{immudex_install,protected}
+
+15. Ustawienie skryptu protected w aktywatorze Mozilla Firefox.
+  - (chroot)# vim /etc/skel/.config/xfce4/panel/launcher-19/16608166085.desktop
+    Zmieniamy w nim poniższe linie:
+    - Name=(Protected) Firefox ESR
+    - Name[pl]=(Protected) Firefox ESR
+    - Exec=/usr/local/bin/protected firefox
+    Zapisujemy zmiany, zamykamy edytor
+
+16. Konfiguracja zapory sieciowej.
+  - (chroot)# ufw default deny incoming
+    (chroot)# ufw default allow outgoing
+    (chroot)# ufw enable 
+
+17. Utworzenie użytkowników i ustawienie hasła dla użytkownika root
+  - (chroot)# useradd -m -s /bin/bash xf0r3m
+    (chroot)# passwd xf0r3m
+    (chroot)# useradd -m -s /bin/bash user
+    (chroot)# passwd user #user1
+    (chroot)# echo "xf0r3m ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
+    (chroot)# echo "user ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
+    (chroot)# passwd #toor
+
+18. Ustawienie nazwy hosta na immudex.
+  - (chroot)# echo "immudex" > /etc/hostname
+
+19. Aktualizacja zainstalowanych dotyczas pakietów.
+  - W pliku repozytorium (/etc/apt/sources.list) zapisujemy poniższe linie:
+    deb http://ftp.icm.edu.pl/pub/Linux/debian/ bullseye main
+    deb-src http://ftp.icm.edu.pub/Linux/debian/ bullseye main
+
+    deb http://security.debian.org/debian-security bullseye-security main
+    deb-src http://security.debian.org/debian-security bullseye-security main
+
+    deb http://ftp.icm.edu.pl/pub/Linux/debian/ bullseye-updates main
+    deb-src http://ftp.icm.edu.pl/pub/Linux/debian/ bullseye-updates main
+    (chroot)# apt update
+    (chroot)# apt upgrade
+    
+
+20. Czyszczenie.
+  - (chroot)# cd 
+    (chroot)# rm -rf immudex/
+    (chroot)# rm -rf xfcedebian/
+    (chroot)# apt-get clean
+    (chroot)# echo > ~/.bash_history
+    (chroot)# history -c
+    Po wykonaniu tej czynności możemy opuścić ten katalog (Ctrl+d)
+
+21. Utworzenie niezbędnej struktury katalogowej:
+  - mkdir -p ~/immudex/{staging/{EFI/boot,boot/grub/x86_64-efi,isolinux,live},tmp}
+
+22. Utworznie archiwun squashfs z obrazem systemu
+  - sudo mksquashfs ~/immudex/chroot ~/immudex/staging/live/filesystem.squashfs -e boot
+
+23. Skopiowanie plików jądra oraz initrd.
+  - cp ~/immudex/chroot/boot/vmlinuz-* ~/immudex/staging/live/vmlinuz
+    cp ~/immudex/chroot/boot/initrd-* ~/immudex/staging/live/initrd
+    * - oznacza sygnaturę najnowszej wersji tych plików.
+
+24. Skopiowanie plików isolinux oraz grub.
+  - cd ~/Pobrane
+    git clone https://github.com/xf0r3m/immudex.git 
+    cp immudex/isolinux/(arch)/* ~/immudex/staging/isolinux
+    cp immudex/grub/(arch)/* ~/immudex/staging/boot/grub
+    (arch) = zależność wobe architektury (i386/amd64).
+
+25. Utworze pliku grub-standalone.cfg
+  - Tworzymy plik ~/immudex/tmp/grub-standalone.cfg
+    W tym pliku zapisujemy:
+    search --set=root --file /DEBIAN
+    set prefix=($root)/boot/grub
+    configfile /boot/grub/grub.cfg
