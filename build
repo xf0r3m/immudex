@@ -2,7 +2,7 @@
   musi posiadać środowiska graficznego.
 
 2. Instalacja oprogramowania niezbędnego do budowania:
-  - sudo apt install debootstrap squasfs-tools xorriso isolinux syslinux-efi
+  - sudo apt install debootstrap squashfs-tools xorriso isolinux syslinux-efi
      grub-pc-bin grub-efi-amd64-bin mtools dosfstools
 
 3. Utworzenie katalogu dla budowania immudex
@@ -18,7 +18,7 @@
   - (chroot)# apt update
 
 7. Instalacją jądro, programu typu init oraz pakietu live-boot
-  - (chroot)# apt install --no-install-recommends linux-image-686-pae live-boot systemd-sysv -y
+  - (chroot)# apt install --no-install-recommends linux-image-(686-pae/amd64) live-boot systemd-sysv -y
 
 8. Instalacja pakietów lokalizacyjnych:
   - (chroot)# apt install tzdata locales keyboard-configuration console-setup -y
@@ -124,9 +124,33 @@
     cp immudex/grub/(arch)/* ~/immudex/staging/boot/grub
     (arch) = zależność wobe architektury (i386/amd64).
 
-25. Utworze pliku grub-standalone.cfg
+25. Tworzenie pliku grub-standalone.cfg
   - Tworzymy plik ~/immudex/tmp/grub-standalone.cfg
     W tym pliku zapisujemy:
     search --set=root --file /DEBIAN
     set prefix=($root)/boot/grub
     configfile /boot/grub/grub.cfg
+
+26. Utworzenie pustego pliku DEBIAN
+  - touch ~/immudex/staging/DEBIAN
+
+27. Skopiowanie plików isolinux 
+  - cp /usr/lib/ISOLINUX/isolinux.bin ~/immudex/staging/isolinux
+    cp /usr/lib/syslinux/modules/bios/* ~/immudex/staging/isolinux
+
+28. Skopiowanie niezbędnych plików GRUB
+  - cp -r /usr/lib/grub/x86_64-efi/* ~/immudex/staging/boot/grub/x86_64-efi
+
+29. Utworzenie pliku programu ładującego
+  - grub-mkstandalone --format=x86_64-efi --output=/home/user/immudex/staging/EFI/boot/bootx64.efi --locales="" --fonts="" "boot/grub/grub.cfg=/home/user/immudex/staging/tmp/grub-standalone.cfg"
+
+30. Utworzenie partycji EFI dla obrazu.
+  - cd ~/immudex/staging/boot/grub
+    dd if=/dev/zero bs=1M of=efiboot.img count=20
+    sudo mkfs.vfat efiboot.img
+    sudo mmd -i efiboot.img efi/boot
+    sudo mcopy -vi efiboot.img /home/user/immudex/staging/EFI/boot/bootx64.efi ::efi/boot
+
+31. Tworzenie obrazu płyty.
+  - cd
+    xorriso -as mkisofs -iso-level 3 -o "immudex(_i386).iso" -full-iso9660-filenames -volid "immudex" -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin -eltorito-boot isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table --eltorito-catalog isolinux/isolinux.cat -eltorito-alt-boot -e /boot/grub/efiboot.img -no-emul-boot -isohybrid-gpt-basdat -append_partition 2 0xef /home/user/immudex/staging/boot/grub/efiboot.img /home/user/immudex/staging
