@@ -79,6 +79,8 @@
     (chroot)# echo "xf0r3m ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
     (chroot)# echo "user ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
     (chroot)# passwd #toor
+    (chroot)# usermod -aG libvirt,libvirt-qemu xf0r3m
+    (chroot)# usermod -aG libvirt,libvirt-qemu user
 
 18. Ustawienie nazwy hosta na immudex.
   - (chroot)# echo "immudex" > /etc/hostname
@@ -86,7 +88,7 @@
 19. Aktualizacja zainstalowanych dotyczas pakietów.
   - W pliku repozytorium (/etc/apt/sources.list) zapisujemy poniższe linie:
     deb http://ftp.icm.edu.pl/pub/Linux/debian/ bullseye main
-    deb-src http://ftp.icm.edu.pub/Linux/debian/ bullseye main
+    deb-src http://ftp.icm.edu.pl/pub/Linux/debian/ bullseye main
 
     deb http://security.debian.org/debian-security bullseye-security main
     deb-src http://security.debian.org/debian-security bullseye-security main
@@ -142,15 +144,15 @@
   - cp -r /usr/lib/grub/x86_64-efi/* ~/immudex/staging/boot/grub/x86_64-efi
 
 29. Utworzenie pliku programu ładującego
-  - grub-mkstandalone --format=x86_64-efi --output=/home/user/immudex/staging/EFI/boot/bootx64.efi --locales="" --fonts="" "boot/grub/grub.cfg=/home/user/immudex/staging/tmp/grub-standalone.cfg"
+  - grub-mkstandalone --format=x86_64-efi --output=/home/user/immudex/staging/EFI/boot/bootx64.efi --locales="" --fonts="" "boot/grub/grub.cfg=/home/user/immudex/tmp/grub-standalone.cfg"
 
 30. Utworzenie partycji EFI dla obrazu.
   - cd ~/immudex/staging/boot/grub
     dd if=/dev/zero bs=1M of=efiboot.img count=20
     sudo mkfs.vfat efiboot.img
-    sudo mmd -i efiboot.img efi/boot
+    sudo mmd -i efiboot.img efi efi/boot
     sudo mcopy -vi efiboot.img /home/user/immudex/staging/EFI/boot/bootx64.efi ::efi/boot
 
 31. Tworzenie obrazu płyty.
   - cd
-    xorriso -as mkisofs -iso-level 3 -o "immudex(_i386).iso" -full-iso9660-filenames -volid "immudex" -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin -eltorito-boot isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table --eltorito-catalog isolinux/isolinux.cat -eltorito-alt-boot -e /boot/grub/efiboot.img -no-emul-boot -isohybrid-gpt-basdat -append_partition 2 0xef /home/user/immudex/staging/boot/grub/efiboot.img /home/user/immudex/staging
+    xorriso -as mkisofs -iso-level 3 -o "immudex(64/32).iso" -full-iso9660-filenames -volid "immudex(64/32)" -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin -eltorito-boot isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table --eltorito-catalog isolinux/isolinux.cat -eltorito-alt-boot -e /boot/grub/efiboot.img -no-emul-boot -isohybrid-gpt-basdat -append_partition 2 0xef /home/user/immudex/staging/boot/grub/efiboot.img /home/user/immudex/staging

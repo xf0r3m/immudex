@@ -1,4 +1,6 @@
-IMMutable DEbian with Xfce
+![Image](https://i.ibb.co/zGj3hbp/immudex.png)
+
+# IMMutable DEbian with Xfce
 
 Immudex to wersja debian zawierająca niezmienne środowisko pracy. Wykorzystuje
 ona bowiem archiwum .squashfs znane z LiveCD. Przyczym pozwala ona na pełen
@@ -27,8 +29,8 @@ Do dyspozycji mamy:
 
 Obraz płyty znajduje się na serwisie sourceforge.net. Poniżej znajduje się 
 odnośniki.
-  * 64-bit:
-  * 32-bit:
+  * 64-bit: [https://sourceforge.net/projects/immudex/files/0.0.0/immudex64.iso/download](https://sourceforge.net/projects/immudex/files/0.0.0/immudex64.iso/download)
+  * 32-bit: [https://sourceforge.net/projects/immudex/files/0.0.0/immudex32.iso/download](https://sourceforge.net/projects/immudex/files/0.0.0/immudex32.iso/download)
 
 Domyślnym użytkownikiem jest user, dostęp to niego uzyskujemy za pomocą hasła
 user1. Możemy również skorzystać z konta superużytkownika root z hasłem toor.
