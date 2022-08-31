@@ -84,6 +84,7 @@
 
 18. Ustawienie nazwy hosta na immudex.
   - (chroot)# echo "immudex" > /etc/hostname
+    (chroot)# echo "127.0.1.1    immudex" >> /etc/hosts
 
 19. Aktualizacja zainstalowanych dotyczas pakietów.
   - W pliku repozytorium (/etc/apt/sources.list) zapisujemy poniższe linie:

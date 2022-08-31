@@ -30,7 +30,8 @@ if $(sudo efibootmgr > /dev/null 2>&1); then
 #uefi installation
 	#partitioning
   echo -n "Installation immudex in EFI mode ... ";
-  disk=$(selectDisk);   
+  disk=$(selectDisk);
+  originDisk=$disk;   
   if [ ! "$disk" ]; then exit 1; fi
 
 	sudo parted /dev/$disk mklabel msdos > /dev/null 2>&1;
@@ -70,7 +71,7 @@ if $(sudo efibootmgr > /dev/null 2>&1); then
 	sudo grub-install --target=x86_64-efi --root-directory=/media --boot-directory=/media/boot --efi-directory=/media/boot/efi --bootloader-id=debian --removable > /dev/null 2>&1;
 
 	#Adding entry to EFI Firmware
-	sudo efibootmgr -c -d /dev/${disk} -p 1 -L "Debian" -l '\EFI\BOOT\grubx64.efi' > /dev/null 2>&1;
+	sudo efibootmgr -c -d /dev/${originDisk} -p 1 -L "Debian" -l '\EFI\BOOT\grubx64.efi' > /dev/null 2>&1;
 
   #Umount all mounted filesystems
   sudo umount -R /media > /dev/null 2>&1;
