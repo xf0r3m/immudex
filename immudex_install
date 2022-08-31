@@ -95,7 +95,7 @@ else
 	sudo mkfs.ext4 /dev/${disk}1 > /dev/null 2>&1;
 
 	#Setting label for partition is necessary for extlinux bootloader
-	sudo e2label /dev/vda1 "immudex" > /dev/null 2>&1;
+	sudo e2label /dev/${disk}1 "immudex" > /dev/null 2>&1;
 
 	#mount partition in /media directory
 	sudo mount /dev/${disk}1 /media > /dev/null 2>&1;
