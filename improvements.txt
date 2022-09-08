@@ -1,3 +1,3 @@
 1. Skrypt do otwierania, wyświetlania i zamykania partycji LUKS.
 2. Skrypt to importowania kluczy SSH
-3. Skrypt do importowania kluczy GPG
+3. Skrypt do importowania kluczy GPG (Wskazówka: https://stackoverflow.com/questions/13116457/how-to-make-auto-trust-gpg-public-key)
