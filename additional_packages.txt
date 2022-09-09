@@ -2,3 +2,4 @@
 	bash-completion
 	etherwake
 	wakeonlan
+  cifs-utils
