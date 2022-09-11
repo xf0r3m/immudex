@@ -1,3 +1,11 @@
 1. Skrypt do otwierania, wyświetlania i zamykania partycji LUKS.
+-= Done =-
+===========================================================================
 2. Skrypt to importowania kluczy SSH
+-= Done =-
+===========================================================================
 3. Skrypt do importowania kluczy GPG (Wskazówka: https://stackoverflow.com/questions/13116457/how-to-make-auto-trust-gpg-public-key)
+Prawdopodobnie -= Canceled =-, bo nie ma dobrej metody na ustawienie
+zaufania dla klucza.
+==========================================================================
+4. Zastąpienie firefox, LibreWolf.

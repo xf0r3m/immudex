@@ -1,4 +1,7 @@
-1. Protected nie działa jeśli jest więcej niż jeden otwarty LUKS w systmie:
+1. Protected nie działa jeśli jest więcej niż jeden otwarty LUKS w systemie:
 	Jeśli w systemie jest otwarty (zamontowany) nie używany LUKS, to
 	protected zamknie go i utworzy żądany proces. Nie sprawdza czy w
 	systemie jest więcej otwartych (zamontowanych) partycji LUKS.
+
+  --= Fixed =--
+===========================================================================

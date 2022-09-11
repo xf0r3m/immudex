@@ -14,13 +14,11 @@ if [ "$mapperDeviceList" ]; then
 				else
 					sudo umount $mountPoint;
 					sudo cryptsetup close /dev/mapper/${dmDevice};
-					$1;
 				fi
-			else
-				$1;
 			fi
 		fi
 	done
+  $1;
 else
 	$1;
 

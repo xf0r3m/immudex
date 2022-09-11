@@ -3,3 +3,4 @@
 	etherwake
 	wakeonlan
   cifs-utils
+  wget
