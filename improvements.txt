@@ -8,4 +8,9 @@
 Prawdopodobnie -= Canceled =-, bo nie ma dobrej metody na ustawienie
 zaufania dla klucza.
 ==========================================================================
+3,5. Skrypt aktualizacji immudex
+-= Done =-
+==========================================================================
 4. Zastąpienie firefox, LibreWolf.
+5. MOTD, podczas uruchomiania terminala. Bardzo proste, napis immudex
+stworzony przez figlet a pod nim informacja czy są dostępne aktualizacje.
