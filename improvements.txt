@@ -12,5 +12,15 @@ zaufania dla klucza.
 -= Done =-
 ==========================================================================
 4. Zastąpienie firefox, LibreWolf.
+-= Canceled =- Nie ma wersji 32-bitowej, więc albo obie wersje albo żadna.
+Mógłbym użyć GNU IceCat albo Tor Browser, ale chce aby immudex dalej
+pozostawał normalnie funkcjonującym systemem na zasadzie LiveCD, nie chce
+również dodawać kolejnych dodatkowych megabajtów, 1.4GB na to dużo jak na
+moje standardy a z kolejnym aktualizacjami pewnie będzie jeszcze więcej.
+==========================================================================
 5. MOTD, podczas uruchomiania terminala. Bardzo proste, napis immudex
 stworzony przez figlet a pod nim informacja czy są dostępne aktualizacje.
+-= Done =-
+==========================================================================
+6. Skrypt buildu immudex.
+
