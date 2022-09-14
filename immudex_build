@@ -1,6 +1,22 @@
 #!/bin/bash
 
+GREEN="\e[32m";
+ENDCOLOR="\e[0m";
+
 set -e
+
+echo "-== Starting immudex_build: $(date) ==-" >> immudex_build.log;
+
+function help() {
+  echo "-== Help printed: $(date) ==-" >> immudex_build.log;
+  echo "immudex_build - script for building immudex LiveCD.";
+  echo "morketsmerke.net @ 2022";
+  echo "Options:";
+  echo " --upgrade --<amd64/i386> - scripts doing only three activities, which";
+  echo "  commonly used when upgrading LiveCD image";
+  echo "Usage:";
+  echo " ./immudex_build [--upgrade] --<amd64/i386>";
+}
 
 #Under this condition i put three activities, which are taking
 #place after updates in chroot environment.
@@ -10,39 +26,54 @@ if [ "$1" ] && [ "$1" = "--update" ]; then
   else help; exit 1;
   fi
   #Creating squasfs archive:
-  sudo mksquasfs ~/immudex/${arch}/chroot ~/immudex/${arch}/staging/live/filesystem.squashfs -e boot;
+  echo -n "Creating squashfs archive...";
+  sudo mksquashfs ~/immudex/${arch}/chroot ~/immudex/${arch}/staging/live/filesystem.squashfs -e boot >> immudex_build.log 2>&1;
+  if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
   #Copying kernel and initrd (core files) from chroot:
-  cp $(ls -v ~/immudex/${arch}/chroot/boot/vmlinuz-* | tail -1) ~/immudex/${arch}/staging/live/vmlinuz;
-  cp $(ls -v ~/immudex/${arch}/chroot/boot/initrd-* | tail -1) ~/immudex/${arch}/staging/live/initrd;
+  echo -n "Copying kernel and initrd (core files) from chroot...";
+  cp -v $(ls -v ~/immudex/${arch}/chroot/boot/vmlinuz-* | tail -1) ~/immudex/${arch}/staging/live/vmlinuz >> immudex_build.log 2>&1;
+  cp -v $(ls -v ~/immudex/${arch}/chroot/boot/initrd-* | tail -1) ~/immudex/${arch}/staging/live/initrd >> immudex_build.log 2>&1;
+  if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
- #Create iso image:
+  #Create iso image:
+  echo -n "Creating iso image...";
   cd ~/immudex/${arch};
-  xorriso as mkisofs -iso-level 3 -o "immudex${arch}.iso" -full-iso9660-filenames -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin -eltorito-boot isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table --eltorito-catalog isolinux/isolinux.cat -eltorito-alt-boot -e /boot/grub/efiboot.img -no-emul-boot -isohybrid-gpt-basdat -append_partition 2 0xef ~/immudex/${arch}/staging/boot/grub/efiboot.img ~/immudex/${arch}/staging;  
+  xorriso as mkisofs -iso-level 3 -o "immudex${arch}.iso" -full-iso9660-filenames -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin -eltorito-boot isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table --eltorito-catalog isolinux/isolinux.cat -eltorito-alt-boot -e /boot/grub/efiboot.img -no-emul-boot -isohybrid-gpt-basdat -append_partition 2 0xef ~/immudex/${arch}/staging/boot/grub/efiboot.img ~/immudex/${arch}/staging >> immudex_build.log 2>&1;
+  if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
   exit 0;
 fi
 
-if [ ! -f /sbin/debootstrap ]; then
-  #Creating enviroment:
-  sudo apt install -y debootstrap squashfs-tools xorriso isolinux syslinux-efi grub-pc-bin grub-efi-amd64-bin mtools dosfstools;
-fi
-
-#Creating root directory sturcture for immudex build:
-mkdir -p ~/immudex/{64,32} > /dev/null 2>&1;
-
-
 #Determing requested architecture and
-#fetching stable vanilla Debian base system files:
 if [ "$1" ] && [ "$1" = "--amd64" ]; then arch="64";
-elif [ "$1" ]; && [ "$1" = "--i386" ]; then arch="32";
+elif [ "$1" ] && [ "$1" = "--i386" ]; then arch="32";
 else
   help;
   exit 1;
 fi
 
-/sbin/debootstrap --arch=$(echo $1 | sed 's/-//g') bullseye ~/immudex/${arch}/chroot http://ftp.icm.edu.pl/debian;
+if [ ! -f /sbin/debootstrap ]; then
+  #Creating enviroment:
+  echo -n "Installation of packages needed to build immudex...";
+  sudo apt update >> immudex_build.log 2>&1;
+  sudo apt install -y debootstrap squashfs-tools xorriso isolinux syslinux-efi grub-pc-bin grub-efi-amd64-bin mtools dosfstools >> immudex_build.log 2>&1;
+  if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+fi
+
+#Creating root directory sturcture for immudex build:
+if [ ! -d ~/immudex/${arch} ]; then
+  echo -n "Creating root directory structure for immudex build...";
+  mkdir -pv ~/immudex/${arch} >> immudex_build.log 2>&1;
+  if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+fi
+
+#Fetching stable vanilla Debian base system files:
+echo -n "Fetching stable vanilla Debian base system files...";
+sudo /sbin/debootstrap --arch=$(echo $1 | sed 's/-//g') bullseye ~/immudex/${arch}/chroot http://ftp.icm.edu.pl/debian >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
 #Creating chroot script:
+echo -n "Creating chroot script...";
 echo "#!/bin/bash" > immudex_chroot;
 echo;
 
@@ -53,12 +84,13 @@ else
 fi
 
 cat >> immudex_chroot <<EOF
+set -e;
 apt install -y tzdata locales keyboard-configuration console-setup
 dpkg-reconfigure tzdata;
 dpkg-reconfigure locales;
 dpkg-reconfigure keyboard-configuration;
-dpkg-reconfiugre console-setup;
-apt install -y task-desktop task-xfce-desktop";
+dpkg-reconfigure console-setup;
+apt install -y task-desktop task-xfce-desktop;
 apt install -y git vim firejail ufw cryptsetup lsof extlinux grub-efi-amd64 efibootmgr;
 cd;
 git clone https://github.com/xf0r3m/xfcedebian.git;
@@ -77,7 +109,7 @@ ufw default deny incoming;
 ufw default allow outgoing;
 ufw enable;
 useradd -m -s /bin/bash xf0r3m;
-echo "xf0r3m:..." | chpasswd;
+echo "xf0r3m:2xp8q4ll" | chpasswd;
 useradd -m -s /bin/bash user;
 echo "user:user1" | chpasswd;
 echo "xf0r3m ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers;
@@ -94,7 +126,7 @@ echo "deb-src http://security.debian.org/debian-security bullseye-security main"
 echo "deb http://ftp.icm.edu.pl/pub/Linux/debian/ bullseye-updates main" >> /etc/apt/sources.list;
 echo "deb-src http://ftp.icm.edu.pl/pub/Linux/debian/ bullseye-updates main" >> /etc/apt/sources.list;
 apt update;
-apt upgrade;
+apt upgrade -y;
 cd;
 rm -rf immudex/
 rm -rf xfcedebian/
@@ -102,59 +134,95 @@ apt-get clean
 echo > ~/.bash_history
 history -c
 EOF
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi 
+ 
 #Copying chroot script to chroot directory:
-sudo cp immudex_chroot ~/immudex/${arch}/chroot;
+echo -n "Copying chroot script to chroot directory...";
+sudo cp -vv immudex_chroot ~/immudex/${arch}/chroot >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
 #Executiong chroot script, at least i trying:
 sudo chroot ~/immudex/${arch}/chroot /bin/bash /immudex_chroot;
 
+#Removing chroot script.
+echo -n "Remove chroot script...";
+sudo rm -vf ~/immudex/${arch}/chroot/immudex_chroot >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
 #Creating LiveCD directory structure:
-mkdir -p ~/immudex/${arch}/{staging/{EFI/boot,boot/grub/x86_64-efi,isolinux,live},tmp};
+echo -n "Creating LiveCD directory structure...";
+mkdir -pv ~/immudex/${arch}/{staging/{EFI/boot,boot/grub/x86_64-efi,isolinux,live},tmp} >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
 #Creating squasfs archive:
-sudo mksquasfs ~/immudex/${arch}/chroot ~/immudex/${arch}/staging/live/filesystem.squashfs -e boot;
+echo -n "Creating squashfs archive...";
+sudo mksquashfs ~/immudex/${arch}/chroot ~/immudex/${arch}/staging/live/filesystem.squashfs -e boot >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
 #Copying kernel and initrd (core files) from chroot:
-cp $(ls -v ~/immudex/${arch}/chroot/boot/vmlinuz-* | tail -1) ~/immudex/${arch}/staging/live/vmlinuz;
-cp $(ls -v ~/immudex/${arch}/chroot/boot/initrd-* | tail -1) ~/immudex/${arch}/staging/live/initrd;
+echo -n "Copying kernel and initrd (core files) from chroot...";
+cp -v $(ls -v ~/immudex/${arch}/chroot/boot/vmlinuz-* | tail -1) ~/immudex/${arch}/staging/live/vmlinuz >> immudex_build.log 2>&1;
+cp -v $(ls -v ~/immudex/${arch}/chroot/boot/initrd.img-* | tail -1) ~/immudex/${arch}/staging/live/initrd >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
 #Getting and copying bootloader files
-mkdir ~/Pobrane;
+echo -n "Copying bootloader files...";
+mkdir -v ~/Pobrane >> immudex_build.log 2>&1;
 cd ~/Pobrane;
-git clone https://github.com/xf0r3m/immudex.git;
+git clone https://github.com/xf0r3m/immudex.git >> immudex_build.log 2>&1;
 if [ "$arch" = "64" ]; then arch2="amd64";
 else arch2="i386"; fi 
-cp immudex/isolinux/${arch2}/* ~/immudex/${arch}/staging/isolinux;
-cp immudex/grub/${arch2}/* ~/immudex/${arch}/staging/boot/grub;
+cp -v immudex/isolinux/${arch2}/* ~/immudex/${arch}/staging/isolinux >> immudex_build.log 2>&1;
+cp -v immudex/grub/${arch2}/* ~/immudex/${arch}/staging/boot/grub >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
 #Create grubstandalone config:
+echo "-==Create grub-standalone config: $(date)==-" >> immudex_build.log;
+echo -n "Create grub-standalone config...";
 cat >> ~/immudex/${arch}/tmp/grub-standalone.cfg <<EOF
 search --set=root --file /DEBIAN
 set prefix=($root)/boot/grub
 configfile /boot/grub/grub.cfg
 EOF
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
 
 #Create an empty file, which will be used to set root directory for GRUB:
+echo "-==Create empty file for setting root directory for GRUB: $(date)==-" >> immudex_build.log;
+echo -n "Create empty file for GRUB...";
 touch ~/immudex/${arch}/staging/DEBIAN;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
 #Copying isolinux files:
-cp /usr/lib/ISOLINUX/isolinux.bin ~/immudex/${arch}/staging/isolinux;
-cp /usr/lib/syslinux/modules/bios/* ~/immudex/${arch}/staging/isolinux;
+echo -n "Copiying isolinux files...";
+cp -v /usr/lib/ISOLINUX/isolinux.bin ~/immudex/${arch}/staging/isolinux >> immudex_build.log 2>&1;
+cp -v /usr/lib/syslinux/modules/bios/* ~/immudex/${arch}/staging/isolinux; >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
 #Copying grub files:
-cp -r /usr/lib/grub/x86_64-efi/* ~/immudex/${arch}/boot/grub/x86_64-efi;
+echo -n "Copying isolinux files...";
+cp -rv /usr/lib/grub/x86_64-efi/* ~/immudex/${arch}/boot/grub/x86_64-efi; >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
 #Creating grub-efi bootloader file:
+echo "-==Creating grub-efi bootloader file: $(date)==-" >> immudex_build.log;
+echo -n "Creating grub-efi bootloader file...";
 myHOME=$(pwd);
 grub-mkstandalone --format=x86_64-efi --output=${myHOME}/immudex/${arch}/staging/EFI/boot/bootx64.efi --locales="" --fonts="" "boot/grub/grub.cfg=${myHOME}/immudex/${arch}/tmp/grub-standalone.cfg";
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
 #Creating additional EFI partition:
 cd ~/immudex/staging/boot/grub;
-dd if=/dev/zero bs=1M of=efiboot.img count=20;
-sudo mkfs.vfat efiboot.img;
-sudo mmd -i efiboot.img efi efi/boot;
-sudo mcopy -vi efiboot.img ~/immudex/${arch}/staging/EFI/boot/bootx64.efi ::efi/boot;
+echo -n "Creating addtitional EFI partition...";
+dd if=/dev/zero bs=1M of=efiboot.img count=20 >> immudex_build.log 2>&1;
+sudo mkfs.vfat efiboot.img >> immudex_build.log 2>&1;
+echo "-==Creating MS-DOS directory: $(date)==-" >> immudex_build.log;
+sudo mmd -i efiboot.img efi efi/boot >> immudex_build_log 2>&1;
+sudo mcopy -vi efiboot.img ~/immudex/${arch}/staging/EFI/boot/bootx64.efi ::efi/boot >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
 #Create iso image:
+echo -n "Creating iso image...";
 cd ~/immudex/${arch};
-xorriso as mkisofs -iso-level 3 -o "immudex${arch}.iso" -full-iso9660-filenames -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin -eltorito-boot isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table --eltorito-catalog isolinux/isolinux.cat -eltorito-alt-boot -e /boot/grub/efiboot.img -no-emul-boot -isohybrid-gpt-basdat -append_partition 2 0xef ~/immudex/${arch}/staging/boot/grub/efiboot.img ~/immudex/${arch}/staging;
+xorriso as mkisofs -iso-level 3 -o "immudex${arch}.iso" -full-iso9660-filenames -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin -eltorito-boot isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table --eltorito-catalog isolinux/isolinux.cat -eltorito-alt-boot -e /boot/grub/efiboot.img -no-emul-boot -isohybrid-gpt-basdat -append_partition 2 0xef ~/immudex/${arch}/staging/boot/grub/efiboot.img ~/immudex/${arch}/staging >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
