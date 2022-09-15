@@ -23,4 +23,12 @@ stworzony przez figlet a pod nim informacja czy są dostępne aktualizacje.
 -= Done =-
 ==========================================================================
 6. Skrypt buildu immudex.
+-= Done =-
+==========================================================================
+7. Padlock.
+Aktywator XFCE, który uruchomi skrypt w terminalu, w którym to do wyboru
+będą dostępne zaszyfrowane partycje (za pomocą pętli select). Wybrana
+partycja zostanie otworzona i zamontowana. Na koniec skrypt otworzy
+terminal w punkcie montowania.
+==========================================================================
 

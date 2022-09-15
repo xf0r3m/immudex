@@ -35,5 +35,8 @@ echo -e " \t$(uptime | grep -o "load.*$" | tr [a-z] [A-Z])";
 echo;
 echo -e "morketsmerke.net @ 2022 https://github.com/xf0r3m/immudex";
 echo;
-/usr/local/bin/immudex_upgrade --check --print
+/usr/local/bin/immudex_upgrade --check --print;
+if [ $? -ne 0 ]; then
+       echo -e "\e[31mThere is no internet connection or internal error.\e[0m";
+fi       
 echo "====================================================================";
