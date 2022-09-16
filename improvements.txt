@@ -30,5 +30,6 @@ Aktywator XFCE, który uruchomi skrypt w terminalu, w którym to do wyboru
 będą dostępne zaszyfrowane partycje (za pomocą pętli select). Wybrana
 partycja zostanie otworzona i zamontowana. Na koniec skrypt otworzy
 terminal w punkcie montowania.
+-= Done =-
 ==========================================================================
 

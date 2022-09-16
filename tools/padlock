@@ -1,0 +1,50 @@
+#!/bin/bash
+
+launcher="/home/${USER}/.config/xfce4/panel/launcher-29/16632574081.desktop";
+
+function unlock() {
+
+  cryptParts=$(sudo blkid | grep 'LUKS' | sed 's/://g' | awk '{printf $1" "}');
+
+  select cryptPart in $cryptParts; do
+    /usr/local/bin/immudex_crypt open $cryptPart;
+    devName=$(basename $(/usr/local/bin/immudex_crypt list | grep "$cryptPart" | head -1 | awk '{printf $2}'));
+    sudo mkdir -p /media/${USER}/$devName;
+    sudo mount /dev/mapper/$devName /media/${USER}/$devName;
+    xfce4-terminal --default-working-directory=/media/${USER}/$devName;
+    sed -i 's/--unlock/--lock/' ${launcher};
+    sed -i 's/padlock.png/unlocked.png/' ${launcher};
+    break;
+  done
+}
+
+function lock() {
+
+  mapperDeviceList=$(ls /dev/mapper --hide=control | awk '{printf $1" "}');
+
+  if [ "$mapperDeviceList" ]; then
+	  for dmDevice in $mapperDeviceList; do
+		  if sudo cryptsetup status /dev/mapper/${dmDevice} > /dev/null 2>&1; then
+			  mountPoint=$(df --output=source,target /dev/mapper/${dmDevice} | tail -n 1 | awk '{printf $2}');
+			  if [ "$mountPoint" ]; then
+				  if $(sudo lsof $mountPoint > /dev/null 2>&1); then
+					  notify-send "Padlock" "The /dev/mapper/${dmDevice} cannot be unmount, because there are opened file or running proceses." --icon=dialog-error;
+				  else
+					  sudo umount $mountPoint;
+					  sudo cryptsetup close /dev/mapper/${dmDevice};
+				  fi
+			  else
+          sudo cryptsetup close /dev/mapper/${dmDevice};
+			  fi
+		  fi
+	  done
+  fi
+  if ! $(df -h | grep -q '/dev/mapper'); then
+    sed -i 's/--lock/--unlock/' ${launcher};
+    sed -i 's/unlocked.png/padlock.png/' ${launcher};
+  fi 
+}
+
+if [ "$1" ] && [ "$1" = "--unlock" ]; then unlock;
+elif [ "$1" ] && [ "$1" = "--lock" ]; then lock;
+fi
