@@ -34,4 +34,9 @@ sudo userdel -r xf0r3m;
 useradd -m -s /bin/bash user;
 useradd -m -s /bin/bash xf0r3m;
 echo "user:user1" | sudo chpasswd;
-echo "xf0r3m:xf0r3m1" | sudo chpasswd;   
+echo "xf0r3m:xf0r3m1" | sudo chpasswd;
+
+rm -rf ~/immudex;
+apt-get clean;
+echo > ~/.bash_history;
+history -c   
