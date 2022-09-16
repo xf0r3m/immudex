@@ -8,24 +8,32 @@
 # wget
 # figlet
 
-sudo apt install bash-completion etherwake wakeonlan cifs-utils wget figlet;
+version=$(echo $0 | cut -d "." -f 1);
+if [ ! "$version" ]; then echo -e "\e[31mUpdate failed!\e[0m"; exit 1; fi;
+
+dhclient
+sudo apt update
+sudo apt upgrade -y
+
+sudo apt install -y bash-completion etherwake wakeonlan cifs-utils wget figlet;
 
 if [ ! -d ~/immudex ]; then
   cd;
   git clone https://github.com/xf0r3m/immudex;
 fi
 
-sudo cp -v ~/immudex/tools/immudex_crypt /usr/local/bin;
-sudo cp -v ~/immudex/tools/immudex_upgrade /usr/local/bin;
-sudo cp -v ~/immudex/tools/import_sshkeys /usr/local/bin;
-sudo cp -v ~/immudex/tools/motd /usr/local/bin;
-sudo cp -v ~/immudex/tools/motd2 /usr/local/bin;
-sudo cp -v ~/immudex/tools/padlock /usr/local/bin;
+sudo cp -v ~/immudex/tools/${version}/immudex_crypt /usr/local/bin;
+sudo cp -v ~/immudex/tools/${version}/immudex_upgrade /usr/local/bin;
+sudo cp -v ~/immudex/tools/${version}/import_sshkeys /usr/local/bin;
+sudo cp -v ~/immudex/tools/${version}/motd /usr/local/bin;
+sudo cp -v ~/immudex/tools/${version}/motd2 /usr/local/bin;
+sudo cp -v ~/immudex/tools/${version}/padlock /usr/local/bin;
 
 sudo chmod +x /usr/local/bin/*;
 
-sudo cp -rv ~/immudex/launchers/launcher-29 /etc/skel/.config/xfce4/panel;
-sudo cp -v ~/immudex/images/* /usr/share/images/desktop-base
+sudo cp -rv ~/immudex/launchers/${version}/launcher-29 /etc/skel/.config/xfce4/panel;
+sudo cp -v ~/immudex/files/${version}/xfce4-panel.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml;
+sudo cp -v ~/immudex/images/* /usr/share/images/desktop-base;
 
 sudo echo "/usr/local/bin/motd2" >> /etc/bash.bashrc;
 
