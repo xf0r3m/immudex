@@ -22,7 +22,7 @@ if $(df -h | grep -q '/dev/mapper'); then
     i=$((i + 1));
   done
 else
-  echo -e "  \tFCP: N/A";
+  echo -e "  \tCRYPT_PART: N/A";
 fi
 echo -e "  \tPROCESSES: $(ps -aux | wc -l | awk '{printf $1}')";
 utime=$(uptime | awk '{printf $3}' | sed 's/,//');

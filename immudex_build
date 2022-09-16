@@ -47,6 +47,12 @@ if [ "$1" ] && [ "$1" = "--update" ]; then
   cp -v $(ls -v ~/immudex/${arch}/chroot/boot/initrd.img-* | tail -1) ~/immudex/${arch}/staging/live/initrd >> ~/immudex_build.log 2>&1;
   if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
+  if [ "$3" ]; then
+	  echo -n "Creating version file...";
+	  echo $3 > ~/immudex/${arch}/staging/live/version;
+	  if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+  fi
+
   #Create iso image:
   echo -n "Creating iso image...";
   cd ~/immudex/${arch};
@@ -103,6 +109,15 @@ sudo chroot ~/immudex/${arch}/chroot /bin/bash /base.sh $arch;
 echo -n "Remove chroot script...";
 sudo rm -vf ~/immudex/${arch}/chroot/base.sh >> immudex_build.log 2>&1;
 if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
+versionsList=$(ls -v ~/Pobrane/immudex/versions --hide=base.sh | awk '{printf $1" "}');
+for i in $versionsList; do
+	echo -n "Executing version script: $i ...";
+	sudo cp -v ~/Pobrane/immudex/versions/${i} ~/immudex/${arch}/chroot >> ~/immudex_build.log 2>&1;
+	sudo chroot ~/immudex/${arch}/chroot /bin/bash $i;
+	sudo rm -vf ~/immudex/${arch}/chroot/${i} >> ~/immudex_build.log 2>&1;
+	if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+done
 
 #Creating LiveCD directory structure:
 echo -n "Creating LiveCD directory structure...";
