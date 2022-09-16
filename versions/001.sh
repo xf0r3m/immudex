@@ -33,7 +33,7 @@ sudo chmod +x /usr/local/bin/*;
 
 sudo cp -rv ~/immudex/launchers/${version}/launcher-29 /etc/skel/.config/xfce4/panel;
 sudo cp -v ~/immudex/files/${version}/xfce4-panel.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml;
-sudo cp -v ~/immudex/images/* /usr/share/images/desktop-base;
+sudo cp -v ~/immudex/images/${version}/* /usr/share/images/desktop-base;
 
 sudo echo "/usr/local/bin/motd2" >> /etc/bash.bashrc;
 
