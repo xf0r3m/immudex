@@ -1,4 +1,5 @@
-![Image](https://i.ibb.com/Nxtyj3T/immudex2.png)
+![Image](https://i.ibb.co/NxtyJ3T/immudex2.png)
+
 # IMMutable DEbian with Xfce
 
 Immudex to wersja debian zawierająca niezmienne środowisko pracy. Wykorzystuje
@@ -36,6 +37,8 @@ odnośniki.
 Domyślnym użytkownikiem jest user, dostęp to niego uzyskujemy za pomocą hasła
 user1. Możemy również skorzystać z konta superużytkownika root z hasłem toor.
 
-immudex is not affiliated with Debian. Debian is a registered trademark owned by Software in the Public Interest, Inc.
+immudex is not affiliated with Debian. Debian is a registered trademark owned 
+by Software in the Public Interest, Inc.
 
-[https://www.flaticon.com/free-icons/lock](Lock icons created by Freepik - Flaticon) 
+[Lock icons created by Freepik - Flaticon] (https://www.flaticon.com/free-icons/lock)
+ 
