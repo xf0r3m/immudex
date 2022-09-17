@@ -40,5 +40,5 @@ user1. Możemy również skorzystać z konta superużytkownika root z hasłem to
 immudex is not affiliated with Debian. Debian is a registered trademark owned 
 by Software in the Public Interest, Inc.
 
-[Lock icons created by Freepik - Flaticon] (https://www.flaticon.com/free-icons/lock)
+[Lock icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/lock)
  
