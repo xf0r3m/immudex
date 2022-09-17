@@ -38,5 +38,8 @@ echo;
 /usr/local/bin/immudex_upgrade --check --print;
 if [ $? -ne 0 ]; then
        echo -e "\e[31mThere is no internet connection or internal error.\e[0m";
+  if [ -f /tmp/feed.xml ] && [ ! -s /tmp/feed.xml ]; then
+    rm -f /tmp/feed.xml;
+  fi
 fi       
 echo "====================================================================";

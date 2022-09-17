@@ -1,3 +1,4 @@
+![Image](https://i.ibb.com/Nxtyj3T/immudex2.png)
 # IMMutable DEbian with Xfce
 
 Immudex to wersja debian zawierająca niezmienne środowisko pracy. Wykorzystuje
@@ -27,8 +28,10 @@ Do dyspozycji mamy:
 
 Obraz płyty znajduje się na serwisie sourceforge.net. Poniżej znajduje się 
 odnośniki.
-  * 64-bit: [https://sourceforge.net/projects/immudex/files/0.0.0/immudex64.iso/download](https://sourceforge.net/projects/immudex/files/0.0.0/immudex64.iso/download)
-  * 32-bit: [https://sourceforge.net/projects/immudex/files/0.0.0/immudex32.iso/download](https://sourceforge.net/projects/immudex/files/0.0.0/immudex32.iso/download)
+  * 64-bit: [https://sourceforge.net/projects/immudex/files/iso/0.0.1/immudex64.iso/download](https://sourceforge.net/projects/immudex/files/iso/0.0.1/immudex64.iso/download)
+    CRC: 1964822169 SHA1: b0fbf24169e1fc750914a0a8d5513b0a216b698e
+  * 32-bit: [https://sourceforge.net/projects/immudex/files/iso/0.0.1/immudex32.iso/download](https://sourceforge.net/projects/immudex/files/iso/0.0.1/immudex32.iso/download)
+    CRC: 1128213029 SHA1: b1c9b8a2a4ef11996a0b27c2011d4571e17cf977
 
 Domyślnym użytkownikiem jest user, dostęp to niego uzyskujemy za pomocą hasła
 user1. Możemy również skorzystać z konta superużytkownika root z hasłem toor.

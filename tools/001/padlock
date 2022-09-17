@@ -1,21 +1,33 @@
 #!/bin/bash
 
-launcher="/home/${USER}/.config/xfce4/panel/launcher-29/16632574081.desktop";
+launcher="/home/${USER}/.config/xfce4/panel/launcher-29/16633324331.desktop";
+
+function main_unlock() {
+  /usr/local/bin/immudex_crypt open $1;
+  devName=$(basename $(/usr/local/bin/immudex_crypt list | grep "$1" | head -1 | awk '{printf $2}'));
+  sudo mkdir -p /media/${USER}/$devName;
+  sudo mount /dev/mapper/$devName /media/${USER}/$devName;
+  xfce4-terminal --default-working-directory=/media/${USER}/$devName;
+  sed -i 's/--unlock/--lock/' ${launcher};
+  sed -i 's/padlock.png/unlocked.png/' ${launcher};
+}
 
 function unlock() {
 
   cryptParts=$(sudo blkid | grep 'LUKS' | sed 's/://g' | awk '{printf $1" "}');
-
-  select cryptPart in $cryptParts; do
-    /usr/local/bin/immudex_crypt open $cryptPart;
-    devName=$(basename $(/usr/local/bin/immudex_crypt list | grep "$cryptPart" | head -1 | awk '{printf $2}'));
-    sudo mkdir -p /media/${USER}/$devName;
-    sudo mount /dev/mapper/$devName /media/${USER}/$devName;
-    xfce4-terminal --default-working-directory=/media/${USER}/$devName;
-    sed -i 's/--unlock/--lock/' ${launcher};
-    sed -i 's/padlock.png/unlocked.png/' ${launcher};
-    break;
-  done
+  if [ "$cryptParts" ]; then
+    if [ $(echo $cryptParts | wc -w) -gt 1 ]; then
+      select cryptPart in $cryptParts; do
+        main_unlock $cryptPart;
+        break;
+      done
+    else
+      main_unlock $cryptParts;
+    fi
+  else
+    echo -e "\e[31mThere is no LUKS partition to open.\e[0m";
+    sleep 3;
+  fi
 }
 
 function lock() {
