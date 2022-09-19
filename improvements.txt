@@ -5,8 +5,7 @@
 -= Done =-
 ===========================================================================
 3. Skrypt do importowania kluczy GPG (Wskazówka: https://stackoverflow.com/questions/13116457/how-to-make-auto-trust-gpg-public-key)
-Prawdopodobnie -= Canceled =-, bo nie ma dobrej metody na ustawienie
-zaufania dla klucza.
+-= BETA =-
 ==========================================================================
 3,5. Skrypt aktualizacji immudex
 -= Done =-
@@ -32,4 +31,11 @@ partycja zostanie otworzona i zamontowana. Na koniec skrypt otworzy
 terminal w punkcie montowania.
 -= Done =-
 ==========================================================================
-
+8. shoutcasts.
+Skrypt odszukujący stacji shoutcastowych na podstawie słowa kluczowego.
+Skrypt przeszukuje katalog projektu xiph.org, zwracając listę dostępnych
+stacji (streamów), następnie użytkownik wybiera jedną. Jej adres zostaje
+skopiowany do schowka i może zostać użyty w QMMP do podłączenia się do
+streamu. (Opcja playlisty "Dodaj URL").
+-= BETA =-
+==========================================================================
