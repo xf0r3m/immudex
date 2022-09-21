@@ -5,3 +5,6 @@
 
   --= Fixed =--
 ===========================================================================
+2. Wbudowani użytkownicy nie znajdują się w grupach libvirt oraz 
+libvirt-qemu.
+
