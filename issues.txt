@@ -8,3 +8,6 @@
 2. Wbudowani użytkownicy nie znajdują się w grupach libvirt oraz 
 libvirt-qemu.
 
+3. Plik odpowiadający za polecenie ping nie ma ustawionego bitu SETUID,
+przez co polecenie wymaga podniesienia uprawnień.
+
