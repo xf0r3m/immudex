@@ -11,3 +11,5 @@ libvirt-qemu.
 3. Plik odpowiadający za polecenie ping nie ma ustawionego bitu SETUID,
 przez co polecenie wymaga podniesienia uprawnień.
 
+4. Padlock. Brak powiadomienia o tym, że nie można odmontować zaszyfowanej
+partycji, kiedy wewnątrz niej zamontowany jest inny system plików.
