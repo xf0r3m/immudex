@@ -23,3 +23,9 @@ sudo cp ~/immudex/tools/002/import_gpgkeys /usr/local/bin
 sudo cp ~/immudex/tools/002/shoutcasts /usr/local/bin
 
 chmod +x /usr/local/bin/*
+
+sudo apt install chirp;
+
+sudo apt-get clean;
+echo > ~/.bash_history;
+history -c;

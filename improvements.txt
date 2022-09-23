@@ -39,3 +39,7 @@ skopiowany do schowka i może zostać użyty w QMMP do podłączenia się do
 streamu. (Opcja playlisty "Dodaj URL").
 -= BETA =-
 ==========================================================================
+9. Aplety XFCE.
+Skrypt uruchamiający się w plikach startowych powłoki, konfigurujący zegary 
+na górnym pasku, głównie usunięcie swapu, ustawienie interfejsu sieciowego, 
+oraz wskaźnik zużycia przestrzenii wybranej partycji.
