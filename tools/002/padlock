@@ -1,0 +1,65 @@
+#!/bin/bash
+
+launcher="/home/${USER}/.config/xfce4/panel/launcher-29/16633324331.desktop";
+
+function main_unlock() {
+  /usr/local/bin/immudex_crypt open $1;
+  devName=$(basename $(/usr/local/bin/immudex_crypt list | grep "$1" | head -1 | awk '{printf $2}'));
+  sudo mkdir -p /media/${USER}/$devName;
+  sudo mount /dev/mapper/$devName /media/${USER}/$devName;
+  xfce4-terminal --default-working-directory=/media/${USER}/$devName;
+  sed -i 's/--unlock/--lock/' ${launcher};
+  sed -i 's/padlock.png/unlocked.png/' ${launcher};
+}
+
+function unlock() {
+
+  cryptParts=$(sudo blkid | grep 'LUKS' | sed 's/://g' | awk '{printf $1" "}');
+  if [ "$cryptParts" ]; then
+    if [ $(echo $cryptParts | wc -w) -gt 1 ]; then
+      select cryptPart in $cryptParts; do
+        main_unlock $cryptPart;
+        break;
+      done
+    else
+      main_unlock $cryptParts;
+    fi
+  else
+    echo -e "\e[31mThere is no LUKS partition to open.\e[0m";
+    sleep 3;
+  fi
+}
+
+function lock() {
+
+  mapperDeviceList=$(ls /dev/mapper --hide=control | awk '{printf $1" "}');
+
+  if [ "$mapperDeviceList" ]; then
+	  for dmDevice in $mapperDeviceList; do
+		  if sudo cryptsetup status /dev/mapper/${dmDevice} > /dev/null 2>&1; then
+			  mountPoint=$(df --output=source,target /dev/mapper/${dmDevice} | tail -n 1 | awk '{printf $2}');
+			  if [ "$mountPoint" ]; then
+				  if $(sudo lsof $mountPoint > /dev/null 2>&1); then
+					  notify-send "Padlock" "The /dev/mapper/${dmDevice} cannot be unmount, because there are opened file or running proceses." --icon=dialog-error;
+				  else
+					  sudo umount $mountPoint;
+            if [ $? -ne 0 ]; then
+              notify-send "Padlock" "The /dev/mapper/${dmDevice} cannot be unmount, because there are other filesystem is mounted in." --icon=dialog-error;
+            fi
+					  sudo cryptsetup close /dev/mapper/${dmDevice};
+				  fi
+			  else
+          sudo cryptsetup close /dev/mapper/${dmDevice};
+			  fi
+		  fi
+	  done
+  fi
+  if ! $(df -h | grep -q '/dev/mapper'); then
+    sed -i 's/--lock/--unlock/' ${launcher};
+    sed -i 's/unlocked.png/padlock.png/' ${launcher};
+  fi 
+}
+
+if [ "$1" ] && [ "$1" = "--unlock" ]; then unlock;
+elif [ "$1" ] && [ "$1" = "--lock" ]; then lock;
+fi

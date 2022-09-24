@@ -25,6 +25,7 @@ sudo cp ~/immudex/tools/002/shoutcasts /usr/local/bin
 chmod +x /usr/local/bin/*
 
 sudo apt install chirp;
+sudo sed -i -e 's/chirpw/sudo chirpw' -e 's/false/true' /usr/share/applications/chirp.desktop;
 
 sudo apt-get clean;
 echo > ~/.bash_history;

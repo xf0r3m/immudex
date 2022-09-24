@@ -43,3 +43,6 @@ streamu. (Opcja playlisty "Dodaj URL").
 Skrypt uruchamiający się w plikach startowych powłoki, konfigurujący zegary 
 na górnym pasku, głównie usunięcie swapu, ustawienie interfejsu sieciowego, 
 oraz wskaźnik zużycia przestrzenii wybranej partycji.
+-= Cancelled =- Tego typu zmiany dokonywane są tylko i wyłącznie z poziomu
+rewindingu.
+==========================================================================
