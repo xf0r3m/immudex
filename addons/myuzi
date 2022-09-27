@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+sudo apt update > /dev/null 2>&1;
+sudo apt install -y gstreamer1.0-libav gstreamer1.0-plugins-good python3-pip ffmpeg;
+sudo wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/bin/yt-dlp;
+sudo chmod +x /usr/bin/yt-dlp;
+sudo apt-get clean;
+
+echo | sudo tee -a /etc/apt/sources.list;
+echo "deb http://ftp.icm.edu.pl/pub/Linux/debian bookworm main" | sudo tee -a /etc/apt/sources.list
+
+sudo apt update > /dev/null 2>&1;
+
+sudo apt install --no-install-recommends -y libgtk-4-bin libgtk-4-common libgtk-4-dev;
+
+sudo apt-get clean;
+
+git clone https://gitlab.com/zehkira/myuzi.git
+cd myuzi;
+pip install .
+sudo su -c "make install"
+
