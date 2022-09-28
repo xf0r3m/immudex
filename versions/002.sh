@@ -19,12 +19,14 @@ sudo usermod -aG libvirt,libvirt-qemu xf0r3m;
 sudo chmod u+s /usr/bin/ping
 
 sudo cp ~/immudex/tools/002/motd2 /usr/local/bin
+sudo cp ~/immudex/tools/002/padlock /usr/local/bin
 sudo cp ~/immudex/tools/002/import_gpgkeys /usr/local/bin
 sudo cp ~/immudex/tools/002/shoutcasts /usr/local/bin
+sudo cp ~/immudex/tools/002/ytaudio /usr/local/bin
 
 chmod +x /usr/local/bin/*
 
-sudo apt install chirp;
+sudo apt install chirp mpv;
 sudo sed -i -e 's/chirpw/sudo chirpw' -e 's/false/true' /usr/share/applications/chirp.desktop;
 
 sudo apt-get clean;
