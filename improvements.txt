@@ -46,3 +46,6 @@ oraz wskaźnik zużycia przestrzenii wybranej partycji.
 -= Cancelled =- Tego typu zmiany dokonywane są tylko i wyłącznie z poziomu
 rewindingu.
 ==========================================================================
+10. Wyłączenie komunikatów jądra podczas bootwania oraz zmniejszenie
+wielkości rootfs (overlay) do 25% pamięci.
+-= Done =-

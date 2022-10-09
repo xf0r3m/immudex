@@ -23,6 +23,7 @@ sudo cp ~/immudex/tools/002/padlock /usr/local/bin
 sudo cp ~/immudex/tools/002/import_gpgkeys /usr/local/bin
 sudo cp ~/immudex/tools/002/shoutcasts /usr/local/bin
 sudo cp ~/immudex/tools/002/ytaudio /usr/local/bin
+sudo cp ~/immudex/tools/immudex_install /usr/local/bin
 
 chmod +x /usr/local/bin/*
 

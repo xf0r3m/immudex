@@ -120,7 +120,7 @@ else
 default immudex
 label immudex
 kernel /live/vmlinuz
-append initrd=/live/initrd boot=live apparmor=1 security=apparmor
+append quiet initrd=/live/initrd boot=live overlay-size=25% apparmor=1 security=apparmor
 EOF
 	sudo cp extlinux.conf /media/extlinux > /dev/null 2>&1;
 
