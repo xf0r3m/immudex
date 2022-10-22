@@ -1,4 +1,4 @@
-1. Aktualizacja obecnie zainstalowanych pakietów.
+. Aktualizacja obecnie zainstalowanych pakietów.
 2. Instalacja pakietów dodatkowych takich jak:
   - bash-completion
   - etherwake

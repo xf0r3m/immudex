@@ -1,0 +1,36 @@
+1. Aktualizacja obecnie zainstalowanego oprogramowania.
+
+2. Instalacja nowych pakietów takich jak:
+  - chirp (programowanie radiotelefonów)
+  - mpv (odtwarzacza multimedialny obsługiwany z poziomu CLI)
+  - youtube-dl (pobieranie filmów z platformy youtube)
+
+3. Zmiana wyświetlania "message of the day". Wyświetlane jest ono raz na
+    uruchomienie systemu.
+
+4. Poprawienie błędu z wersji 0.0.1, brak uprawnień do obsługi KVM.
+    Dodano domyślnych użytkowników do grupy "libvirt" oraz "libvirt-qemu".
+
+5. Poprawienie błędy z wersji 0.0.1, polecenie "ping" wymaga podniesienia
+    uprawnień. Nadanie bitu setuid, plikowi odpowiedzialnemu za polecenie
+    ping.
+
+6. Wgranie ulepszonych/poprawnionych wersji narzędzi takich jak "motd2"
+    oraz "padlock".
+
+7. Wgranie nowych narzędzi:
+  - import_gpgkeys, skrypt który importuje klucze "private.gpg" oraz 
+    "public.gpg" znajdujące się bezpośrednio w katalogu domowym
+    użytkownika.
+  - shoutcasts - wyszukiwarka wolnych stacji radia internetowego. Jej
+    zbiorem danych jest katalog projektu xiph.org
+  - ytaudio - skrypt wykorzystujący mpv oraz youtube-dl do streamowania
+    ścieżki dzwiękowej z filmów na youtube. Przydatny gdy chcemy posłuchać
+    podcastów lub długich kompilacji bez uruchamiania przeglądarki.
+
+8. Wgranie nowej wersji "immudex_install" w związku ze zmianą parametów
+    jądra podczas uruchomienia:
+    - quiet - wyłączenie wyświetlania komunikatów jądra podczas jego
+      ładowania
+    - overlay-size=25% - zmniejszenie rozmiaru katalogu głównego z połowy
+      ilość pamięci RAM do 1/4. 
