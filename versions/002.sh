@@ -38,7 +38,7 @@ sudo cp ~/immudex/tools/immudex_install /usr/local/bin
 
 chmod +x /usr/local/bin/*
 
-sudo sed -i -e 's/chirpw/sudo chirpw' -e 's/false/true' /usr/share/applications/chirp.desktop;
+sudo sed -i -e 's/chirpw/sudo chirpw/' -e 's/false/true/' /usr/share/applications/chirp.desktop;
 
 rm -rf ~/immudex;
 sudo apt-get clean;
