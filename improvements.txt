@@ -37,7 +37,7 @@ Skrypt przeszukuje katalog projektu xiph.org, zwracając listę dostępnych
 stacji (streamów), następnie użytkownik wybiera jedną. Jej adres zostaje
 skopiowany do schowka i może zostać użyty w QMMP do podłączenia się do
 streamu. (Opcja playlisty "Dodaj URL").
--= BETA =-
+-= Done =-
 ==========================================================================
 9. Aplety XFCE.
 Skrypt uruchamiający się w plikach startowych powłoki, konfigurujący zegary 
@@ -49,3 +49,12 @@ rewindingu.
 10. Wyłączenie komunikatów jądra podczas bootwania oraz zmniejszenie
 wielkości rootfs (overlay) do 25% pamięci.
 -= Done =-
+==========================================================================
+11. immudex_crypt powinien tworzyć punkty montowania oraz automatycznie
+montować odblokowywane LUKS-y.
+==========================================================================
+12. Ukrycie outputu nie których poleceń w skrypcie ytaudio, wyswietlenie
+help-a jeśli nie podano argumentu.
+==========================================================================
+13. Automatyczne zerowanie pierwszego megabajta wybranego dysku do
+instalacji immudex (immudex_install).
