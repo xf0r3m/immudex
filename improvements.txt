@@ -58,3 +58,8 @@ help-a jeśli nie podano argumentu.
 ==========================================================================
 13. Automatyczne zerowanie pierwszego megabajta wybranego dysku do
 instalacji immudex (immudex_install).
+==========================================================================
+14. yt-audio. Zamiana pliku binarnego youtube-dl z yt-dlp. Możliwość 
+podania linku jako argumentu oraz odtwarzania filmów 
+(--audio(-a) lub --video(-v)). Przekszatałcenie yt-audio w yt-play
+==========================================================================
