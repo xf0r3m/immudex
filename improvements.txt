@@ -52,14 +52,20 @@ wielkości rootfs (overlay) do 25% pamięci.
 ==========================================================================
 11. immudex_crypt powinien tworzyć punkty montowania oraz automatycznie
 montować odblokowywane LUKS-y.
+-= Done =-
 ==========================================================================
 12. Ukrycie outputu nie których poleceń w skrypcie ytaudio, wyswietlenie
 help-a jeśli nie podano argumentu.
+-= Done =-
 ==========================================================================
 13. Automatyczne zerowanie pierwszego megabajta wybranego dysku do
 instalacji immudex (immudex_install).
+-= Done =-
 ==========================================================================
-14. yt-audio. Zamiana pliku binarnego youtube-dl z yt-dlp. Możliwość 
+14. ytaudio. Zamiana pliku binarnego youtube-dl z yt-dlp. Możliwość 
 podania linku jako argumentu oraz odtwarzania filmów 
-(--audio(-a) lub --video(-v)). Przekszatałcenie yt-audio w yt-play
+(--audio(-a) lub --video(-v)). Przekszatałcenie ytaudio w ytplay
+-= Done =-
+==========================================================================
+15. Alias chhome ustawiający katalog domowy na CWD.
 ==========================================================================
