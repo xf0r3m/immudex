@@ -23,7 +23,7 @@ sudo cp -vv ~/immudex/tools/${version}/immudex_install /usr/local/bin;
 
 sudo chmod +x /usr/local/bin;
 
-echo "alias chhome=\"export HOME=\"\$(pwd)\"\"" >> /etc/bash.bashrc
+echo "alias chhome='export HOME=\$(pwd)'" >> /etc/bash.bashrc
 
 rm -rf ~/immudex;
 sudo apt-get clean;
