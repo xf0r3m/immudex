@@ -18,4 +18,4 @@ partycji, kiedy wewnątrz niej zamontowany jest inny system plików.
   --= Fixed =--
 ===========================================================================
 5. Błąd w poleceniach sed w skrypcie wersji 002.sh
-
+  --= Fixed =--
