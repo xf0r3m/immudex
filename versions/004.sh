@@ -6,7 +6,7 @@ if [ ! $version ]; then echo -e "\e[31mUpdate failed!\e[0m"; exit 1; fi;
 dhclient;
 sudo apt update;
 sudo apt upgrade -y;
-sudo apt install vim-gtk3
+sudo apt install vim-gtk3 -y
 
 if [ ! -d ~/immudex ]; then
   cd;
@@ -14,7 +14,7 @@ if [ ! -d ~/immudex ]; then
 fi
 
 sudo cp -vv ~/immudex/launchers/${version}/16674118881.desktop /etc/skel/.config/xfce4/panel/launcher-32
-sudo rm /etc/skel/.confg/xfce4/panel/launcher-32/16608177609.desktop
+sudo rm /etc/skel/.config/xfce4/panel/launcher-32/16608177609.desktop
 sudo cp -vv ~/immudex/files/${version}/xfce4-panel.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
 
 sudo userdel -r user;
