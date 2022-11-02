@@ -19,3 +19,6 @@ partycji, kiedy wewnątrz niej zamontowany jest inny system plików.
 ===========================================================================
 5. Błąd w poleceniach sed w skrypcie wersji 002.sh
   --= Fixed =--
+===========================================================================
+6. Zawieszenie się systemu po załadowaniu środowiska graficznego przy
+uruchomieniu w trybie UEFI.
