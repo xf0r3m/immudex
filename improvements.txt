@@ -68,4 +68,5 @@ podania linku jako argumentu oraz odtwarzania filmów
 -= Done =-
 ==========================================================================
 15. Alias chhome ustawiający katalog domowy na CWD.
+-= Done =-
 ==========================================================================
