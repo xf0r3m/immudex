@@ -70,3 +70,4 @@ podania linku jako argumentu oraz odtwarzania filmów
 15. Alias chhome ustawiający katalog domowy na CWD.
 -= Done =-
 ==========================================================================
+16. Zmiana mousepad na gVim.
