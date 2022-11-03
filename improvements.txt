@@ -71,3 +71,7 @@ podania linku jako argumentu oraz odtwarzania filmów
 -= Done =-
 ==========================================================================
 16. Zmiana mousepad na gVim.
+-= Done =-
+==========================================================================
+17. Instalacja oraz konfiguracja programu Redshift.
+
