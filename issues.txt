@@ -27,3 +27,5 @@ uruchomieniu w trybie UEFI.
   df: /run/user/1001/doc: Operacja niedozwolona
 komunikat pojawia się podczas wyświetlania informacji o szyfrowanych
 dyskach.
+==========================================================================
+8. Domyślna sieć KVM nie startuje automatycznie.
