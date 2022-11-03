@@ -26,6 +26,11 @@ echo "xf0r3m:xf0r3m1" | sudo chpasswd;
 sudo usermod -aG libvirt,libvirt-qemu user;
 sudo usermod -aG libvirt,libvirt-qemu xf0r3m;
 
+sudo cp -vv ~/immudex/tools/${version}/motd2 /usr/local/bin;
+chmod +x /usr/local/bin/*
+
+sudo virsh net-autostart default
+
 rm -rf ~/immudex;
 sudo apt-get clean;
 echo > ~/.bash_history;
