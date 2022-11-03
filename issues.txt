@@ -22,10 +22,12 @@ partycji, kiedy wewnątrz niej zamontowany jest inny system plików.
 ===========================================================================
 6. Zawieszenie się systemu po załadowaniu środowiska graficznego przy
 uruchomieniu w trybie UEFI.
+  --= Fixed =--
 ===========================================================================
 7. Czasami podczas wyświetlania motd pojawia się taki komunikat:
   df: /run/user/1001/doc: Operacja niedozwolona
 komunikat pojawia się podczas wyświetlania informacji o szyfrowanych
 dyskach.
+  --= Fixed =--
 ==========================================================================
 8. Domyślna sieć KVM nie startuje automatycznie.
