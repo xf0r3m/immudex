@@ -22,3 +22,8 @@ partycji, kiedy wewnątrz niej zamontowany jest inny system plików.
 ===========================================================================
 6. Zawieszenie się systemu po załadowaniu środowiska graficznego przy
 uruchomieniu w trybie UEFI.
+===========================================================================
+7. Czasami podczas wyświetlania motd pojawia się taki komunikat:
+  df: /run/user/1001/doc: Operacja niedozwolona
+komunikat pojawia się podczas wyświetlania informacji o szyfrowanych
+dyskach.
