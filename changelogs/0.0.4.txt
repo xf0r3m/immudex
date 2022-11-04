@@ -10,3 +10,6 @@
 4. Rozwiązanie problemu z poleceniem motd2.
 
 5. Próba rozwiązania problemu z autostartem domyślnej sieci KVM.
+
+6. Instalacja programu redshift. Konfiguracja lokalizacji ustawiona na
+    "manual". Podano lokalizację z ISP.
