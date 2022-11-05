@@ -75,3 +75,7 @@ podania linku jako argumentu oraz odtwarzania filmów
 ==========================================================================
 17. Instalacja oraz konfiguracja programu Redshift.
 -= Done =-
+==========================================================================
+18. Instalacja transmission-gtk
+==========================================================================
+19. Dodanie możliwości podania opcji --ytdl-format do yt-play.
