@@ -1,0 +1,46 @@
+Aby domyślna sieć KVM rzeczywiście startowała automatycznie, polecenie
+"virsh" podczas ustawiania tej opcji musi skomunikować się z daemonem KVM.
+
+Problem polega na tym, iż podczas budowania ze immudex ze składników Debiana
+żaden daemon nie działa w obrębie obrazu. Nie działa nawet sam program typu
+init. 
+
+Rozwiązaniem tego jest instalacja immudex jak greenOS (mój poprzedni
+projekt), ustawienie autostartu sieci "default" następnie utworzenie
+ponownie archiwum squashfs na podstawie rootfs.
+
+Pierwszą czynnością jaką należy wykonać jest utworzenie z 
+filesystem.squashfs rootfs.tgz. Na immudex instalujemy squashfs-tools. Do
+wcześniej utworzonego katalogu rozpakowujemy archiwum squashfs.
+
+  $ sudo apt install squashfs-tools
+  $ mkdir tmp
+  $ sudo unsquashfs -f -d chroot/ /run/live/medium/live/filesystem.squashfs
+
+Przyglądając się plikom dojdziemy do wniosku, że brakuje jednego z katalogów
+w rootfs. Brakuje katalogu /boot, zawierającego jądro. Trzeba je
+zainstalować ponownie aby rootfs nadawał się do instalacji na dysku.
+
+  $ sudo chroot tmp/ /bin/bash
+  (chroot)# apt purge linux-image-*
+  (chroot)# apt purge live-boot
+  (chroot)# apt install linux-image-amd64 grub2
+  (chroot)# apt-get clean
+  (chroot)# rm /vmlinuz*
+  (chroot)# rm /initrd.img*
+  (chroot)# history -c
+  (chroot)# ctrl+d
+  $ cd tmp
+  $ sudo tar -czvf rootfs.tgz *
+  $ scp rootfs.tgz 192.168.x.y:/home/xf0r3m
+
+Tak utworzony rootfs musimy gdzieś umieścić. Ja testowałem to rozwiązanie 
+na fizycznym sprzęcie aby mieć pewność, że te rozwiązania rzeczywiście 
+działają. Dlatego i w tym przypadku wykorzystałem bufor w postaci 
+mikroserwera i tam skopiowałem rootfs. Uruchomiłem laptopa z poziomu
+z immudex na usb, utworzyłem na dysku laptopa dwie partycje, jedna na
+rootfs druga jako swap. Podmontowałem główną partycję i skopiowałem na nią 
+wcześniej przygotowane archiwum.
+
+  /mnt$ scp 192.168.x.y:/home/xf0r3m/rootfs.tgz .
+  /mnt$ tar -xzvf rootfs.tgz
