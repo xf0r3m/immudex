@@ -31,4 +31,4 @@ dyskach.
   --= Fixed =--
 ==========================================================================
 8. Domyślna sieć KVM nie startuje automatycznie.
-  --= Defect =--
+  --= Fixed =-- Patrz: autostart_domyślnej_sieci_kvm.txt
