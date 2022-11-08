@@ -19,15 +19,23 @@ wcześniej utworzonego katalogu rozpakowujemy archiwum squashfs.
 
 Przyglądając się plikom dojdziemy do wniosku, że brakuje jednego z katalogów
 w rootfs. Brakuje katalogu /boot, zawierającego jądro. Trzeba je
-zainstalować ponownie aby rootfs nadawał się do instalacji na dysku.
+zainstalować ponownie aby rootfs nadawał się do instalacji na dysku. 
 
   $ sudo chroot tmp/ /bin/bash
+  (chroot)# mkdir /boot
+
+Konieczne jest utworzenie katalogu /boot, ponieważ następne 
+polecenie zakończy się błędem i usuwanie pozostałości jądra w 
+rootfs niepowiedzie się.
+
   (chroot)# apt purge linux-image-*
+
+Jeśli natrafimy na komunikat o tym, że usuwamy obecnie używane
+jądro, to nie przerywamy tego działania. Kontynuujemy je.
+
   (chroot)# apt purge live-boot
   (chroot)# apt install linux-image-amd64 grub2
   (chroot)# apt-get clean
-  (chroot)# rm /vmlinuz*
-  (chroot)# rm /initrd.img*
   (chroot)# history -c
   (chroot)# ctrl+d
   $ cd tmp
@@ -42,5 +50,111 @@ z immudex na usb, utworzyłem na dysku laptopa dwie partycje, jedna na
 rootfs druga jako swap. Podmontowałem główną partycję i skopiowałem na nią 
 wcześniej przygotowane archiwum.
 
+Jeśli mamy zamiar robić to na maszynie wirtualnej KVM, to przed
+uruchomieniem maszyny, należy wyłączyć sieć KVM (tak, tą o którą
+rozchodzi się tym dokumencie), następnie w preferencjach
+umożliwić edycję kodu XML, aby następnie zmienić adresu IP nadane
+domyślnie sieci KVM. Bez tych czynności sieć na maszynie nie
+będzie chciała wystartować, co czyni w tym przypadku maszynę KVM
+bezużyteczną.
+
   /mnt$ scp 192.168.x.y:/home/xf0r3m/rootfs.tgz .
   /mnt$ tar -xzvf rootfs.tgz
+  /mnt$ for i in /dev /dev/pts /proc /run /sys; do sudo mount -B $i /mnt${i}
+  /mnt$ sudo chroot . /bin/bash
+  (chroot)# cp /etc/fstab /etc/fstab.bkp
+  (chroot)# blkid > /etc/fstab
+  
+W pliku /etc/fstab ustawiamy główny system plików oraz przestrzeń
+wymiany.
+
+  (chroot)# grub-install /dev/xyz
+  (chroot)# update-grub
+  (chroot)# history -c
+  (chroot)# ctrl+d
+  /mnt$ for i in /dev /dev/pts /proc /run /sys; do sudo umount /mnt${i}; done 
+  /mnt$ sudo reboot
+
+Po ponownym uruchomieniu, logujemy się i wydajemy następujące
+polecenia:
+
+  $ sudo virsh net-list
+
+Lista powinna być pusta.
+
+  $ sudo virsh net-start default
+  $ sudo virsh net-autostart default
+  $ sudo virsh net-list 
+
+Teraz w kolumnach "automatyczne uruchamianie" oraz "trwałe"
+powinniśmy zobaczyć wartość "tak". Aby pozostawić po sobie jak
+najmniej śladów wydajemy polecenie:
+
+  $ history -c
+  $ ctrl+d
+
+Zamykamy system, aby utworzyć archiwum squashfs potrzebujemy
+dla niego dodatkowego miejsca docelowego. Takim miejscem może być
+dodatkowy dysk, lub overlay (główny system plików w pamięci RAM).
+System plików z potencjalnym squashfs immudex montujemy w /mnt
+natomiast dodatkowy system plików w /media.
+
+  $ sudo mount /dev/vda1 /mnt
+  $ sudo mount /dev/vdb1 /media
+
+Aby squashfs był zdatny do użycia musimy zainstalować ponownie 
+pakiet live-boot 
+
+  $ sudo chroot /mnt /bin/bash
+  (chroot)# apt install live-boot
+  (chroot)# apt-get clean
+  (chroot)# history -c
+  (chroot)# ctrl+d
+
+Teraz możemy utworzyć archiwum squashfs.
+
+  $ cd /media
+  $ sudo mksquashfs /mnt filesystem.squashfs -e boot
+
+Po po utworzeniu archiwum musimy przenieść archiwum na komputer,
+w którym budowany jest immudex, do odpowiedniego katalogu
+(najlepiej do indywidualnego środowiska budowania, może być to 
+kopia katalogu ostatniej wersji) 
+Jak to zrobimy to już sprawa indywidualna.
+
+Po przeniesieniu archiwum, pozostaje zmienić algorytm 
+aktualizacji immudex w indywidualnej dla tego katalogu wersji 
+skryptu immudex_build. Aktualizacja składa się z poniżej
+wymienionych czynności takich jak:
+
+  0. Sprawdzenie dostępności w systemie pakietów niezbędnych do
+      budowania LiveCD z immudex.
+  1. Oczyszczenie katalogu staging/live,
+  2. Usunięcie dotyczasowego obrazu płyty .iso,
+  3. Utworzenia nowego archiwum squashfs,
+  4. Utworzenie pliku wersji,
+  5. Skopiowanie do katalogu staging/live jądra oraz initrd,
+  6. Utworzenia nowego obrazu płyty.
+
+W tym przypadku interesować nas będą punkt 0, 2, 4 i 6. Przy 
+piątym 
+warto się zatrzymać, ponieważ jeśli zainstalowane podczas
+tworzenia rootfs jądro jest zgodne z jądrem ostatniej wersji to
+można ująć w komentarz tę czynność też (tak jak inne niż
+wymienione na początku tego akapitu), jeśli nie to wówczas:
+należy skopiować do podkatalogu budowania chroot odpowiedniej
+wersji immudex (32 lub 64-bitowej) zawartość przygotowanego
+archiwum rootfs.tgz i wykonać wyszystkie czynności aktualizacji
+immudex. 
+
+Po ujęciu w komentarz nie wymienionych czynności należy utworzyć
+nowy obraz płyty. Tak przygotowany obraz POWINIEN już posiadać 
+domyślnie włączoną sieć KVM.
+
+  $ cd immudex_005_beta
+  $ chhome
+  $ ./immudex_build --update --amd64 0.0.5
+  
+Opisane tutaj czynności można wykorzystać do bardziej
+zaawansowanych zmian, na które np. nie pozwala rewinding.
+
