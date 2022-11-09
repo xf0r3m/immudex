@@ -145,7 +145,9 @@ wymienione na początku tego akapitu), jeśli nie to wówczas:
 należy skopiować do podkatalogu budowania chroot odpowiedniej
 wersji immudex (32 lub 64-bitowej) zawartość przygotowanego
 archiwum rootfs.tgz i wykonać wyszystkie czynności aktualizacji
-immudex. 
+immudex. Te czynność i tak będzie trzeba wykonać aby zachować 
+płynność wersji immudex. Więc dla testów możemy zmusić skrypt 
+do wykonania tylko wyżej wymienionych czynności.
 
 Po ujęciu w komentarz nie wymienionych czynności należy utworzyć
 nowy obraz płyty. Tak przygotowany obraz POWINIEN już posiadać 
