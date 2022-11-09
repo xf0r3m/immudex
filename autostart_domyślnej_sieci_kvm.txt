@@ -143,8 +143,9 @@ tworzenia rootfs jądro jest zgodne z jądrem ostatniej wersji to
 można ująć w komentarz tę czynność też (tak jak inne niż
 wymienione na początku tego akapitu), jeśli nie to wówczas:
 należy skopiować do podkatalogu budowania chroot odpowiedniej
-wersji immudex (32 lub 64-bitowej) zawartość przygotowanego
-archiwum rootfs.tgz i wykonać wyszystkie czynności aktualizacji
+wersji immudex (32 lub 64-bitowej) zawartość głównego systemu 
+plików, na którym zainstalowana wersją immudex posłużyła do 
+rozwiązania problemu i wykonać wyszystkie czynności aktualizacji
 immudex. Te czynność i tak będzie trzeba wykonać aby zachować 
 płynność wersji immudex. Więc dla testów możemy zmusić skrypt 
 do wykonania tylko wyżej wymienionych czynności.
