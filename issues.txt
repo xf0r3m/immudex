@@ -32,3 +32,5 @@ dyskach.
 ==========================================================================
 8. Domyślna sieć KVM nie startuje automatycznie.
   --= Fixed =-- Patrz: autostart_domyślnej_sieci_kvm.txt
+==========================================================================
+9. Po wylogowaniu i ponownym zalogowaniu protected nie działa jak powinno.
