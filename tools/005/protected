@@ -1,0 +1,29 @@
+#!/bin/bash
+
+mapperDeviceList=$(ls /dev/mapper --hide=control | awk '{printf $1" "}');
+
+if [ "$mapperDeviceList" ]; then
+
+	for dmDevice in $mapperDeviceList; do
+		if sudo cryptsetup status /dev/mapper/${dmDevice} > /dev/null 2>&1; then
+			mountPoint=$(df --output=source,target /dev/mapper/${dmDevice} | tail -n 1 | awk '{printf $2}');
+			if [ "$mountPoint" ]; then
+				if $(sudo lsof $mountPoint > /dev/null 2>&1); then
+					notify-send "Protected" "The $1 cannot be run, because your LUKS partition is open." --icon=dialog-error;
+					exit 1;
+				else
+					sudo umount $mountPoint;
+					sudo cryptsetup close /dev/mapper/${dmDevice};
+          #zmiana na launcherze padlock
+          launcher="/home/${USER}/.config/xfce4/panel/launcher-29/16633324331.desktop";
+          sed -i 's/--lock/--unlock/' ${launcher};
+          sed -i 's/unlocked.png/padlock.png/' ${launcher};
+				fi
+			fi
+		fi
+	done
+  $1;
+else
+	$1;
+
+fi
