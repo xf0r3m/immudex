@@ -12,3 +12,5 @@ immudex 0.0.5 - ważna zmiana
 
   5. Aktualizacja pakietów.
   
+  6. Dodanie aliasu do MPV pozwalającego na otwieranie streamów z YT.
+  
