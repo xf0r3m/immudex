@@ -46,6 +46,8 @@ chmod +x /usr/local/bin/protected;
 
 rm -rf ~/immudex;
 rm -rf ~/Python*;
+sudo apt remove -y libssl-dev libbz2-dev libnss3-dev libgdbm-dev libncurses5-dev libffi-dev libreadline-dev libsqlite3-dev zlib1g-dev build-essential software-properties-common;
+sudo apt autoclean;
 sudo apt-get clean;
 sudo apt-get clean;
 echo > ~/.bash_history;
