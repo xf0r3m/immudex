@@ -34,3 +34,5 @@ dyskach.
   --= Fixed =-- Patrz: autostart_domyślnej_sieci_kvm.txt
 ==========================================================================
 9. Po wylogowaniu i ponownym zalogowaniu protected nie działa jak powinno.
+  --= Misunderstanding =-- Skrypt protected działa prawidło, nie zmieniona
+  pozostaje jedynie ikona launchera padlock.
