@@ -23,7 +23,7 @@ sudo make
 sudo make altinstall
 
 sudo sed -i '26s/1/0/' /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml;
-sudo sed -i '64i\\t<property name="disable-struts" type="bool" value="false"/>' /etc/skel/.conf/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml;
+sudo sed -i '64i\\t<property name="disable-struts" type="bool" value="false"/>' /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml;
 
 echo 'alias ytstream="mpv --ytdl-format=best[height=480]"' >> /etc/bash.bashrc;
 
@@ -41,7 +41,7 @@ if [ ! -d ~/immudex ]; then
   git clone https://github.com/xf0r3m/immudex;
 fi
 
-sudo cp -vv ~/immudex/${version}/tools/protected /usr/local/bin;
+sudo cp -vv ~/immudex/tools/${version}/protected /usr/local/bin;
 chmod +x /usr/local/bin/protected;
 
 rm -rf ~/immudex;
