@@ -11,7 +11,7 @@ sudo apt install -y libssl-dev libbz2-dev libnss3-dev libgdbm-dev libncurses5-de
 
 sudo apt install --no-install-recommends software-properties-common -y
 
-sudo ln -s /etc/libvirt/qemu/networks/default.xml /etc/libvirt/qemu/networks/autostart/default.xml;
+#sudo ln -s /etc/libvirt/qemu/networks/default.xml /etc/libvirt/qemu/networks/autostart/default.xml;
 
 cd;
 sudo wget https://www.python.org/ftp/python/3.11.0/Python-3.11.0.tar.xz -O Python-3.11.0.tar.xz;
