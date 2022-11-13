@@ -1,16 +1,14 @@
 immudex 0.0.5 - ważna zmiana
   
-  1. Automatyczne uruchamianie domyślnej sieci KVM.
+  1. Kompilacja i instalacja najnowszej wersji Python 3.11
 
-  2. Kompilacja i instalacja najnowszej wersji Python 3.11
-
-  3. Wyłączenie autoukrywania górnego paska. Czasami potrafiło się to
+  2. Wyłączenie autoukrywania górnego paska. Czasami potrafiło się to
       zbugować.
 
-  4. Zmiana ikony launchera padlock, kiedy protected zamyka nieużywane
+  3. Zmiana ikony launchera padlock, kiedy protected zamyka nieużywane
       cryptfs-y.
 
-  5. Aktualizacja pakietów.
+  4. Aktualizacja pakietów.
   
-  6. Dodanie aliasu do MPV pozwalającego na otwieranie streamów z YT.
+  5. Dodanie aliasu do MPV pozwalającego na otwieranie streamów z YT.
   
