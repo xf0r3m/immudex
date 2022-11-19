@@ -97,8 +97,12 @@ else
       fi
       echo $2 > /tmp/lastShowedNewsFeed;
   elif [ "$1" ] && [ "$1" = "--open" ] && [ "$2" ] && [ $2 -gt 0 ]; then
-      subscriptionNumber=$(cat /tmp/lastShowedNewsFeed);
+    subscriptionNumber=$(cat /tmp/lastShowedNewsFeed);
+    if ! grep -q 'CDATA' /tmp/newsfeed_${subscriptionNumber}.xml; then
       link=$(sed 's/<\/link>/\n/g' /tmp/newsfeed_${subscriptionNumber}.xml | sed 's/<\/title>/\n/g' | grep '<link>' | sed -n '2,$p' | sed 's/<link>//g' | sed -n "${2}p")
-      exo-open --launch WebBrowser "$link";
+    else
+      link=$(sed 's/<\/link>/\n/g' /tmp/newsfeed_${subscriptionNumber}.xml | sed 's/<\/description>/\n/g' | grep '<link>' | sed -n '2,$p' | sed 's/<link>//g' | sed -n "${2}p")
+    fi
+    exo-open --launch WebBrowser "$link";
   fi
 fi
