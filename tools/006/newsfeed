@@ -70,7 +70,7 @@ else
           compressed=1;
           amountOfNews=$(sed 's/<\/title>/\n/g' /tmp/newsfeed_${i}.xml | sed 's/<item>/\n/g' | grep '<title>' | wc -l)
         fi
-        notify-send "$nameOfSubscription" "New $amountOfNews newses" --icon=applications-internet;
+        notify-send "$nameOfSubscription" "New $amountOfNews newses" --icon=/usr/share/icons/rss.png;
       fi
     fi
     i=$((i + 1));

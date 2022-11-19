@@ -41,4 +41,5 @@ immudex is not affiliated with Debian. Debian is a registered trademark owned
 by Software in the Public Interest, Inc.
 
 [Lock icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/lock)
+[Rss icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/rss)
  
