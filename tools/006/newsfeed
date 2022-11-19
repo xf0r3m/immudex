@@ -63,6 +63,7 @@ else
             j=$((j + 1));
           done
         fi
+        mv /tmp/new_newsfeed_${i}.xml /tmp/newsfeed_${i}.xml;
       else
         mv /tmp/new_newsfeed_${i}.xml /tmp/newsfeed_${i}.xml;
         amountOfNews=$(grep '<title>' /tmp/newsfeed_${i}.xml | sed -n '2,$p' | wc -l);
