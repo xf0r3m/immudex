@@ -79,3 +79,13 @@ podania linku jako argumentu oraz odtwarzania filmów
 18. Instalacja transmission-gtk
 ==========================================================================
 19. Dodanie możliwości podania opcji --ytdl-format do yt-play.
+==========================================================================
+20. Zmiana domyślnego TIMEOUT w menu GRUB w trybie EFI z 30 sekund na 5.
+==========================================================================
+21. Ustawienie strony głównej firefox na 
+https://searx.morketsmerke.net/searxng
+==========================================================================
+22. Utworznie dodatku do firefox-a, na podstawie: 
+https://gitlab.com/jjustra/search-searx, 
+który umożliwi dodanie https://searx.morketsmerke.net/searxng jako search 
+engine-u.
