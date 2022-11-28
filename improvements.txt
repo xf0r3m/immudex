@@ -77,8 +77,11 @@ podania linku jako argumentu oraz odtwarzania filmów
 -= Done =-
 ==========================================================================
 18. Instalacja transmission-gtk
+-= Done =-
 ==========================================================================
 19. Dodanie możliwości podania opcji --ytdl-format do yt-play.
+-= Done =- Dodanie również możliwości odtwarzania treści na żywo z poziomu 
+wyszukiwarki.
 ==========================================================================
 20. Zmiana domyślnego TIMEOUT w menu GRUB w trybie EFI z 30 sekund na 5.
 ==========================================================================
@@ -89,3 +92,4 @@ https://searx.morketsmerke.net/searxng
 https://gitlab.com/jjustra/search-searx, 
 który umożliwi dodanie https://searx.morketsmerke.net/searxng jako search 
 engine-u.
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Your_first_WebExtension
