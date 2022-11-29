@@ -36,3 +36,9 @@ dyskach.
 9. Po wylogowaniu i ponownym zalogowaniu protected nie działa jak powinno.
   --= Misunderstanding =-- Skrypt protected działa prawidło, nie zmieniona
   pozostaje jedynie ikona launchera padlock.
+==========================================================================
+10. Index w immudex_crypt nie jest jednoznaczny dla indeksów przy
+urządzeniach /dev/dm-X. Jeśli z trzech zamontowanych cryptfs-ów odmontujemy
+środkowy (nr. 1), to kolejnym indeksem w immudex_crypt będzie 3. Natomiast
+system przypisze dysk pod /dev/dm-1, przez co skrypt nie może prawidłowo 
+określić istnienia systemu plików (np. ext4) na odblokowanym cryptfs.
