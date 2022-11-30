@@ -11,7 +11,11 @@ sudo apt install transmission-gtk;
 
 
 sudo cp -vv ~/immudex/tools/${version}/ytplay /usr/local/bin;
+sudo cp -vv ~/immudex/tools/${version}/immudex_crypt /usr/local/bin;
 chmod +x /usr/local/bin;
+
+sudo rm -rf /etc/skel/.mozilla;
+sudo tar -xzvf ~/immudex/files/${version}/mozilla.tgz -C /etc/skel
 
 
 
