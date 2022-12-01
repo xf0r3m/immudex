@@ -24,7 +24,7 @@ sudo chown -R root:root /etc/skel/.mozilla
 
 sudo sed -i 's/80x24/100x30/' /etc/skel/.config/xfce4/terminal/terminalrc
 
-sudo apt remove -y libssl-dev libbz2-dev libnss3-dev libgdbm-dev libncurses5-dev libffi-dev libreadline-dev libsqlite3-dev zlib1g-dev build-essential software-properties-common;
+#sudo apt remove -y libssl-dev libbz2-dev libnss3-dev libgdbm-dev libncurses5-dev libffi-dev libreadline-dev libsqlite3-dev zlib1g-dev build-essential software-properties-common;
 sudo apt autoremove -y;
 
 sudo userdel -r user;
