@@ -9,6 +9,10 @@ sudo apt upgrade -y;
 
 sudo apt install -y transmission-gtk;
 
+if [ ! -d ~/immudex ]; then
+  cd;
+  git clone https://github.com/xf0r3m/immudex.git;
+fi
 
 sudo cp -vv ~/immudex/tools/${version}/ytplay /usr/local/bin;
 sudo cp -vv ~/immudex/tools/${version}/immudex_crypt /usr/local/bin;
