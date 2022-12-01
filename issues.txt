@@ -43,3 +43,6 @@ urządzeniach /dev/dm-X. Jeśli z trzech zamontowanych cryptfs-ów odmontujemy
 system przypisze dysk pod /dev/dm-1, przez co skrypt nie może prawidłowo 
 określić istnienia systemu plików (np. ext4) na odblokowanym cryptfs.
   --= Fixed =--
+==========================================================================
+11. Poprawić funkcję pomocy dla immudex_crypt. Zamiast "crypt" zapisano 
+  poszczególne opcje.
