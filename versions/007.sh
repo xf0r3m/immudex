@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version=$(echo 0 | cut -d "." -f 1);
+version=$(echo $0 | cut -d "." -f 1);
 if [ ! $version ]; then echo -e "\e[31mUpdate failed!\e[0m"; exit 1; fi
 
 sudo dhclient;
