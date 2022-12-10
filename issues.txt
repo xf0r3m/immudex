@@ -46,3 +46,4 @@ określić istnienia systemu plików (np. ext4) na odblokowanym cryptfs.
 ==========================================================================
 11. Poprawić funkcję pomocy dla immudex_crypt. Zamiast "crypt" zapisano 
   poszczególne opcje.
+  --= Fixed =--
