@@ -1,5 +1,22 @@
 #!/bin/bash
 
+function help() {
+  echo "======================================================================";
+  echo "morketsmerke - script for fetch and adjust morketsmerke.net site";
+  echo "as offline available source of information.";
+  echo "morketsmerke.net COPYLEFT @ 2022";
+  echo;
+  echo "Options:";
+  echo "  --browser - launching fetched site in default application for open"
+  echo "  html sites";
+  echo "  -[-]<any_other_chars_or_strings> - print this message";
+  echo "By default script open downloaded site in terminal via W3M browser with";
+  echo "monochrome mode";
+  echo;
+  echo "Usage:";
+  echo "  $ morketsmerke [--browser]";
+}
+
 function R() {
   
   if [ "$path" ]; then path=${path}/${1};
@@ -45,6 +62,9 @@ morketsmerke_path=/usr/share/doc/morketsmerke;
 
 if [ "$1" ] && [ "$1" = "--browser" ]; then
   xdg-open ${morketsmerke_path}/index.html;
+elif [ "$1" ]; then
+  help;
+  exit 1;
 else
   w3m -M ${morketsmerke_path}/index.html;
 fi
