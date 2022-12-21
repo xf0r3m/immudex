@@ -16,6 +16,8 @@ sudo cp -vv ~/immudex/tools/${version}/morketsmerke /usr/local/bin;
 sudo cp -vv ~/immudex/tools/${version}/immudex_crypt /usr/local/bin;
 chmod +x /usr/local/bin;
 
+/usr/local/bin/morketsmerke -h
+
 rm -rf ~/immudex;
 sudo apt autoclean;
 sudo apt-get clean;
