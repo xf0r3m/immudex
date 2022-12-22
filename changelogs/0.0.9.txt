@@ -1,0 +1,5 @@
+immudex 0.0.9 - zmniejszenie wielkości obrazu
+
+  1. Aktualizacja pakietów
+  
+  2. Usunięcie trzeciej (niepotrzebnej) wersji jądra.
