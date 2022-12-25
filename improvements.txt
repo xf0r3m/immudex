@@ -97,4 +97,8 @@ engine-u.
 https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Your_first_WebExtension
 -= Done =-
 ==========================================================================
-23. Dodanie wsparcia dla 32-bitowego EFI.
+23. Dodanie wsparcia dla 32-bitowego EFI do immudex_install
+-= Edited 25.12.2022 =-
+==========================================================================
+24. Utworzenie narzędzia pozwalającego utworzyć nośnik instalacyjny na USB
+dla systemów opartych na 32-bitowym EFI.
