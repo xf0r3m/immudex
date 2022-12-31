@@ -6,13 +6,14 @@ if [ ! $version ]; then echo -e "\e[31mUpdate failed!\e[0m"; exit 1; fi
 sudo dhclient;
 sudo apt update;
 sudo apt upgrade -y;
-sudo apt install grub-efi-ia32-bin -y;
+sudo apt install grub-efi-ia32-bin irssi -y;
 
 if [ ! -d ~/immudex ]; then
   cd;
   git clone https://github.com/immudex/immudex.git;
 fi
 
+sudo cp -vv ~/immudex/tools/${version}/create_media /usr/local/bin
 sudo cp -vv ~/immudex/tools/${version}/immudex_install /usr/local/bin;
 chmod +x /usr/local/bin;
 
