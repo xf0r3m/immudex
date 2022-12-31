@@ -4,6 +4,16 @@ GREEN="\e[32m";
 YELLOW="\e[33m";
 ENDCOLOR="\e[0m";
 
+function help() {
+  echo "create_media - script used for write iso image to usb drive(mainly)";
+  echo "morketsmerke.net COPYLEFT @ 2022";
+  echo "Options:";
+  echo "  --i386-efi - creating 32-bit EFI usb drive with iso image";
+  echo "  (comapatible with immudex only iso images)";
+  echo "Usage:";
+  echo "  $ create_media [--i386-efi] <usb_disk> <iso_image>";
+}
+
 if [ "$1" ] && [ "$1" = "--i386-efi" ]; then target="i386-efi"; shift; fi
 if [ "$1" ] && echo $1 | grep -Eq '/dev/(sd[a-z]|vd[a-z]|mmcblk[0-9])'; then
   disk=$1; shift;
