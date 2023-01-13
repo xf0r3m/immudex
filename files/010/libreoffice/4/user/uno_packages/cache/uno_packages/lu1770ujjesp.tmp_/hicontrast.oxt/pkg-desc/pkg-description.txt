@@ -1,0 +1,1 @@
+Hicontrast icon theme as shipped with LibreOffice before version 6.1
