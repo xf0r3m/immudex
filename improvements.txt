@@ -102,3 +102,8 @@ https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Your_firs
 ==========================================================================
 24. Utworzenie narzędzia pozwalającego utworzyć nośnik instalacyjny na USB
 dla systemów opartych na 32-bitowym EFI.
+==========================================================================
+25. Zmiana domyślnego zestawu ikon dla LibreOffice, domyślne ikony niebyły
+widoczne w przypadku ciemnego schematu kolorów (adwaita (dark)).
+==========================================================================
+26. Dodanie irssi do autostartu użytkownika xf0r3m.
