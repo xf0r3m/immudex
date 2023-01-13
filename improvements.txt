@@ -5,7 +5,7 @@
 -= Done =-
 ===========================================================================
 3. Skrypt do importowania kluczy GPG (Wskazówka: https://stackoverflow.com/questions/13116457/how-to-make-auto-trust-gpg-public-key)
--= BETA =-
+-= Done =-
 ==========================================================================
 3,5. Skrypt aktualizacji immudex
 -= Done =-
@@ -98,12 +98,15 @@ https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Your_firs
 -= Done =-
 ==========================================================================
 23. Dodanie wsparcia dla 32-bitowego EFI do immudex_install
--= Edited 25.12.2022 =-
+-= BETA =-
 ==========================================================================
 24. Utworzenie narzędzia pozwalającego utworzyć nośnik instalacyjny na USB
 dla systemów opartych na 32-bitowym EFI.
+-= BETA =-
 ==========================================================================
 25. Zmiana domyślnego zestawu ikon dla LibreOffice, domyślne ikony niebyły
 widoczne w przypadku ciemnego schematu kolorów (adwaita (dark)).
+-= BETA =-
 ==========================================================================
 26. Dodanie irssi do autostartu użytkownika xf0r3m.
+-= BETA =-
