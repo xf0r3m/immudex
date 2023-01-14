@@ -315,7 +315,3 @@ statusbar = {
     };
   };
 };
-settings = {
-  core = { real_name = "Unknown"; user_name = "xf0r3m"; nick = "xf0r3m"; };
-  "fe-text" = { actlist_sort = "refnum"; };
-};
