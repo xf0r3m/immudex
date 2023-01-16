@@ -110,3 +110,8 @@ widoczne w przypadku ciemnego schematu kolorów (adwaita (dark)).
 ==========================================================================
 26. Dodanie irssi do autostartu użytkownika xf0r3m.
 -= BETA =-
+==========================================================================
+27. Dodanie pakietów nmap nfs-common oraz remmina (z pakietami rekomendowanymi)
+==========================================================================
+28. Dodanie opcji RELOAD przy wynikach wyszukiwania ytplay, aby odpytać
+YT jeszcze raz o te same "keywords".
