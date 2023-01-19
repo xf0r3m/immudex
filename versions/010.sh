@@ -41,12 +41,14 @@ VERSION=$(echo $0 | cut -d "." -f 1);
 if [ ! $VERSION ]; then echo -e "\e[31mUpdate failed!\e[0m"; exit 1; fi
 
 update_packages;
-install_packages grub-efi-ia32-bin irssi;
+install_packages grub-efi-ia32-bin irssi nmap nfs-common remmina;
 
 get_immudex_project;
 
 sudo cp -vv ~/immudex/tools/${VERSION}/create_media /usr/local/bin
 sudo cp -vv ~/immudex/tools/${VERSION}/immudex_install /usr/local/bin;
+sudo cp -vv ~/immudex/tools/${VERSION}/ytplay /usr/local/bin;
+
 chmod +x /usr/local/bin;
 
 sudo cp -rvv ~/immudex/files/${VERSION}/libreoffice /etc/skel/.config;
