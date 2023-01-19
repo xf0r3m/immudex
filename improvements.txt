@@ -112,6 +112,8 @@ widoczne w przypadku ciemnego schematu kolorów (adwaita (dark)).
 -= BETA =-
 ==========================================================================
 27. Dodanie pakietów nmap nfs-common oraz remmina (z pakietami rekomendowanymi)
+-= Done =-
 ==========================================================================
 28. Dodanie opcji RELOAD przy wynikach wyszukiwania ytplay, aby odpytać
+-= BETA =- (Zamiast numer filmu podaje się 'r' lub 'R')
 YT jeszcze raz o te same "keywords".
