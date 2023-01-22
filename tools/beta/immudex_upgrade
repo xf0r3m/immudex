@@ -1,0 +1,155 @@
+#!/bin/bash
+
+set -e
+
+RED="\e[31m";
+GREEN="\e[32m";
+YELLOW="\e[33m";
+ENDCOLOR="\e[0m";
+root="/run/live/medium";
+
+function help() {
+  echo "immudex_upgrade - script for searching upgrades and upgrade immudex";
+  echo "morketsmerke.net @ 2022";
+  echo "Options:";
+  echo " --check --print - check there are upgrades for immudex";
+  echo " --upgrade - check there are upgrades for immudex and install them.";
+  echo "  If there is no new version, script will propose refreshing";
+  echo "  current immudex installation, its helpful when you tried";
+  echo "  remaster immudex and you get any trouble with this".
+}
+
+function get_debian_branch() {
+  if grep -q '\/sid' /etc/os-release; then
+    echo "testing";
+  else
+    echo "stable";
+  fi
+}
+
+function get_machine_arch() {
+  arch=$(uname -m);
+  if [ "$arch" = "i686" ]; then
+    echo "32";
+  else
+    echo "64";
+  fi
+}
+
+function main_upgrade() {
+  set -e
+  ARCH=$(get_machine_arch);
+  BRANCH=$(get_debian_branch);
+  rootPart=$(grep "${1}" /etc/mtab | head -1 | awk '{printf $1}');
+  sudo mount $rootPart $1 -o remount,rw;
+  sudo rm -f ${1}/live/*;
+  sudo wget -q https://ftp.morketsmerke.net/immudex/${BRANCH}/upgrades/${2}/${ARCH}/filesystem.squashfs/download -O ${1}/live/filesystem.squashfs;
+  sudo wget -q https://ftp.morketsmerke.net/immudex/${BRANCH}/upgrades/${2}/${ARCH}/initrd/download -O ${1}/live/initrd;
+  sudo wget -q https://ftp.morketsmerke.net/immudex/${BRANCH}/upgrades/${2}/${ARCH}/vmlinuz/download -O ${1}/live/vmlinuz;
+  echo "$2" > /tmp/version;
+  sudo cp /tmp/version ${1}/live;
+}
+
+#function check(){
+#  set -e
+#  if [ -d ${root}/live ]; then
+#    if [ -f ${root}/live/version ]; then 
+#      version=$(cat ${root}/live/version | sed 's/\.//g');
+#    else version="000";
+#    fi
+#    if [ ! -f /tmp/feed.xml ]; then
+#      wget -q https://sourceforge.net/p/immudex/activity/feed -O /tmp/feed.xml
+#    fi
+#	  if [ ! -s /tmp/feed.xml ]; then sudo rm /tmp/feed.xml; return 255; fi;
+#    newVersionTxt=$(grep -o "[0-9]\.[0-9]\.[0-9]" /tmp/feed.xml | head -1);
+#    newVersionInt=$(echo $newVersionTxt | sed 's/\.//g');
+#    if [ $version -lt $newVersionInt ]; then
+#     exitcode=0;
+#    else
+#     exitcode=1;
+#    fi
+#  else
+#    exitcode=255;
+#  fi
+#  if [ "$1" ] && [ "$1" = "--print" ]; then
+#    echo $newVersionTxt;
+#    return 0;
+#  fi
+#  return $exitcode;
+#}
+
+function check() {
+  set -e
+  if [ -d ${root}/live ]; then
+    if [ -f ${root}/live/version ]; then 
+      version=$(cat ${root}/live/version | sed 's/\.//g');
+    else version="000";
+    fi
+    BRANCH=$(get_debian_branch);
+    ARCH=$(get_machine_arch);
+    if [ ! -f /tmp/ltver ]; then
+      wget -q https://ftp.morketsmerke.net/immudex/${BRANCH}/upgrades/latest/${ARCH}/version -O /tmp/ltver;
+    fi
+	  if [ ! -s /tmp/ltver ]; then sudo rm /tmp/ltver; return 255; fi;
+    newVersionTxt=$(cat /tmp/ltver);
+    newVersionInt=$(echo $newVersionTxt | sed 's/\.//g');
+    if [ $version -lt $newVersionInt ]; then
+     exitcode=0;
+    else
+     exitcode=1;
+    fi
+  else
+    exitcode=255;
+  fi
+  if [ "$1" ] && [ "$1" = "--print" ]; then
+    echo $newVersionTxt;
+    return 0;
+  fi
+  return $exitcode;
+}
+
+if [ "$1" ] && [ "$1" = "--check" ]; then
+  if [ "$2" ] && [ "$2" = "--print" ]; then
+    newVersion=$(check --print);
+    if check; then
+      echo -e "${YELLOW}New version (${ENDCOLOR}${RED}$newVersion${ENDCOLOR}${YELLOW}) of immudex is available to upgrade.${ENDCOLOR}";
+    else
+ 	echo -e "${YELLOW}This (${ENDCOLOR}${GREEN}$newVersion${ENDCOLOR}${YELLOW}) is the latest version of immudex.${ENDCOLOR}";
+    fi
+  fi
+elif [ "$1" ] && [ "$1" = "--upgrade" ]; then
+  newVersionTxt=$(check --print);
+  newVersionInt=$(echo $newVersionTxt | sed 's/\.//g');
+  if check; then
+    echo -en "${YELLOW}New version "
+    echo -en "(${ENDCOLOR}${RED}${newVersionTxt}${ENDCOLOR}${YELLOW}) "
+    echo -e "of immudex is available.${ENDCOLOR}";
+    echo -e "${RED}Warning, reboot maybe necessary to continue work on this machine${ENDCOLOR}";
+    echo -en "${YELLOW}Do you want upgrade this system? (y/n):${ENDCOLOR} ";
+    read commit;
+    if [ $commit = "y" ]; then
+      echo -n "Upgrading immudex to the newest version...";
+      main_upgrade $root $newVersionTxt;
+      if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+    else
+      exit 1;
+    fi
+  else
+    echo -e "${GREEN}There is no newer version of immudex,${ENDCOLOR}"; 
+    echo -e "${YELLOW}but you can copy fresh system files from latest iso image";
+    echo -e "${RED}Warning, reboot maybe necessary to continue work on this machine${ENDCOLOR}";
+    echo -en "${YELLOW}Do you want refresh this system? (y/n):${ENDCOLOR} ";
+    read commit;
+    if [ $commit = "y" ]; then
+      echo -n "Refreshing immudex to the latest iso image...";
+      main_upgrade $root $newVersionTxt;
+      if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+    else
+      exit 1;
+    fi
+    exit 0;
+  fi
+else
+  help;
+  exit 1;
+fi
