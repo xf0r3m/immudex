@@ -48,6 +48,8 @@ get_immudex_project;
 sudo cp -vv ~/immudex/tools/${VERSION}/create_media /usr/local/bin
 sudo cp -vv ~/immudex/tools/${VERSION}/immudex_install /usr/local/bin;
 sudo cp -vv ~/immudex/tools/${VERSION}/ytplay /usr/local/bin;
+sudo cp -vv ~/immudex/tools/${VERSION}/immudex_upgrade /usr/local/bin;
+sudo cp -vv ~/immudex/tools/${VERSION}/motd2 /usr/local/bin;
 
 chmod +x /usr/local/bin;
 
