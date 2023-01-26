@@ -29,10 +29,16 @@ Do dyspozycji mamy:
 
 Obraz płyty znajduje się na serwisie sourceforge.net. Poniżej znajduje się 
 odnośniki.
-  * 64-bit: [https://sourceforge.net/projects/immudex/files/iso/0.0.9/immudex64.iso/download](https://sourceforge.net/projects/immudex/files/iso/0.0.9/immudex64.iso/download)
-    CRC: 3975124502 SHA1: 6add76d6dc7d54e0634c4c99775c4d65cacc9c02
-  * 32-bit: [https://sourceforge.net/projects/immudex/files/iso/0.0.9/immudex32.iso/download](https://sourceforge.net/projects/immudex/files/iso/0.0.9/immudex32.iso/download)
-    CRC: 1583775775 SHA1: 7ffb6ccc1dd80ed1e8a661e16f766d3009140cbe
+
+**Ze względu na zmianę serwera dystrybuującego immudex, do aktualizacji systemu
+do wersji 0.1.0 należy użyć skryptu immudex_upgrade z katalogu tools/010 lub
+przeprowadzić aktualizacje ręcznie. Skrypt aktualizacji zawarty w wersji 0.0.9
+nie będzie działać.**
+
+  * 64-bit: [https://ftp.morketsmerke.net/immudex/stable/iso/0.1.0/immudex64.iso](https://ftp.morketsmerke.net/immudex/stable/iso/0.1.0/immudex64.iso)
+    CRC: 2356080590 SHA1: da6971fc1605cdf11f16d24116fa626cfe969a9a
+  * 32-bit: [https://ftp.morketsmerke.net/immudex/stable/iso/0.1.0/immudex32.iso](https://ftp.morketsmerke.net/immudex/stable/iso/0.1.0/immudex32.iso)
+    CRC: 3179597757 SHA1: bc4f720ff313dbbcd2b6c7f0380863a396a2f55b
 
 Domyślnym użytkownikiem jest user, dostęp to niego uzyskujemy za pomocą hasła
 user1. Możemy również skorzystać z konta superużytkownika root z hasłem toor.
