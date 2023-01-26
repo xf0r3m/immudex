@@ -51,7 +51,7 @@ sudo cp -vv ~/immudex/tools/${VERSION}/ytplay /usr/local/bin;
 sudo cp -vv ~/immudex/tools/${VERSION}/immudex_upgrade /usr/local/bin;
 sudo cp -vv ~/immudex/tools/${VERSION}/motd2 /usr/local/bin;
 
-chmod +x /usr/local/bin;
+chmod +x /usr/local/bin/*;
 
 sudo cp -rvv ~/immudex/files/${VERSION}/libreoffice /etc/skel/.config;
 sudo cp -rvv ~/immudex/files/${VERSION}/.irssi /etc/skel;
