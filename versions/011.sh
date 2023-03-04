@@ -46,16 +46,19 @@ install_packages openvpn netselect-apt debootstrap squashfs-tools xorriso isolin
 
 get_immudex_project;
 
-cp -vv ~/immudex/tools/${VERSION}/secured-firefox /usr/local/bin;
-cp -vv ~/immudex/tools/${VERSION}/immudex_upgrade /usr/local/bin;
-cp -vv ~/immudex/tools/${VERSION}/library.sh /usr/local/bin;
-cp -vv ~/immudex/tools/${VERSION}/motd2 /usr/local/bin;
-chmod +x /usr/local/bin/*;
+sudo cp -vv ~/immudex/tools/${VERSION}/secured-firefox /usr/local/bin;
+sudo cp -vv ~/immudex/tools/${VERSION}/immudex_upgrade /usr/local/bin;
+sudo cp -vv ~/immudex/tools/${VERSION}/library.sh /usr/local/bin;
+sudo cp -vv ~/immudex/tools/${VERSION}/motd2 /usr/local/bin;
+sudo chmod +x /usr/local/bin/*;
 
-cp -vv ~/immudex/files/${VERSION}/16608166085.desktop /etc/skel/.config/xfce4/panel/launcher-19/16608166085.desktop;
-cp -vv ~/immudex/files/${VERSION}/firejail.config /etc/firejail;
-cp -vv ~/immudex/files/${VERSION}/Notifier\ -\ distro.desktop /etc/skel/.config/autostart;
-cp -vv ~/immudex/files/${VERSION}/config /etc/skel/.irssi;
+sudo cp -vv ~/immudex/files/${VERSION}/16608166085.desktop /etc/skel/.config/xfce4/panel/launcher-19/16608166085.desktop;
+sudo cp -vv ~/immudex/files/${VERSION}/firejail.config /etc/firejail;
+sudo cp -vv ~/immudex/files/${VERSION}/Notifier\ -\ distro.desktop /etc/skel/.config/autostart;
+sudo cp -vv ~/immudex/files/${VERSION}/config /etc/skel/.irssi;
+
+sudo rm -rf /etc/skel/.mozilla;
+sudo tar -xzvf ~/immudex/files/${VERSION}/mozilla.tgz -C /etc/skel;
 
 cp -vv ~/immudex/images/${VERSION}/apply.png /usr/share/icons;
 
