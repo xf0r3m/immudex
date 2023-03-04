@@ -50,6 +50,7 @@ określić istnienia systemu plików (np. ext4) na odblokowanym cryptfs.
 ==========================================================================
 12. Funkcja tidy szblonu plików wersji nie usuwa pobranego z GH katalogu
 projektu.
+  --= Fixed =--
 ==========================================================================
 13. Może być tak, że narzędzie immudex_upgrade nie uzyska informacji o wersji.
 To jeśli plik /tmp/ltver istnieje to powinno się kontrolować czy jego rozmiar

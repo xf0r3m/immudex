@@ -33,6 +33,7 @@ function tidy() {
   sudo apt autoclean;
   sudo apt-get clean;
   sudo apt-get clean;
+  sudo rm -rf ~/immudex;
   echo > ~/.bash_history;
   history -c
 }
