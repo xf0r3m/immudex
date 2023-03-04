@@ -1,0 +1,18 @@
+#!/bin/bash
+
+source library.sh;
+
+if [ "$1" ]; then
+  case $1 in
+    "distro") if check_distro_version; then 
+                msg=$(check_distro_version --print);
+                notify-send -i software-update-urgent "Distribution update" "New version (${msg}) of immudex is available to upgrade.";
+              else
+                msg=$(check_distro_version --print);
+                notify-send -i apply "Distribution update" "This (${msg}) is the latest version of immudex.";
+              fi;;
+    "packages") msg=$(sudo apt update > /tmp/update.log 2>&1 && tail -1 /tmp/update.log;);
+                notify-send -i software-update-available "Packages update" "$msg";;
+  esac
+fi
+   
