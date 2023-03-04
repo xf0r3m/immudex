@@ -30,15 +30,17 @@ Do dyspozycji mamy:
 Obraz płyty znajduje się na serwisie sourceforge.net. Poniżej znajduje się 
 odnośniki.
 
-**Ze względu na zmianę serwera dystrybuującego immudex, do aktualizacji systemu
-do wersji 0.1.0 należy użyć skryptu immudex_upgrade z katalogu tools/010 lub
-przeprowadzić aktualizacje ręcznie. Skrypt aktualizacji zawarty w wersji 0.0.9
-nie będzie działać.**
+**Uwaga! Ze względu na zmianę domeny, aby zaktualizować immudex z wersji 0.1.0
+należy na początku pobrać z repozytorium (tools/011) wersję 'immudex_upgrade' 
+wraz z biblioteką 'library.sh' dedykowaną dla wersji 0.1.1 lub dokonać 
+aktualizacji ręcznie.**
 
-  * 64-bit: [https://ftp.morketsmerke.org/immudex/stable/iso/0.1.0/immudex64.iso](https://ftp.morketsmerke.org/immudex/stable/iso/0.1.0/immudex64.iso)
-    CRC: 2356080590 SHA1: da6971fc1605cdf11f16d24116fa626cfe969a9a
-  * 32-bit: [https://ftp.morketsmerke.org/immudex/stable/iso/0.1.0/immudex32.iso](https://ftp.morketsmerke.org/immudex/stable/iso/0.1.0/immudex32.iso)
-    CRC: 3179597757 SHA1: bc4f720ff313dbbcd2b6c7f0380863a396a2f55b
+  * 64-bit: [https://ftp.morketsmerke.org/immudex/stable/iso/0.1.1/immudex64.iso](https://ftp.morketsmerke.org/immudex/stable/iso/0.1.1/immudex64.iso)
+    
+    CRC: 2426717088 SHA1: 8a4e3337ed987ced17b1dd0ef66300516e2b584a
+  * 32-bit: [https://ftp.morketsmerke.org/immudex/stable/iso/0.1.1/immudex32.iso](https://ftp.morketsmerke.org/immudex/stable/iso/0.1.1/immudex32.iso)
+    
+    CRC: 4281820074 SHA1: d225718329db8bdc63cc7cca7ed411ad9f07bd26
 
 Domyślnym użytkownikiem jest user, dostęp to niego uzyskujemy za pomocą hasła
 user1. Możemy również skorzystać z konta superużytkownika root z hasłem toor.
