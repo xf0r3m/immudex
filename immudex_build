@@ -18,12 +18,24 @@ function help() {
   echo " ./immudex_build [--update] --<amd64/i386>";
 }
 
+function create_enviroment() {
+  echo -n "Installation of packages needed to build immudex...";
+  sudo apt update >> ~/immudex_build.log 2>&1;
+  sudo apt install -y debootstrap squashfs-tools xorriso isolinux syslinux-efi grub-pc-bin grub-efi-amd64-bin mtools dosfstools >> immudex_build.log 2>&1;
+  if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+}
+
 #Under this condition i put three activities, which are taking
 #place after updates in chroot environment.
 if [ "$1" ] && [ "$1" = "--update" ]; then
   if [ "$2" ] && [ "$2" = "--amd64" ]; then arch="64";
   elif [ "$2" ] && [ "$2" = "--i386" ]; then arch="32";
   else help; exit 1;
+  fi
+
+  #Creating enviroment:
+  if [ ! -f /sbin/debootstrap ]; then
+    create_enviroment
   fi
 
   #Purging staging/live catalog:
@@ -71,10 +83,11 @@ fi
 
 if [ ! -f /sbin/debootstrap ]; then
   #Creating enviroment:
-  echo -n "Installation of packages needed to build immudex...";
-  sudo apt update >> immudex_build.log 2>&1;
-  sudo apt install -y debootstrap squashfs-tools xorriso isolinux syslinux-efi grub-pc-bin grub-efi-amd64-bin mtools dosfstools >> immudex_build.log 2>&1;
-  if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+  create_enviroment
+  #echo -n "Installation of packages needed to build immudex...";
+  #sudo apt update >> immudex_build.log 2>&1;
+  #sudo apt install -y debootstrap squashfs-tools xorriso isolinux syslinux-efi grub-pc-bin grub-efi-amd64-bin mtools dosfstools >> immudex_build.log 2>&1;
+  #if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 fi
 
 #Creating root directory sturcture for immudex build:
