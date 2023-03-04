@@ -50,6 +50,7 @@ sudo cp -vv ~/immudex/tools/${VERSION}/secured-firefox /usr/local/bin;
 sudo cp -vv ~/immudex/tools/${VERSION}/immudex_upgrade /usr/local/bin;
 sudo cp -vv ~/immudex/tools/${VERSION}/library.sh /usr/local/bin;
 sudo cp -vv ~/immudex/tools/${VERSION}/motd2 /usr/local/bin;
+sudo cp -vv ~/immudex/tools/${VERSION}/notifier /usr/local/bin;
 sudo chmod +x /usr/local/bin/*;
 
 sudo cp -vv ~/immudex/files/${VERSION}/16608166085.desktop /etc/skel/.config/xfce4/panel/launcher-19/16608166085.desktop;
