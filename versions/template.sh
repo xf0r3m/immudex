@@ -38,6 +38,12 @@ function tidy() {
   history -c
 }
 
+function set_notifier_packages() {
+  cp -vv ~/immudex/files/011/Notifier\ -\ packages.desktop /home/xf0r3m/.config/autostart;
+  chown xf0r3m:xf0r3m /home/xf0r3m/.config/autostart/Notifier\ -\ packages.desktop;
+}
+
 VERSION=$(echo $0 | cut -d "." -f 1);
 if [ ! $VERSION ]; then echo -e "\e[31mUpdate failed!\e[0m"; exit 1; fi
+
 
