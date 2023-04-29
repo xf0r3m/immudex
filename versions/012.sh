@@ -8,7 +8,7 @@ fi
 
 source ~/immudex/versions/template.sh;
 
-upgrade_packages;
+update_packages;
 install_packages thunderbird gimp;
 
 sudo cp -vv ~/immudex/tools/${VERSION}/* /usr/local/bin;
