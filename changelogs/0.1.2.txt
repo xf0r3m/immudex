@@ -1,0 +1,23 @@
+immudex 0.1.2 - nieaktualne pakiety
+
+  1. Aktualizacja pakietów.
+
+  2. Instalacja pakietu gimp.
+  
+  3. Instalacja programu pocztowego Mozilla Thunderbird oraz jego konfiguracja
+    tak aby działał z profilami zapisanymi na cryptfs (narzędzie run-thunderbird).
+
+  4. Aktualiazacja narzędzia ytplay (dodanie dla opcji -a trybu --no-video).
+
+  5. Zmiana wyrażenia regularnego określającego głąź immudex w funkcji,
+    'get_debian_branch' w pliku library.sh.
+
+  6. Aktualizacja narzędzia immudex_install (poprawienie wyświetlania
+    komunikatu ostrzegawczego, usunięcie pliku extlinux.conf po skopiowaniu).
+
+  7. Aktualizacja narzędzia immudex_crypt (dodanie funkcji pozwalającej na
+    utworzenie cryptfs ze wskazanej partycji).
+
+  8. Aktualizacja narzędzia immudex_upgrade (dodanie funkcji pozwalającej na
+    łatwe sprawdzenie dostępnych wersji immudex oraz dodanie funkcji
+    pozwaljącej na zmianę gałęzi immudex)

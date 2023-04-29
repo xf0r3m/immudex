@@ -1,0 +1,125 @@
+#!/bin/bash
+
+set -e
+
+source library.sh
+
+RED="\e[31m";
+GREEN="\e[32m";
+YELLOW="\e[33m";
+ENDCOLOR="\e[0m";
+root="/run/live/medium";
+
+function help() {
+  echo "immudex_upgrade - script for searching upgrades and upgrade immudex";
+  echo "morketsmerke.org @ 2023";
+  echo "Options:";
+  echo " --check --print - check there are upgrades for immudex";
+  echo " --upgrade - check there are upgrades for immudex and install them.";
+  echo "  If there is no new version, script will propose refreshing";
+  echo "  current immudex installation, its helpful when you tried";
+  echo "  remaster immudex and you get any trouble with this".
+  echo " --version - getting latest version of immudex";
+  echo " --branch <stable/testing> - change immudex branch";
+  echo "  Switch between stable or testing version and vice versa"
+}
+
+function main_upgrade() {
+  set -e
+  ARCH=$(get_machine_arch);
+  if [ ! "$BRANCH" ]; then
+    BRANCH=$(get_debian_branch);
+  fi
+  rootPart=$(grep "${1}" /etc/mtab | head -1 | awk '{printf $1}');
+  sudo mount $rootPart $1 -o remount,rw;
+  sudo rm -f ${1}/live/*;
+  sudo wget -q https://ftp.morketsmerke.org/immudex/${BRANCH}/upgrades/${2}/${ARCH}/filesystem.squashfs -O ${1}/live/filesystem.squashfs;
+  sudo wget -q https://ftp.morketsmerke.org/immudex/${BRANCH}/upgrades/${2}/${ARCH}/initrd -O ${1}/live/initrd;
+  sudo wget -q https://ftp.morketsmerke.org/immudex/${BRANCH}/upgrades/${2}/${ARCH}/vmlinuz -O ${1}/live/vmlinuz;
+  echo "$2" > /tmp/version;
+  sudo cp /tmp/version ${1}/live;
+}
+
+if [ "$1" ] && [ "$1" = "--check" ]; then
+  if [ "$2" ] && [ "$2" = "--print" ]; then
+    newVersion=$(check_distro_version --print);
+    if check_distro_version; then
+      echo -e "${YELLOW}New version (${ENDCOLOR}${RED}$newVersion${ENDCOLOR}${YELLOW}) of immudex is available to upgrade.${ENDCOLOR}";
+    else
+ 	echo -e "${YELLOW}This (${ENDCOLOR}${GREEN}$newVersion${ENDCOLOR}${YELLOW}) is the latest version of immudex.${ENDCOLOR}";
+    fi
+  fi
+elif [ "$1" ] && [ "$1" = "--upgrade" ]; then
+  newVersionTxt=$(check_distro_version --print);
+  newVersionInt=$(echo $newVersionTxt | sed 's/\.//g');
+  if check_distro_version; then
+    echo -en "${YELLOW}New version "
+    echo -en "(${ENDCOLOR}${RED}${newVersionTxt}${ENDCOLOR}${YELLOW}) "
+    echo -e "of immudex is available.${ENDCOLOR}";
+    echo -e "${RED}Warning, reboot maybe necessary to continue work on this machine${ENDCOLOR}";
+    echo -en "${YELLOW}Do you want upgrade this system? (y/n):${ENDCOLOR} ";
+    read commit;
+    if [ $commit = "y" ]; then
+      echo -n "Upgrading immudex to the newest version...";
+      main_upgrade $root $newVersionTxt;
+      if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+    else
+      exit 1;
+    fi
+  else
+    echo -e "${GREEN}There is no newer version of immudex,${ENDCOLOR}"; 
+    echo -e "${YELLOW}but you can copy fresh system files from latest iso image";
+    echo -e "${RED}Warning, reboot maybe necessary to continue work on this machine${ENDCOLOR}";
+    echo -en "${YELLOW}Do you want refresh this system? (y/n):${ENDCOLOR} ";
+    read commit;
+    if [ $commit = "y" ]; then
+      echo -n "Refreshing immudex to the latest iso image...";
+      main_upgrade $root $newVersionTxt;
+      if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+    else
+      exit 1;
+    fi
+    exit 0;
+  fi
+elif [ "$1" ] && [ "$1" = "--version" ]; then
+  stable64=$(curl https://ftp.morketsmerke.org/immudex/stable/upgrades/latest/64/version 2>/dev/null)
+  stable32=$(curl https://ftp.morketsmerke.org/immudex/stable/upgrades/latest/32/version 2>/dev/null)
+  testing64=$(curl https://ftp.morketsmerke.org/immudex/testing/upgrades/latest/64/version 2>/dev/null)
+  testing32=$(curl https://ftp.morketsmerke.org/immudex/testing/upgrades/latest/32/version 2>/dev/null)
+  branch=$(get_debian_branch);
+  localVer=$(cat /run/live/medium/live/version);
+  if [ "$(uname -m)" = "x86_64" ]; then
+    arch="amd64";
+    stable=$stable64;
+    testing=$testing64;
+  else
+    arch="i386";
+    stable=$stable32;
+    testing=$testing32;
+  fi
+  echo "Arch: $arch";
+  echo "Local: ${localVer} (${branch})";
+  echo "Stable: $stable";
+  echo "Testing: $testing";
+elif [ "$1" ] && [ "$1" = "--branch" ]; then
+  if [ "$2" ] && ([ "$2" = "stable" ] || [ "$2" = "testing" ]); then
+    BRANCH=$2;
+    ARCH=$(get_machine_arch);
+    export $BRANCH;
+    echo -en "${YELLOW}Do you really want change immudex branch (y/n):${ENDCOLOR} ";
+    read commit;
+    if [ $commit = "y" ]; then
+      echo -n "Changing immudex branch to ${BRANCH}...";
+      newVersionTxt=$(curl https://ftp.morketsmerke.org/immudex/${BRANCH}/upgrades/latest/${ARCH}/version 2>/dev/null);
+      main_upgrade $root $newVersionTxt;
+      if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+    else
+      exit 1;
+    fi
+  else
+    help; exit 1;
+  fi 
+else
+  help;
+  exit 1;
+fi
