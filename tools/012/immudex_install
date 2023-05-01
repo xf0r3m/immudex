@@ -66,6 +66,8 @@ if $(sudo efibootmgr > /dev/null 2>&1); then
 
 	#copying whole iso image to the second partition
 	sudo cp -rvv /run/live/medium/* /media > /dev/null 2>&1;
+  
+  sudo sed -i 's/bootfrom=removable //g' /media/boot/grub/grub.cfg; 
 
 	#removing unnecessary directories from second partition
 	sudo rm -rf /media/isolinux > /dev/null 2>&1;
