@@ -30,20 +30,17 @@ Do dyspozycji mamy:
 Obraz płyty znajduje się na serwisie sourceforge.net. Poniżej znajduje się 
 odnośniki.
 
-**Uwaga! Ze względu na zmianę domeny, aby zaktualizować immudex z wersji 0.1.0
-należy na początku pobrać z repozytorium (tools/011) wersję 'immudex_upgrade' 
-wraz z biblioteką 'library.sh' dedykowaną dla wersji 0.1.1 lub dokonać 
-aktualizacji ręcznie.**
-
-  * 64-bit: [https://ftp.morketsmerke.org/immudex/stable/iso/0.1.1/immudex64.iso](https://ftp.morketsmerke.org/immudex/stable/iso/0.1.1/immudex64.iso)
+  * 64-bit: [https://ftp.morketsmerke.org/immudex/stable/iso/0.1.2/immudex64.iso](https://ftp.morketsmerke.org/immudex/stable/iso/0.1.2/immudex64.iso)
     
-    CRC: 2426717088 SHA1: 8a4e3337ed987ced17b1dd0ef66300516e2b584a
-  * 32-bit: [https://ftp.morketsmerke.org/immudex/stable/iso/0.1.1/immudex32.iso](https://ftp.morketsmerke.org/immudex/stable/iso/0.1.1/immudex32.iso)
+    CRC: 788962615 SHA1: 12f0871a04e238994d76ba4e431d4dead6cb82af
+  * 32-bit: [https://ftp.morketsmerke.org/immudex/stable/iso/0.1.2/immudex32.iso](https://ftp.morketsmerke.org/immudex/stable/iso/0.1.2/immudex32.iso)
     
-    CRC: 4281820074 SHA1: d225718329db8bdc63cc7cca7ed411ad9f07bd26
+    CRC: 1054117526 SHA1: 0f5441df6fec646bb1afb674f3bd1cab77b52378
 
 Domyślnym użytkownikiem jest user, dostęp to niego uzyskujemy za pomocą hasła
 user1. Możemy również skorzystać z konta superużytkownika root z hasłem toor.
+
+Dokumentacja systemu znajduje się pod [tym](https://morketsmerke.github.io/articles/immudex/index.html) adresem.
 
 immudex is not affiliated with Debian. Debian is a registered trademark owned 
 by Software in the Public Interest, Inc.

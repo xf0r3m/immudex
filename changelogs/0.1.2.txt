@@ -21,3 +21,11 @@ immudex 0.1.2 - nieaktualne pakiety
   8. Aktualizacja narzędzia immudex_upgrade (dodanie funkcji pozwalającej na
     łatwe sprawdzenie dostępnych wersji immudex oraz dodanie funkcji
     pozwaljącej na zmianę gałęzi immudex)
+
+  9. Dodanie do plików konfiguracyjnych programów rozruchowych na LiveCD opcji 
+    'bootfrom=removable' ograniczającej poszukiwanie katalogu '/live' do
+    dysków wymiennych. Dostoswanie narzędzia 'immudex_install' do tej czynności
+    (program korzysta z pliku konfiguracyjnego GRUB z LiveCD, dlatego tę opcję
+    należy usunąć po skopiowaniu pliku na dysk).
+
+  10. Zmiana serwera lustrzanego. Z SunSITE ICM UW na CDN Debiana.
