@@ -8,6 +8,8 @@ fi
 
 source ~/immudex/versions/template.sh;
 
+sudo sed -i 's@ftp.icm.edu.pl/pub/Linux@deb.debian.org@g' /etc/apt/sources.list;
+
 update_packages;
 install_packages thunderbird gimp;
 
