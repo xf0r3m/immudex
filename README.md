@@ -27,6 +27,9 @@ Do dyspozycji mamy:
   * Odtwarzacz multimedialny VLC
   * virt-manager (KVM)
 
+**Uwaga! Od wersji 1.0.0, immudex będzie wymagać min. 6GB wolnego miejsca na
+ dysku**
+
 Obraz płyty znajduje się na serwisie sourceforge.net. Poniżej znajduje się 
 odnośniki.
 
