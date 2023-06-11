@@ -1,0 +1,32 @@
+#!/bin/bash
+
+file=$1;
+
+function help() {
+  echo "pl - Play Links. Skrypt to odtwarzania multimediów z listy linków";
+  echo "morketsmerke.org; COPYLEFT; 2023";
+  echo;
+  echo "Użycie:";
+  echo "$ pl sciezka/do/listy/linkow";
+  echo;
+  echo "Format listy:";
+  echo "nazwa linku: https://youtube.com/...";
+}
+
+if [ "$1" ]; then 
+  PS3="Link: ";
+  linkNames=$(cut -d ":" -f 1 $1 | sed 's/\ /_/g' | awk '{printf $1" "}')
+  select name in $linkNames; do
+    if [ ! "$name" ]; then break; fi
+    linkName=$(echo $name | sed 's/_/\ /g');
+    link=$(grep "$linkName" $file | cut -d ":" -f 2-);
+    if echo $link | grep -q "youtube"; then
+      ytplay -a $link -f best[height=360];
+    else
+      mpv --no-video $link;
+    fi
+  done
+else
+  help;
+  exit 1;
+fi

@@ -1,0 +1,26 @@
+immudex 0.1.1 - ważna zmiana
+
+  1. Aktualizacja pakietów.
+
+  2. Zmiana sposobu uruchamiania przeglądarki Firefox. Dotyczasowy skrypt
+      'protected' staje się rozwiązaniem przestarzałym. Obecnie Firefox
+      uruchamiany jest za pomocą sandbox-era Firejail z emulacją stosu TCP/IP.
+
+  3. Instalacja pakietów: openvpn, netselect-apt, debootstrap, squashfs-tools
+      xorriso isolinux syslinux-efi grub-pc-bin grub-efi-amd64-bin mtools
+      dosfstools solaar chrony; 
+
+  4. Aktualizacja skryptu yt-dlp (rozwiązanie problemu z odtwarzaniem z YT w
+      mpv)
+
+  5. Podział 'immudex_upgrade' na 'immudex_upgrade' + 'library.sh'. Niektóre z 
+      funkcji 'immudex_upgrade' mogą być wykorzystywane przez inne narzędzia.
+
+  6. Wdrożenie narzędzia 'notifier', wyświetlającego powiadomienia o dostępności
+      nowej wersji immudex oraz aktualizacjach pakietów (tylko użytkownik xf0r3m).
+
+  7. Przyspieszenie pierwszego uruchomienia powłoki po przez usunięcie z
+      narzędzia 'motd2' sprawdzenia wersji immudex oraz dostępności pakietów.
+
+  8. Zmiana domeny z morketsmerke.net na morketsmerke.org. Wymagana aktualizacja
+      narzędzi: 'immudex_upgrade' oraz 'motd2' oraz aktualizacja plików Firefox.

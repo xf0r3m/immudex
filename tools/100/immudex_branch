@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if grep -q 'trixie' /etc/os-release; then
+  echo -n '-testing'; 
+else 
+  echo -n '-stable';
+fi

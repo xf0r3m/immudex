@@ -1,0 +1,30 @@
+#!/bin/bash
+
+function help() {
+  echo "meteo - prognoza pogody z meteo.icm.edu.pl"
+  echo "morketsmerke.org @ 2023";
+  echo "Opcje:";
+  echo "  -h - legenda, pozwalająca na odczytanie prognozy";
+  echo "Użycie:";
+  echo "$ meteo <miasto>";
+}
+
+rm /tmp/meteo*;
+
+if [ "$1" ] && [ "$1" = "-h" ]; then
+  xdg-open /usr/share/meteo/leg60.png;
+elif [ "$1" ]; then
+  if [ ! "$2" ]; then prognoza=60;
+  else prognoza=$2; fi
+
+  miasto=$(echo "$1" | sed -e 's/ą/a/g' -e 's/ę/e/g' -e 's/ć/c/g' -e 's/ż/z/g' -e 's/ś/s/g' -e 's/ź/z/g' -e 's/ń/n/g' -e 's/ó/o/g' -e 's/ł/l/g');
+  #miasto=${miasto^};
+
+  wget m.meteo.pl/${miasto}/${prognoza} -O /tmp/meteo 2>/dev/null;
+  link=$(grep "image_${prognoza}" /tmp/meteo | cut -d '"' -f 2);
+  wget $link -O /tmp/meteo_${miasto}.png 2>/dev/null;
+  xdg-open /tmp/meteo_${miasto}.png;
+else
+  help;
+  exit 1;
+fi

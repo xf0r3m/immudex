@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Klient poczty Thunderbird
+Comment=Czytanie i wysyłanie e-maili
+Exec=/usr/local/bin/run-thunderbird
+Icon=thunderbird
+Path=
+Terminal=false
+StartupNotify=true

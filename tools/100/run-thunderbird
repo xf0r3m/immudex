@@ -1,0 +1,4 @@
+#!/bin/bash
+
+export HOME=/ic0;
+thunderbird;

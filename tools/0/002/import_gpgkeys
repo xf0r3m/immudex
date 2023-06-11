@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ -f ~/public.gpg ] && [ -f ~/private.gpg ]; then
+  gpg --import ~/public.gpg
+  gpg --import ~/private.gpg
+  userId=$(gpg --list-keys | sed -nr 's/.+<(.*)>$/\1/p');
+  gpg --edit-key $userId;
+fi

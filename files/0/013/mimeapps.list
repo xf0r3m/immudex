@@ -1,0 +1,7 @@
+[Default Applications]
+image/jpeg=ristretto.desktop
+image/png=ristretto.desktop
+
+[Added Associations]
+image/jpeg=ristretto.desktop;
+image/png=ristretto.desktop;

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+while [ ! -h /dev/mapper/immudex_crypt0 ]; do sleep 1; done
+HOME=/ic0 xfce4-notes > /dev/null 2>&1 &

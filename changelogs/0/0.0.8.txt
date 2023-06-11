@@ -1,0 +1,12 @@
+immudex 0.0.8 - aktualizacja jądra.
+
+  1. Aktualizacja jądra Linux oraz zainstalowanych pakietów.
+
+  2. Instalacja narzędzia 'morketsmerke', umożliwającego pobranie zawartości 
+      strony morketsmerke.net i używania jej ofline. Oczywiście wersją offline
+      jest aktualna na dzień wydania wersji immudex.
+
+  3. Pobranie zawartości morketsmerke.net i dostosowanie jej (za pomocą
+      narzędzia 'morketsmerke'), aby była dostępna jako dokumentacja offline.
+
+  4. Aktualizacja immudex_crypt - poprawiono treść wiadomości w funcji pomocy.
