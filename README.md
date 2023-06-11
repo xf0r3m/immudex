@@ -30,12 +30,12 @@ Do dyspozycji mamy:
 Obraz płyty znajduje się na serwisie sourceforge.net. Poniżej znajduje się 
 odnośniki.
 
-  * 64-bit: [https://ftp.morketsmerke.org/immudex/stable/iso/0.1.3/immudex64.iso](https://ftp.morketsmerke.org/immudex/stable/iso/0.1.3/immudex64.iso)
+  * 64-bit: [https://ftp.morketsmerke.org/immudex/stable/iso/1.0.0/immudex64.iso](https://ftp.morketsmerke.org/immudex/stable/iso/1.0.0/immudex64.iso)
     
-    CRC: 3635402843 SHA1: 8df09c433c1e089cf84e1bc9d42a1bc194242729
-  * 32-bit: [https://ftp.morketsmerke.org/immudex/stable/iso/0.1.3/immudex32.iso](https://ftp.morketsmerke.org/immudex/stable/iso/0.1.3/immudex32.iso)
+    CRC: 1168608441 SHA1: 36bbcdd3313057e3bc9cdf86bca696d26e58e8f5 
+  * 32-bit: [https://ftp.morketsmerke.org/immudex/stable/iso/1.0.0/immudex32.iso](https://ftp.morketsmerke.org/immudex/stable/iso/1.0.0/immudex32.iso)
     
-    CRC: 4060229527 SHA1: 3e89a8e70ac21e8cd31632fbcfd30b37d9d76c07
+    CRC: 1175383744 SHA1: aa47d67da1476d2a7a27b7000518123faf2d590b
 
 Domyślnym użytkownikiem jest user, dostęp to niego uzyskujemy za pomocą hasła
 user1. Możemy również skorzystać z konta superużytkownika root z hasłem toor.
