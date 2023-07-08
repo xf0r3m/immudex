@@ -28,7 +28,7 @@ function recreate_users() {
   cp -rvv /etc/skel/.??* /home/user;
   cp -rvv /etc/skel/?* /home/user;
   mkdir /home/user/.local;
-  tar -xvf ~/immudex/files/${VERSION}/local_user.tar -C /home/user/.local;
+  tar -xvf ~/immudex/files/local_user.tar -C /home/user/.local;
   rm /home/user/.face;
   cp /usr/share/images/desktop-base/immudex_xfce_greeter_logo.png /home/user/.face;
   chown -R user:user /home/user;
@@ -38,7 +38,7 @@ function recreate_users() {
   cp -rvv /etc/skel/.??* /home/xf0r3m;
   cp -rvv /etc/skel/?* /home/xf0r3m;
   mkdir /home/xf0r3m/.local;
-  tar -xvf ~/immudex/files/${VERSION}/local_xf0r3m.tar -C /home/xf0r3m/.local;
+  tar -xvf ~/immudex/files/local_xf0r3m.tar -C /home/xf0r3m/.local;
   rm /home/xf0r3m/.face;
   cp /usr/share/images/desktop-base/immudex_xfce_greeter_logo.png /home/xf0r3m/.face;
   chown -R xf0r3m:xf0r3m /home/xf0r3m;
