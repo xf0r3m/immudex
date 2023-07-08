@@ -17,7 +17,7 @@ cp -vv ~/immudex/tools/${VERSION}/immudex_hostname /usr/local/bin;
 cp -vv ~/immudex/tools/${VERSION}/newsfeed /usr/local/bin; 
 cp -vv ~/immudex/tools/${VERSION}/pl /usr/local/bin;
 
-apt remove thunderbird;
+apt remove -y thunderbird;
 rm -vf /etc/skel/Pulpit/Klient\ poczty\ Thunderbird.desktop;
 rm -vf /usr/local/bin/run-thunderbird;
 recreate_users;
