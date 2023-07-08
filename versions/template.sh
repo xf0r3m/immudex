@@ -10,6 +10,16 @@ function install_packages() {
   apt install $@ -y;
 }
 
+function set_notifier_packages() {
+  cp -vv ~/immudex/files/Notifier\ -\ packages.desktop /home/xf0r3m/.config/autostart;
+  chown xf0r3m:xf0r3m /home/xf0r3m/.config/autostart/Notifier\ -\ packages.desktop;
+}
+
+function set_xfce4_notes_autostart() {
+  cp -vv ~/immudex/files/autostart-x4notes.desktop /home/xf0r3m/.config/autostart;
+  chown xf0r3m:xf0r3m /home/xf0r3m/.config/autostart/autostart-x4notes.desktop;
+}
+
 function recreate_users() {
   userdel -r user;
   userdel -r xf0r3m;
@@ -34,6 +44,9 @@ function recreate_users() {
   chown -R xf0r3m:xf0r3m /home/xf0r3m;
   echo "xf0r3m:xf0r3m1" | chpasswd;
 
+  set_notifier_packages;
+  set_xfce4_notes_autostart;
+
   usermod -aG libvirt,libvirt-qemu xf0r3m;
   usermod -aG libvirt,libvirt-qemu user;
 
@@ -57,13 +70,9 @@ function set_default_wallpaper() {
   ln -s /usr/share/images/desktop-base/$1 /usr/share/images/desktop-base/default;
 }
 
-function set_notifier_packages() {
-  cp -vv ~/immudex/files/${VERSION}/Notifier\ -\ packages.desktop /home/xf0r3m/.config/autostart;
-  chown xf0r3m:xf0r3m /home/xf0r3m/.config/autostart/Notifier\ -\ packages.desktop;
+
+function set_mime() {
+  cp -vv ~/immudex/files/mimeinfo.cache /usr/share/applications;  
 }
 
-function set_xfce4_notes_autostart() {
-  cp -vv ~/immudex/files/${VERSION}/autostart-x4notes.desktop /home/xf0r3m/.config/autostart;
-  chown xf0r3m:xf0r3m /home/xf0r3m/.config/autostart/autostart-x4notes.desktop;
-}
-
+export VERSION=$(echo $0 | cut -d "." -f 1);
