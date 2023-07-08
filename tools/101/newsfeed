@@ -90,10 +90,10 @@ else
         #sed 's/<!\[CDATA\[//g' | sed 's/\]\]>//g' | \
         #sed 's/^[[:space:]]*//g' | nl | less;
         grep -e '<title>' -e '<description>' /tmp/newsfeed_${2}.xml |\
-        sed -n '3,$p' | sed -e 's/<title>//g' -e 's/<description>//g' |\
+        sed -n '3,$p' | sed -e 's/<title>//g' -e 's/<description>/>>>/g' |\
         sed 's/&#[0-9]*;//g' | \
         sed 's/&quot;//g' | sed -e 's/<!\[CDATA\[//g' -e 's/\]\]>//g' |\
-        sed -e 's/<img.*br\/>/>>>/g' -e 's/^[[:space:]]*//g' \
+        sed -e 's/<img.*br\/>/<obrazek>/g' -e 's/^[[:space:]]*//g' \
         -e 's/<\/description>/\n/g' -e 's/<\/title>//g' | nl -b p^[[:alnum:]] | less
       else 
         sed 's/<\/title>/\n/g' /tmp/newsfeed_${2}.xml | \
