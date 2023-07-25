@@ -30,6 +30,10 @@ Do dyspozycji mamy:
 **Uwaga! Od wersji 1.0.0, immudex będzie wymagać min. 6GB wolnego miejsca na
  dysku**
 
+**Uwaga! Od poniedziałku (31.07) godziny 18:00 do wtorku (01.08) godziny 07:00 dostęp do 
+searx.morketsmerke.org (silnik wyszukiwania, strona startowa firefox-a) może 
+być ograniczony ze względu na prowadzone w tym czasie prace konserwatorskie.**
+
 Obraz płyty znajduje się na serwisie sourceforge.net. Poniżej znajduje się 
 odnośniki.
 
