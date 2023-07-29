@@ -39,10 +39,10 @@ odnośniki.
 
   * 64-bit: [https://ftp.morketsmerke.org/immudex/stable/iso/1.0.1/immudex64.iso](https://ftp.morketsmerke.org/immudex/stable/iso/1.0.1/immudex64.iso)
     
-    CRC: 820814467 SHA1: 458a7faf88608cdce99f44c39af94233d8c6e478
+    CRC: 3131350976  SHA1: 10de6cd5a10f3177fb37ad4da4a472151c260475
   * 32-bit: [https://ftp.morketsmerke.org/immudex/stable/iso/1.0.1/immudex32.iso](https://ftp.morketsmerke.org/immudex/stable/iso/1.0.1/immudex32.iso)
     
-    CRC: 3072989609 SHA1: e59a08ff192f0ca092a30f6ecf69c7f8af5a9612
+    CRC: 1944978744 SHA1: 761e5903e684d09a400621c0b4099348707c9cf9
 
 Domyślnym użytkownikiem jest user, dostęp to niego uzyskujemy za pomocą hasła
 user1. Możemy również skorzystać z konta superużytkownika root z hasłem toor.
