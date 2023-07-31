@@ -13,7 +13,6 @@ cp -vv ~/immudex/tools/${VERSION}/create_media /usr/local/bin;
 cp -vv ~/immudex/tools/${VERSION}/pl /usr/local/bin;
 cp -vv ~/immudex/tools/${VERSION}/immudex_hostname /usr/local/bin;
 
-cp -vv ~/immudex/files/${VERSION}/gtk-main.css /usr/share/xfce4-notes-plugin/gtk-3.0;
 cp -vv ~/immudex/files/${VERSION}/xfce4-keyboard-shortcuts.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml;
 cp -vv ~/immudex/files/${VERSION}/whiskermenu-1.rc /etc/skel/.config/xfce4/panel;
 recreate_users;
