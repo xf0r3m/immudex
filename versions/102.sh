@@ -18,6 +18,8 @@ cp -vv ~/immudex/files/${VERSION}/xfce4-keyboard-shortcuts.xml /etc/skel/.config
 cp -vv ~/immudex/files/${VERSION}/whiskermenu-1.rc /etc/skel/.config/xfce4/panel;
 recreate_users;
 
+set_default_wallpaper altai_1920x1080.png;
+
 set_mime;
 
 tidy;
