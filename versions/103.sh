@@ -13,6 +13,8 @@ apt purge -y xpra;
 cp -vv ~/immudex/tools/${VERSION}/pl /usr/local/bin;
 cp -vv ~/immudex/tools/${VERSION}/idle-clic /usr/local/bin;
 
+wget https://github.com/yt-dlp/yt-dlp/releases/download/2023.07.06/yt-dlp -O /usr/bin/yt-dlp;
+
 cp -vv ~/immudex/files/${VERSION}/xfce4-keyboard-shortcuts.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-keyboard-shortcuts.xml;
 cp -vv ~/immudex/files/${VERSION}/xfwm4.xml /etc/skel/.config/xfce4/xfconf/xfce-perchannel-xml;
 
