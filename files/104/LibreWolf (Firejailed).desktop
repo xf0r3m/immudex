@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=LibreWolf (Firejailed)
+Comment=Bezpieczne przeglądanie stron WWW
+Exec=/usr/local/bin/secured-firefox
+Icon=/usr/lib/librewolf/browser/chrome/icons/default/default48.png
+Path=
+Terminal=false
+StartupNotify=false
