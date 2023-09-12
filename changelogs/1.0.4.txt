@@ -1,0 +1,13 @@
+immudex 1.0.4 - aktualizacja jądra
+(immudex 1.0.4 = immudex-testing 1.1.0)
+
+	1. Aktualizacja pakietów wraz z jądrem Linux.
+
+  2. Dodanie przeglądarki LibreWolf.
+
+  3. Zmiana przeglądarki uruchamianej przez Firejail z Firefox ESR na LibreWolf.
+
+  4. Usunięcie obrazów, do których nie mam żadnych praw:
+    4.1. Zmiana tapety menedżera wyświetlania LightDM.
+    4.2. Usunięcie obrazu z tła terminala.
+    4.3. Usunięcie obrazu z tła pluginu notatek XFCE.
