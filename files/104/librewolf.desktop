@@ -1,0 +1,17 @@
+[Desktop Entry]
+Name=LibreWolf
+Name[pl]=LibreWolf
+Comment=Secure the World Wide Web Browsing
+Comment[pl]=Bezpieczene przeglądanie stron WWW
+GenericName=Secure Web Browser
+X-GNOME-FullName=LibreWolf Web Browser
+X-GNOME-FullName[pl]=Przeglądarka WWW LibreWolf
+Exec=/usr/lib/librewolf/librewolf %u
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Icon=/usr/lib/librewolf/browser/chrome/icons/default/default128.png
+Categories=Network;WebBrowser;
+MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/vnd.mozilla.xul+xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;
+StartupWMClass=Firefox-esr
+StartupNotify=true
