@@ -17,27 +17,35 @@ function get_machine_arch() {
   fi
 }
 
-function check_distro_commit() {
-  versionFile="/run/live/medium/live/version";
-  if [ -f $versionFile ]; then
-    localVersion=$(cat $versionFile);
-    if [ -d /tmp/immudex-testing ]; then
-      $(cd /tmp/immudex-testing && git pull -q);
-    else
-      git clone -q https://github.com/xf0r3m/immudex-testing /tmp/immudex-testing;
+function check_distro_version() {
+  set -e
+  root="/run/live/medium";
+  if [ -d ${root}/live ]; then
+    if [ -f ${root}/live/version ]; then 
+      version=$(cat ${root}/live/version | sed 's/\.//g');
+    else version="000";
     fi
-    latestVersion=$(cd /tmp/immudex-testing && git log --pretty=oneline | head -1 | cut -d " " -f 1);
-    if [ "$1" ] && [ "$1" == "--print" ]; then
-      echo "$(cd /tmp/immudex-testing && git log ${localVersion}..${latestVersion})";
+    BRANCH=$(get_debian_branch);
+    ARCH=$(get_machine_arch);
+    if [ ! -f /tmp/ltver ]; then
+      wget -q https://ftp.morketsmerke.org/immudex/${BRANCH}/upgrades/latest/${ARCH}/version -O /tmp/ltver;
     fi
-    if [ "$localVersion" = "$latestVersion" ]; then
-      return 0;
+	  if [ ! -s /tmp/ltver ]; then sudo rm /tmp/ltver; return 255; fi;
+    newVersionTxt=$(cat /tmp/ltver);
+    newVersionInt=$(echo $newVersionTxt | sed 's/\.//g');
+    if [ $version -lt $newVersionInt ]; then
+     exitcode=0;
     else
-      return 1;
+     exitcode=1;
     fi
   else
-    return 255;
+    exitcode=255;
   fi
+  if [ "$1" ] && [ "$1" = "--print" ]; then
+    echo $newVersionTxt;
+    return 0;
+  fi
+  return $exitcode;
 }
 
 function ascii_colors() {
