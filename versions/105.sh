@@ -18,7 +18,7 @@ else
   tar -xf librewolf-118.0.1-1.en-US.linux-i686.tar.bz2 -C /usr/lib;
   rm librewolf-118.0.1-1.en-US.linux-i686.tar.bz2;
 fi
-ln -s /usr/lib/librewolf/librewolf /usr/bin/librewolf;
+#ln -s /usr/lib/librewolf/librewolf /usr/bin/librewolf;
 
 tar -xf ~/immudex/files/${VERSION}/librewolf.tgz -C /etc/skel;
 
@@ -27,7 +27,9 @@ cp -vv ~/immudex/tools/${VERSION}/motd2 /usr/local/bin;
 cp -vv ~/immudex/tools/${VERSION}/newsfeed /usr/local/bin;
 cp -vv ~/immudex/tools/${VERSION}/sync.sh /usr/local/bin;
 cp -vv ~/immudex/tools/${VERSION}/unlock-ds /usr/local/bin;
+chmod +x /usr/local/bin/*
 
+recreate_users;
 set_mime;
 
 tidy;

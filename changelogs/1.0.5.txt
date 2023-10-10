@@ -1,0 +1,28 @@
+immudex 1.0.5 - aktualizacja Debiana 12.2
+(immudex 1.0.5 = immudex-testing: 5ebc813)
+
+	1. Aktualizacja pakietów wraz z jądrem Linux.
+
+  2. Dodanie do profile LibreWolf 3 zakładek.
+
+  3. Dodanie do skryptu funkcji 'library.sh', funkcji ascii_colors (motd2); 
+
+  4. Aktualizcja narzędzia motd2:
+    4.1. Zmiana wyświelania baneru 'immudex'. Obecnie użyto funkcji:
+         'library.sh/ascii_colors'.
+    4.2. Poprawiono wyświetlanie uptime-u.
+
+  5. Aktualizacja narzędzia newsfeed:
+    5.1. Zmieniono metodę przetwarzania plików z kanałów RSS.
+    5.2. Dodano podopcje '--show-one' do opcji '--check' wyświetlającą
+          pierwszą wiadomość z kanału.
+    5.3. Zaktualizowano komunikat pomocy.
+
+  6. Aktualizacja narzędzia sync.sh:
+    6.1. Zmieniono obsługi katalogów. Porzucono prostą synchonizację na rzecz
+          repozytorium Git.
+
+  7. Dodano narzędzie 'unlock-ds'. Narzędzie to pozwala odblokować poprzez
+      odmontowanie zamontowanych wewnątrz datastore-u systemów plików oraz
+      (UWAGA!) ZABICIE procesów posiadających otware pliki na datastore.
+      Korzystanie z tego narzędzia wyłącznie na własną odpowiedzialność.
