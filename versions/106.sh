@@ -15,7 +15,7 @@ cd curl;
 wget https://github.com/curl/curl/archive/refs/tags/curl-8_4_0.tar.gz;
 tar -xf curl-8_4_0.tar.gz;
 cd curl-curl-8_4_0;
-sudo apt install -y zlib1g-dev libc6-dev libnghttp2-dev libidn2-0-dev librtmp-dev libssh2-1-dev libpsl-dev libssh2-1-dev libssl-dev libgss-dev libldap-dev libzstd-dev libbrotli-dev libgnutls28-dev libhogweed6 nettle-dev libgmp-dev libkrb5-dev libk5crypto3 libcom-dev libkrb5support0 libsasl2-dev libp11-dev libtasn1-6-dev libkeyutils-dev libffi-dev autoconf libtool
+apt install -y zlib1g-dev libc6-dev libnghttp2-dev libidn2-0-dev librtmp-dev libssh2-1-dev libpsl-dev libssh2-1-dev libssl-dev libgss-dev libldap-dev libzstd-dev libbrotli-dev libgnutls28-dev libhogweed6 nettle-dev libgmp-dev libkrb5-dev libk5crypto3 libcom-dev libkrb5support0 libsasl2-dev libp11-dev libtasn1-6-dev libkeyutils-dev libffi-dev autoconf libtool
 autoreconf -fi
 ./configure --with-openssl --with-gssapi --disable-libcurl-option --with-libssh2
 make
