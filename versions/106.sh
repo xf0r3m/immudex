@@ -1,5 +1,6 @@
 #!/bin/bash
 
+ARCH=$(dpkg --print-architecture);
 cd
 if [ -x /usr/bin/git ]; then git clone https://github.com/xf0r3m/immudex;
 else apt install git && git clone https://github.com/xf0r3m/immudex;
@@ -20,7 +21,11 @@ autoreconf -fi
 make
 make install
 rm /usr/bin/curl
-cp -vv /usr/local/lib/libcurl.* /lib/x86_64-linux-gnu/
+if [ $ARCH = "amd64" ]; then
+  cp -vv /usr/local/lib/libcurl.* /lib/x86_64-linux-gnu/
+else
+  cp -vv /usr/local/lib/libcurl.* /lib/i386-linux-gnu/
+fi
 ln -s /usr/local/bin/curl /usr/bin/curl;
 curl -V;
 cd;
