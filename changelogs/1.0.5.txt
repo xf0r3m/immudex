@@ -21,8 +21,3 @@ immudex 1.0.5 - aktualizacja Debiana 12.2
   6. Aktualizacja narzędzia sync.sh:
     6.1. Zmieniono obsługi katalogów. Porzucono prostą synchonizację na rzecz
           repozytorium Git.
-
-  7. Dodano narzędzie 'unlock-ds'. Narzędzie to pozwala odblokować poprzez
-      odmontowanie zamontowanych wewnątrz datastore-u systemów plików oraz
-      (UWAGA!) ZABICIE procesów posiadających otware pliki na datastore.
-      Korzystanie z tego narzędzia wyłącznie na własną odpowiedzialność.

@@ -26,7 +26,6 @@ cp -vv ~/immudex/tools/${VERSION}/library.sh /usr/local/bin;
 cp -vv ~/immudex/tools/${VERSION}/motd2 /usr/local/bin;
 cp -vv ~/immudex/tools/${VERSION}/newsfeed /usr/local/bin;
 cp -vv ~/immudex/tools/${VERSION}/sync.sh /usr/local/bin;
-cp -vv ~/immudex/tools/${VERSION}/unlock-ds /usr/local/bin;
 chmod +x /usr/local/bin/*
 
 recreate_users;
