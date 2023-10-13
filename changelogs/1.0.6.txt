@@ -1,4 +1,0 @@
-immudex 1.0.6 - aktualizacja awaryjna
-(immudex 1.0.6 = immudex-testing: f200d61)
-
-	1. Aktualizacja narzędzia curl, za pomocą kompilacji źródeł: CVE-2023-38545
