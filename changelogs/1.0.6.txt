@@ -1,0 +1,18 @@
+immudex 1.0.6 - aktualizacja pakietów
+(immudex 1.0.6 = immudex-testing: d5a1b81)
+
+	1. Aktualizacja pakietów.
+
+  2. Aktualizacja przeglądarki LibreWolf.
+
+  3. Aktualizacja wtyczki uBlock Origin.
+
+  4. Migracja z Firefox ESR -> LibreWolf Stage 2: 
+      Zmiana domyślnej przeglądarki, ale Firefox ESR pozostaje zainstalowany w systemie 
+
+  5. Aktualizacja narzędzia newsfeed:
+      Poprawienie błędu inicjacji opcji --show-one - BT #128.
+
+  6. Ustawienie domyślnego schematu kolorów edytora Vim na 'evening'.
+
+  7. Aktualizacja domyślnego profilu przeglądarki Mozilla Firefox.
