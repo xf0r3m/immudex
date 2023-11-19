@@ -1,5 +1,6 @@
 #!/bin/bash
 
+ARCH=$(dpkg --print-architecture)
 dhclient;
 cd
 if [ -x /usr/bin/git ]; then git clone https://github.com/xf0r3m/immudex.git;
