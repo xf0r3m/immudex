@@ -21,6 +21,7 @@ else
 fi
 
 tar -xf ~/immudex/files/${VERSION}/librewolf.tgz -C /etc/skel;
+tar -xf ~/immudex/files/${VERSION}/mozilla.tgz -C /etc/skel;
 
 update-alternatives --remove x-www-browser /usr/bin/firefox-esr;
 update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/lib/librewolf/librewolf 70;
