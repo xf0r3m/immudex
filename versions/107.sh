@@ -23,6 +23,8 @@ fi
 update-alternatives --remove x-www-browser /usr/bin/firefox-esr;
 update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/lib/librewolf/librewolf 70;
 
+wget https://github.com/yt-dlp/yt-dlp/releases/download/2023.11.16/yt-dlp -O /usr/bin/youtube-dl;
+
 set_mime;
 
 tidy;
