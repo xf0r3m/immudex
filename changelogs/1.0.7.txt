@@ -1,0 +1,7 @@
+immudex 1.0.7 - finalny obraz płyty
+
+	1. Aktualizacja pakietów.
+
+  2. Aktualizacja przeglądarki LibreWolf.
+
+  3. Aktualizacja skryptu yt-dlp.
