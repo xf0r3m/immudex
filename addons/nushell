@@ -1,0 +1,17 @@
+#!/bin/bash
+wget https://github.com/nushell/nushell/releases.atom
+ver=$(grep 'title' releases.atom | sed -n '2p' | sed -e 's,<title>,,g' -e 's,</title>,,g' -e 's,^[[:space:]]*,,g')
+sourceURL="https://github.com/nushell/nushell/archive/refs/tags/${ver}.tar.gz";
+wget $sourceURL
+tar -xf $(basename $sourceURL)
+cd nushell-${ver} 
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+sudo apt install libssl-dev pkg-config build-essential -y
+$HOME/.cargo/bin/cargo build --release
+mv target/release/nu /usr/local/bin/
+if [ $? -eq 0 ]; then
+        cd ..;
+        rm -rf nushell-${ver};
+        rm $(basename $sourceURL);
+        rm releases.atom;
+fi

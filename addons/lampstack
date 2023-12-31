@@ -1,0 +1,51 @@
+#!/bin/bash
+
+if [ "$1" ]; then
+  case $1 in
+    "install") echo "Installation $(basename $0) addon...";
+                baseVersion=$(head -1 /etc/apt/sources.list | awk '{print $3}')
+
+                apt install lsb-release -y;
+                wget https://dev.mysql.com/get/mysql-apt-config_0.8.25-1_all.deb;
+                dpkg -i mysql-apt-config_0.8.25-1_all.deb;
+
+                sed -i "s/$baseVersion/bullseye/g" /etc/apt/sources.list;
+
+                apt update;
+                apt install mysql-server -y
+                apt-get install --fix-missing
+                if [ $? -eq 0 ]; then mysqlSuccess=0; else mysqlSuccess=1; fi
+
+                apt-mark hold libmecab2 libssl1.1 mecab-ipadic mecab-ipadic-utf8 mecab-utils mysql-client mysql-common mysql-community-client mysql-community-client-core mysql-community-client-plugins mysql-community-server mysql-community-server-core
+
+                sed -i "s/bullseye/$baseVersion/g" /etc/apt/sources.list; 
+                apt update
+                apt install apache2 libapache2-mod-php php php-mysql -y;
+                if [ $? -eq 0 ]; then phpApacheSucces=0; else phpApacheSuccess=1; fi
+                apt autoremove;
+                apt autoclean;
+                apt clean;
+                apt clean;
+
+                rm mysql-apt-config_0.8.25-1_all.deb;
+                if [ $((mysqlSuccess * phpApacheSuccess)) -eq 0 ]; then
+                  echo "Installation $(basename $0) addon...[ OK ]";
+                fi;;
+    "remove") echo "Removing $(basename $0) addon...";
+                apt-mark unhold libmecab2 libssl1.1 mecab-ipadic mecab-ipadic-utf8 mecab-utils mysql-client mysql-common mysql-community-client mysql-community-client-core mysql-community-client-plugins mysql-community-server mysql-community-server-core
+
+                apt-get remove -y libssl1.1  mysql-client mysql-common mysql-community-client mysql-community-client-core mysql-community-client-plugins mysql-community-server mysql-community-server-core apache2 libapache2-mod-php php php-mysql mysql-apt-config
+                if [ $? -eq 0 ]; then success=0; else success=1; fi
+                apt-get upgrade -y libmecab2 mecab-utils mecab-ipadic mecab-ipadic-utf8;
+
+                apt-get autoclean
+                apt-get autoremove -y
+                apt-get clean
+                if [ $success -eq 0 ]; then
+                  echo "Removing $(basename $0) addon...[ OK ]";
+                fi;;
+  esac
+else
+  echo "Internal error: action must be given.";
+  exit 1;
+fi

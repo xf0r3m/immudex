@@ -1,0 +1,158 @@
+#!/bin/bash
+
+GREEN="\e[32m";
+ENDCOLOR="\e[0m";
+
+set -e
+
+echo "-== Starting immudex_build: $(date) ==-" >> immudex_build.log;
+
+function help() {
+  echo "-== Help printed: $(date) ==-" >> immudex_build.log;
+  echo "immudex-build - script for building immudex LiveCD.";
+  echo "@ 2023 morketsmerke.org";
+  echo "Usage:";
+  echo " ./immudex-build  --<amd64/i386> --<testing/stable/oldstable>";
+}
+
+function create_enviroment() {
+  echo -n "Installation of packages needed to build immudex...";
+  sudo apt update >> immudex_build.log 2>&1;
+  sudo apt install -y debootstrap squashfs-tools xorriso isolinux syslinux-efi grub-pc-bin grub-efi-amd64-bin mtools dosfstools >> immudex_build.log 2>&1;
+  if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+}
+
+#Distributing immudex-testing as meta-distribution there is no such thing like
+#updates. For every new commit in Git service you build new iso image.
+
+#Determing requested architecture and
+if [ "$1" ] && [ "$1" = "--amd64" ]; then arch="64";
+elif [ "$1" ] && [ "$1" = "--i386" ]; then arch="32";
+else
+  help;
+  exit 1;
+fi
+
+#Determinig vanilla debian version
+case $2 in
+  '--testing') debver="testing";;
+  '--stable') debver="stable";;
+  '--oldstable') debver="oldstable";;
+  *) help; exit 1;;
+esac
+
+if [ ! -f /sbin/debootstrap ]; then
+  create_enviroment 
+fi
+
+#Creating root directory sturcture for immudex build:
+if [ ! -d ${HOME}/build/immudex-${debver}/${arch} ]; then
+  echo -n "Creating root directory structure for immudex build...";
+  mkdir -pv ${HOME}/build/immudex-${debver}/${arch} >> immudex_build.log 2>&1;
+  if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+fi
+
+#Fetching vanilla Debian base system files:
+echo -n "Fetching ${debver} vanilla Debian base system files...";
+sudo /sbin/debootstrap --arch=$(echo $1 | sed 's/-//g') $debver ${HOME}/build/immudex-${debver}/${arch}/chroot http://deb.debian.org/debian >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
+#Copying chroot script to chroot directory:
+echo -n "Copying chroot script to chroot directory...";
+sudo cp -vv ${HOME}/immudex/versions/base.sh ${HOME}/build/immudex-${debver}/${arch}/chroot >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
+#Executing chroot script, at least i trying:
+sudo chroot ${HOME}/build/immudex-${debver}/${arch}/chroot /bin/bash /base.sh $debver;
+
+#Removing chroot script.
+echo -n "Remove chroot script...";
+sudo rm -vf ${HOME}/build/immudex-${debver}/${arch}/chroot/base.sh >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
+#Creating LiveCD directory structure:
+echo -n "Creating LiveCD directory structure...";
+mkdir -pv ${HOME}/build/immudex-${debver}/${arch}/{staging/{EFI/boot,boot/grub/x86_64-efi,isolinux,live},tmp} >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
+#Creating squasfs archive:
+echo -n "Creating squashfs archive...";
+sudo mksquashfs ${HOME}/build/immudex-${debver}/${arch}/chroot ${HOME}/build/immudex-${debver}/${arch}/staging/live/filesystem.squashfs -e boot >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
+#Copying kernel and initrd (core files) from chroot:
+echo -n "Copying kernel and initrd (core files) from chroot...";
+cp -v $(ls -v ${HOME}/build/immudex-${debver}/${arch}/chroot/boot/vmlinuz-* | tail -1) ${HOME}/build/immudex-${debver}/${arch}/staging/live/vmlinuz >> immudex_build.log 2>&1;
+cp -v $(ls -v ${HOME}/build/immudex-${debver}/${arch}/chroot/boot/initrd.img-* | tail -1) ${HOME}/build/immudex-${debver}/${arch}/staging/live/initrd >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
+#Setting version for this image:
+echo "-==Setting version for immudex image: $(date)==-" >> immudex_build.log;
+echo -n "Setting version for this immudex image...";
+(cd ${HOME}/immudex && git log --pretty=oneline) | head -1 | awk '{printf $1}' | tee ${HOME}/build/immudex-${debver}/${arch}/staging/live/version >> immudex_build.log 2>&1;
+versionShort=$(cut -c 1-7 ${HOME}/build/immudex-${debver}/${arch}/staging/live/version);
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
+#Getting and copying bootloader files
+echo -n "Copying bootloader files...";
+arch2=$(echo $1 | sed 's/-//g');
+cp -v ${HOME}/immudex/isolinux/${arch2}/* ${HOME}/build/immudex-${debver}/${arch}/staging/isolinux >> immudex_build.log 2>&1;
+cp -v ${HOME}/immudex/grub/${arch2}/* ${HOME}/build/immudex-${debver}/${arch}/staging/boot/grub >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
+#Setting a properly Debian vanilla base version in bootloader files
+echo -n "Setting a properly Debian vanilla base version in bootloader files...";
+sed -i "s,Debian\ 13,Debian\ ${debver},g" ${HOME}/build/immudex-${debver}/${arch}/staging/isolinux/isolinux.cfg;
+sed -i "s,Debian\ 13,Debian\ ${debver},g" ${HOME}/build/immudex-${debver}/${arch}/staging/boot/grub/grub.cfg;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
+#Create grubstandalone config:
+echo "-==Create grub-standalone config: $(date)==-" >> immudex_build.log;
+echo -n "Create grub-standalone config...";
+cat >> ${HOME}/build/immudex-${debver}/${arch}/tmp/grub-standalone.cfg <<EOF
+search --set=root --file /DEBIAN
+set prefix=(\$root)/boot/grub
+configfile /boot/grub/grub.cfg
+EOF
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
+
+#Create an empty file, which will be used to set root directory for GRUB:
+echo "-==Create empty file for setting root directory for GRUB: $(date)==-" >> immudex_build.log;
+echo -n "Create empty file for GRUB...";
+touch ${HOME}/build/immudex-${debver}/${arch}/staging/DEBIAN;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
+#Copying isolinux files:
+echo -n "Copiying isolinux files...";
+cp -v /usr/lib/ISOLINUX/isolinux.bin ${HOME}/build/immudex-${debver}/${arch}/staging/isolinux >> immudex_build.log 2>&1;
+cp -v /usr/lib/syslinux/modules/bios/* ${HOME}/build/immudex-${debver}/${arch}/staging/isolinux >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
+#Copying grub files:
+echo -n "Copying isolinux files...";
+cp -rv /usr/lib/grub/x86_64-efi/* ${HOME}/build/immudex-${debver}/${arch}/staging/boot/grub/x86_64-efi >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
+#Creating grub-efi bootloader file:
+echo "-==Creating grub-efi bootloader file: $(date)==-" >> immudex_build.log;
+echo -n "Creating grub-efi bootloader file...";
+grub-mkstandalone --format=x86_64-efi --output=${HOME}/build/immudex-${debver}/${arch}/staging/EFI/boot/bootx64.efi --locales="" --fonts="" "boot/grub/grub.cfg=${HOME}/build/immudex-${debver}/${arch}/tmp/grub-standalone.cfg";
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
+#Creating additional EFI partition:
+oldcwd=$(pwd);
+cd ${HOME}/build/immudex-${debver}/${arch}/staging/boot/grub;
+echo -n "Creating addtitional EFI partition...";
+dd if=/dev/zero bs=1M of=efiboot.img count=20 >> ${oldcwd}/immudex_build.log 2>&1;
+sudo mkfs.vfat efiboot.img >> immudex_build.log 2>&1;
+echo "-==Creating MS-DOS directory: $(date)==-" >> ${oldcwd}/immudex_build.log;
+sudo mmd -i efiboot.img efi efi/boot >> ${oldcwd}/immudex_build.log 2>&1;
+sudo mcopy -vi efiboot.img ${HOME}/build/immudex-${debver}/${arch}/staging/EFI/boot/bootx64.efi ::efi/boot >> ${oldcwd}/immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
+#Create iso image:
+cd $oldcwd;
+echo -n "Creating iso image...";
+xorriso as mkisofs -iso-level 3 -o "immudex-${debver}${arch}_${versionShort}.iso" -full-iso9660-filenames -volid "immudex-${debver}${arch}_${versionShort}" -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin -eltorito-boot isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table --eltorito-catalog isolinux/isolinux.cat -eltorito-alt-boot -e /boot/grub/efiboot.img -no-emul-boot -isohybrid-gpt-basdat -append_partition 2 0xef ${HOME}/build/immudex-${debver}/${arch}/staging/boot/grub/efiboot.img ${HOME}/build/immudex-${debver}/${arch}/staging >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi

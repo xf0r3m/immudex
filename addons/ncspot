@@ -1,0 +1,17 @@
+#!/bin/bash
+wget https://github.com/hrkfdn/ncspot/releases.atom
+ver=$(grep 'title' releases.atom | sed -n '2p' | sed -e 's,<title>,,g' -e 's,</title>,,g' -e 's,^[[:space:]]*,,g')
+sourceURL="https://github.com/hrkfdn/ncspot/archive/refs/tags/v${ver}.tar.gz";
+wget $sourceURL
+tar -xf $(basename $sourceURL)
+cd ncspot-${ver}
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+sudo apt install libdbus-1-dev libncursesw5-dev libpulse-dev libssl-dev libxcb1-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev pkg-config build-essential -y
+$HOME/.cargo/bin/cargo build --release
+mv target/release/ncspot /usr/local/bin/
+if [ $? -eq 0 ]; then
+	cd ..;
+	rm -rf ncspot-${ver};
+	rm $(basename $sourceURL);
+	rm releases.atom;
+fi

@@ -1,0 +1,43 @@
+#!/bin/bash
+
+if [ "$1" ]; then
+  case $1 in
+    "install") echo "Installation $(basename $0) addon...";
+                if [ ! -f /proc/cpuinfo ]; then
+                  echo "There is no system interfaces! Nothing to do. Exiting...";
+                  exit 1;
+                else
+                if [ ! -d /boot ]; then
+	                mkdir /boot;
+	                apt purge linux-image* --purge -y;
+	                apt install linux-image-amd64 -y;
+                fi
+
+                  cp -vv /etc/apt/sources.list /etc/apt/sources.list.d/nvidia.list;
+                  sed -e 's/main/contrib non-free non-free-firmware/g' -i /etc/apt/sources.list.d/nvidia.list;
+                  apt update;
+                  apt install -y build-essential dkms linux-headers-\$(uname -r);
+                  apt install -y nvidia-detect;
+                  apt install -y nvidia-driver;
+                  if [ $? -eq 0 ]; then success=0; else; success=1; fi
+                fi
+                if [ $success -eq 0 ]; then
+                  echo "Installation $(basename $0) addon...[ OK ]";
+                fi;;
+    "remove") echo "Removing $(basename $0) addon...";
+                apt remove -y nvidia-driver nvidia-detect dkms linux-headers-\$(uname -r);
+                apt purge -y nvidia-*;
+                if [ $? -eq 0 ]; then success=0; else success=1; fi
+                rm /etc/apt/sources.list.d/nvidia.list;
+                apt update;
+                apt-get autoremove -y;
+                apt-get autoclean;
+                apt-get clean;
+                if [ $success -eq 0 ]; then
+                  echo "Removing $(basename $0) addon...[ OK ]";
+                fi;;
+  esac
+else
+  echo "Internal error: action must be given.";
+  exit 1;
+fi

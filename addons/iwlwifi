@@ -1,0 +1,42 @@
+#!/bin/bash
+
+if [ "$1" ]; then
+  case $1 in
+    "install") echo "Installation $(basename $0) addon...";
+                if [ ! -d /boot ]; then
+                  mkdir /boot;
+	                apt purge linux-image* --purge -y;
+	                apt install linux-image-amd64;
+                fi
+
+                cp -vv /etc/apt/sources.list /etc/apt/sources.list.d/iwlwifi.list;
+                sed -e 's/main/contrib non-free non-free-firmware/g' -i /etc/apt/sources.list.d/iwlwifi.list;
+
+                apt update;
+                apt install firmware-iwlwifi;
+                if [ $? -eq 0 ]; then success=0; else succes=1; fi
+                rm /etc/apt/sources.list.d/iwlwifi.list;
+                apt update;
+
+                apt-get autoclean;
+                apt-get autoremove;
+                apt-get clean;
+                apt-get clean;
+                if [ $success -eq 0 ]; then
+                  echo "Installation $(basename $0) addon...[ OK ]";
+                fi;;
+    "remove") echo "Removing $(basename $0) addon...";
+                apt remove -y firmware-iwlwifi;
+                if [ $? -eq 0 ]; then success=0; else success=1; fi
+                apt-get autoclean;
+                apt-get autoremove -y;
+                apt-get clean;
+
+                if [ $success -eq 0 ]; then
+                  echo "Removing $(basename $0) addon...[ OK ]";
+                fi;;
+  esac
+else
+  echo "Internal error: action must be given.";
+  exit 1;
+fi

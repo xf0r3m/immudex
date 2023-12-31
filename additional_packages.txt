@@ -1,7 +1,0 @@
-0.0.1:
-	bash-completion
-	etherwake
-	wakeonlan
-  cifs-utils
-  wget
-  figlet
