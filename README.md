@@ -16,7 +16,7 @@ Aby dołączyć jakiekolwiek zmiany do obrazu płyty należy przed rozpoczęciem
 procesu tworzenia obrazu płyty umieścić modyfikacje, przed poleceniem `tidy` w
 pliku *versions/base.sh*.
 
-### Zmiany jakich należy dokonać przed stworzeniem obrazu płyty.
+### Zmiany jakich należy dokonać przed stworzeniem obrazu płyty:
 
 1. Usuń użytkowników testowych:
   ```
