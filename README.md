@@ -38,7 +38,7 @@ pliku *versions/base.sh*.
   usermod -L root
   ```
 **Podpowiedź:** _Tę czynność można skrócić, odnajdując wywołanie funkcji `recreate_user`, wyłączając je
-za pomocą komentarza (`#`) i zapisując zamiast niej polecenia z pkt. `3` oraz `4`._
+za pomocą komentarza (`#`) i zapisując zamiast go polecenia z pkt. `3` oraz `4`._
 
 ### Tworzenie obrazu płyty dystrybucji:
   
