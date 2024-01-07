@@ -138,9 +138,20 @@ echo "127.0.1.1   immudex" >> /etc/hosts;
 # Zmiany można umieścić również tutaj jeśli dotyczą one użytkowników lub ich
 # plików konfiguracyjnych
 
-recreate_users;
-echo "user ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers;
-echo "xf0r3m ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers;
+echo -n "Username: ";
+read username;
+useradd -m -s /bin/bash $username;
+cp -r /etc/skel/.??* /home/${username};
+chown -R ${username}:${username} /home/${username};
+passwd $username;
+usermod -aG sudo,libvirt,libvirt-qemu $username;
+
+
+dd if=/dev/random bs=1M of=random count=1;
+rootPassword=$(md5sum random | awk '{printf $1}');
+rm random;
+echo "root:${rootPassword}" | chpasswd;
+usermod -L root;
 
 # Miejsce na twoje zmiany, przed poleceniem 'tidy'
 tidy;
