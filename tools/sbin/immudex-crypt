@@ -151,10 +151,8 @@ if [ "$1" ]; then
     exit 1;
   fi
  
-  immudexCryptPID=$$;
-  parentProcessPID=$((immudexCryptPID - 1));
   #immudex-crypt RUID is EUID of sudo, which spawning immudex-crypt
-  export RUID=$(grep '^Uid:' /proc/${parentProcessPID}/status | awk '{printf $2}');
+  export RUID=$(grep '^Uid:' /proc/$(pidof -s sudo)/status | awk '{printf $2}');
   export USER=$(grep "$RUID" /etc/passwd | cut -d ":" -f1);
 
   case $1 in
