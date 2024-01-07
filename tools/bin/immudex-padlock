@@ -3,8 +3,8 @@
 launcher="/home/${USER}/.config/xfce4/panel/launcher-14/16844255236.desktop";
 
 function main_unlock() {
-  /usr/local/bin/immudex-crypt open $1;
-  index=$(basename $(/usr/local/bin/immudex-crypt list | grep "$1" | head -1 | awk '{printf $2}' | grep -o '[0-9]'));
+  sudo /usr/local/sbin/immudex-crypt open $1;
+  index=$(basename $(sudo /usr/local/sbin/immudex-crypt list | grep "$1" | head -1 | awk '{printf $2}' | grep -o '[0-9]'));
   #sudo mkdir -p /media/${USER}/$devName;
   #sudo mount /dev/mapper/$devName /media/${USER}/$devName;
   

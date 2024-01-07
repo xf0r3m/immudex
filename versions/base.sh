@@ -67,30 +67,31 @@ bash install.sh;
 
 cd;
 
-cp -vv ~/immudex/tools/immudex-autostart-x4notes /usr/local/bin;
-cp -vv ~/immudex/tools/immudex-create-media /usr/local/bin;
-cp -vv ~/immudex/tools/immudex-branch /usr/local/bin;
-cp -vv ~/immudex/tools/immudex-crypt /usr/local/bin;
-cp -vv ~/immudex/tools/immudex-hostname /usr/local/bin;
-cp -vv ~/immudex/tools/immudex-install /usr/local/bin;
-cp -vv ~/immudex/tools/immudex-import-gpgkeys /usr/local/bin;
-cp -vv ~/immudex/tools/immudex-import-sshkeys /usr/local/bin;
-cp -vv ~/immudex/tools/immudex-meteo /usr/local/bin;
-cp -vv ~/immudex/tools/immudex-morketsmerke /usr/local/bin;
-cp -vv ~/immudex/tools/immudex-motd2 /usr/local/bin;
-cp -vv ~/immudex/tools/immudex-padlock /usr/local/bin;
-cp -vv ~/immudex/tools/immudex-pl /usr/local/bin;
-cp -vv ~/immudex/tools/immudex-secured-firefox /usr/local/bin;
-cp -vv ~/immudex/tools/immudex-shoutcasts /usr/local/bin;
-cp -vv ~/immudex/tools/immudex-version /usr/local/bin;
-cp -vv ~/immudex/tools/immudex-upgrade /usr/local/bin;
-cp -vv ~/immudex/tools/immudex-ytplay /usr/local/bin;
-cp -vv ~/immudex/tools/library.sh /usr/local/bin;
-cp -vv ~/immudex/tools/idle-clic /usr/local/bin;
-cp -vv ~/immudex/tools/sync.sh /usr/local/bin;
-
-
+cp -vv ~/immudex/tools/bin/immudex-autostart-x4notes /usr/local/bin;
+cp -vv ~/immudex/tools/bin/immudex-branch /usr/local/bin;
+cp -vv ~/immudex/tools/bin/immudex-import-gpgkeys /usr/local/bin;
+cp -vv ~/immudex/tools/bin/immudex-import-sshkeys /usr/local/bin;
+cp -vv ~/immudex/tools/bin/immudex-meteo /usr/local/bin;
+cp -vv ~/immudex/tools/bin/immudex-morketsmerke /usr/local/bin;
+cp -vv ~/immudex/tools/bin/immudex-motd2 /usr/local/bin;
+cp -vv ~/immudex/tools/bin/immudex-padlock /usr/local/bin;
+cp -vv ~/immudex/tools/bin/immudex-pl /usr/local/bin;
+cp -vv ~/immudex/tools/bin/immudex-secured-firefox /usr/local/bin;
+cp -vv ~/immudex/tools/bin/immudex-shoutcasts /usr/local/bin;
+cp -vv ~/immudex/tools/bin/immudex-version /usr/local/bin;
+cp -vv ~/immudex/tools/bin/immudex-ytplay /usr/local/bin;
+cp -vv ~/immudex/tools/bin/library.sh /usr/local/bin;
+cp -vv ~/immudex/tools/bin/idle-clic /usr/local/bin;
+cp -vv ~/immudex/tools/bin/sync.sh /usr/local/bin;
 chmod +x /usr/local/bin/*;
+
+cp -vv ~/immudex/tools/sbin/immudex-create-media /usr/local/sbin;
+cp -vv ~/immudex/tools/sbin/immudex-crypt /usr/local/sbin;
+cp -vv ~/immudex/tools/sbin/immudex-hostname /usr/local/sbin;
+cp -vv ~/immudex/tools/sbin/immudex-install /usr/local/sbin;
+cp -vv ~/immudex/tools/sbin/immudex-upgrade /usr/local/sbin;
+chown root:root /usr/local/sbin/*;
+chmod 544 /usr/local/sbin/*;
 
 mkdir /etc/skel/.irssi
 

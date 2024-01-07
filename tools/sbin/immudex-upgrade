@@ -28,15 +28,15 @@ if [ "$1" ]; then
       check_distro_commit --print;
     fi
   elif [ "$1" ] && [ "$1" = "--upgrade" ]; then
-    part=$(sudo blkid | grep 'LABEL="immudex"' | awk '{printf $1}' | cut -d ":" -f 1);
-    if sudo mount | grep -q "$part"; then
+    part=$(blkid | grep 'LABEL="immudex"' | awk '{printf $1}' | cut -d ":" -f 1);
+    if mount | grep -q "$part"; then
       echo -n "Mounting iso image...";
-      sudo mount $2 /mnt > /dev/null 2>&1;
+      mount $2 /mnt > /dev/null 2>&1;
       if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
-      mountPointList=$(sudo mount | grep "$part" | awk '{printf $3" "}');
+      mountPointList=$(mount | grep "$part" | awk '{printf $3" "}');
       for mountPoint in $mountPointList; do
         echo -n "Unlocking $mountPoint ..."; 
-        sudo mount $part $mountPoint -o remount,rw > /dev/null 2>&1;
+        mount $part $mountPoint -o remount,rw > /dev/null 2>&1;
         if [ $? -eq 0 ]; then
           echo -e "[ ${GREEN}OK${ENDCOLOR} ]";
         else
@@ -44,13 +44,13 @@ if [ "$1" ]; then
         fi
       done
       echo "Copying immudex files to the disk...";
-      sudo cp -vv /mnt/live/* ${mountPoint}/live;
+      cp -vv /mnt/live/* ${mountPoint}/live;
     else
       echo "Mounting immudex partition...";
-      sudo mount $part /mnt >> /dev/null 2>&1;
+      mount $part /mnt >> /dev/null 2>&1;
       if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
       echo "Copying immudex files to the disk...";
-      sudo cp -vv /run/live/medium/live/* /mnt/live;
+      cp -vv /run/live/medium/live/* /mnt/live;
     fi
     if [ $? -eq 0 ]; then
       echo -e "Copying immudex files to the disk...[ ${GREEN}OK${ENDCOLOR} ]";
