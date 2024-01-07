@@ -4,6 +4,11 @@ RED="\e[31m";
 GREEN="\e[32m";
 ENDCOLOR="\e[0m";
 
+if [ $UID -ne 0 ]; then
+  echo "Permission denied!";
+  exit 1;
+fi
+
 while [ true ]; do
   echo -e "${RED}This script will install immudex on first disk on your machine.${ENDCOLOR}";
   echo -e "${RED}It could be destructive for data placed on this disk${ENDCOLR}";

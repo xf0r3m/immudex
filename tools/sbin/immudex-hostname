@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ $UID -ne 0 ]; then
+  echo "Permission denied!";
+  exit 1;
+fi
+
 bootID=$(sed 's/-//g' /proc/sys/kernel/random/boot_id | cut -c 26-33);
 if hostnamectl > /dev/null 2>&1; then
 	hName="$(hostnamectl | grep 'Chassis' | cut -d ":" -f 2 | awk '{printf $1}')-${bootID}";

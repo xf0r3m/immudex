@@ -12,11 +12,18 @@ root="/run/live/medium";
 
 function help() {
   echo "immudex-upgrade - script for searching upgrades and upgrade immudex";
-  echo "@ 2023 morketsmerke.org";
+  echo "@ 2024 morketsmerke.org";
+  echo "Superuser (root) privileges are required.";
   echo "Options:";
   echo " --check - check there are upgrades for immudex";
   echo " --upgrade - upgrade immudex from given source";
 }
+
+if [ $UID -ne 0 ]; then
+  echo "Permission denied!";
+  help;
+  exit 1;
+fi
 
 if [ "$1" ]; then
   if [ "$1" ] && [ "$1" = "--check" ]; then
