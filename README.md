@@ -18,30 +18,18 @@ pliku *versions/base.sh*.
 
 ### Zmiany jakich należy dokonać przed stworzeniem obrazu płyty:
 
-1. Usuń użytkowników testowych:
-  ```
-  userdel -r user
-  userdel -r xf0r3m
-  ```
-2. Usuń wpisy dla tych użytkowników z pliku `/etc/sudoers`:
-  ```
-  sed -i -e '/^user/d' -e '/^xf0r3m/d' /etc/sudoers
-  ```
-3. Utwórz swojego użytkownika:
-  ```
-  useradd -m -s /bin/bash *nazwa-użytkownika*
-  passwd *nazwa-użytkownika*
-  usermod -aG sudo,libvirt,libvirt-qemu *nazwa-użytkownika*
-  ``` 
-4. Zablokuj możliwość logowania się na superużytkownika:
-  ```
-  usermod -L root
-  ```
+Obecnie superużytkownik posiada losowe haslo oraz zablokowana
+jest możliwość zalogowania się na niego. Dostęp do 'root' możemy
+uzyskać za pomocą polecenia 'sudo su'.
+Podstawowy użytkownik (z uprawnieniami sudo)
+jest tworzony podczas budowania obrazu. Podejmowanie czynności
+przed stworzeniem obrazu płyty nie jest póki co wymagane.
+
 ### Tworzenie obrazu płyty dystrybucji:
   
   ```
   $ git clone https://github.com/xf0r3m/immudex
-  $ cd immudex-testing
+  $ cd immudex
   $ ./immudex-build --<amd64/i386> --<testing/stable/oldstable>
   ```
 
