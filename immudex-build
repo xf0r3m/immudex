@@ -45,6 +45,13 @@ if [ ! -f /sbin/debootstrap ]; then
   create_enviroment 
 fi
 
+#Removing old immudex build directory structure:
+if [ -d ${HOME}/build/immudex-${debver}/${arch} ]; then
+  echo -n "Removing old immudex build directory structure...";
+  sudo rm -rvf ${HOME}/build/immudex-${debver}/${arch} >> immudex_build.log 2>&1;
+  if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+fi
+
 #Creating root directory sturcture for immudex build:
 if [ ! -d ${HOME}/build/immudex-${debver}/${arch} ]; then
   echo -n "Creating root directory structure for immudex build...";
