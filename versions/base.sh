@@ -130,7 +130,8 @@ chmod u+s /usr/bin/ping;
 
 /usr/sbin/ufw default deny incoming;
 /usr/sbin/ufw default allow outgoing;
-/usr/sbin/ufw enable;
+#/usr/sbin/ufw enable;
+sed -i '/^ENABLED=/s/ENABLED=no/ENABLED=yes/' /etc/ufw/ufw.conf
 
 echo "immudex" > /etc/hostname;
 echo "127.0.1.1   immudex" >> /etc/hosts;
