@@ -14,7 +14,5 @@ else
   cp -vv /etc/apt/sources.list /etc/apt/sources.list.d/nvidia.list;
   sed -e 's/main/contrib non-free non-free-firmware/g' -i /etc/apt/sources.list.d/nvidia.list;
   apt update;
-  apt install -y build-essential dkms linux-headers-$(uname -r);
-  apt install -y nvidia-detect;
-  apt install -y nvidia-driver;
+  apt install -y build-essential dkms linux-headers-amd64 nvidia-detect nvidia-driver;
 fi
