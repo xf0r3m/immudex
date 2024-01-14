@@ -3,8 +3,8 @@
 baseVersion=$(head -1 /etc/apt/sources.list | awk '{print $3}')
 
 apt install lsb-release -y;
-wget https://dev.mysql.com/get/mysql-apt-config_0.8.25-1_all.deb;
-dpkg -i mysql-apt-config_0.8.25-1_all.deb;
+wget https://dev.mysql.com/get/mysql-apt-config_0.8.29-1_all.deb
+dpkg -i mysql-apt-config_0.8.29-1_all.deb;
 
 sed -i "s/$baseVersion/bullseye/g" /etc/apt/sources.list;
 
