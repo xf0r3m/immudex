@@ -17,7 +17,8 @@ function help() {
   echo "Options:";
   echo " --check - check there are upgrades for immudex";
   echo " --upgrade - upgrade immudex from given source";
-  echo " --myversion - print images current commit message";
+  echo " --myversion - prints images current commit message";
+  echo " --compilation-date - prints date of image creation";
   echo " --packages-upgradable [--security] - updates apt (packages) list and";
   echo "   prints available to upgrade packages, with --security modificator";
   echo "   prints only pacakages from security repository branch";
@@ -82,6 +83,8 @@ if [ "$1" ]; then
     else
       apt list --upgradable;
     fi
+  elif [ "$1" ] && [ "$1" = "--compilation-date" ]; then
+    echo "Image was created: $(cat /run/live/medium/live/compilation_date)";
   else
     help;
     exit 1;
