@@ -17,6 +17,10 @@ function help() {
   echo "Options:";
   echo " --check - check there are upgrades for immudex";
   echo " --upgrade - upgrade immudex from given source";
+  echo " --myversion - print images current commit message";
+  echo " --packages-upgradable [--security] - updates apt (packages) list and";
+  echo "   prints available to upgrade packages, with --security modificator";
+  echo "   prints only pacakages from security repository branch";
 }
 
 if [ $UID -ne 0 ]; then
@@ -68,9 +72,16 @@ if [ "$1" ]; then
     if [ -d /tmp/immudex ]; then 
       (cd /tmp/immudex && git pull > /dev/null 2>&1)
     else
-      git clone https://github.com/xf0r3m/immudex /tmp;
+      git clone https://github.com/xf0r3m/immudex /tmp/immudex;
     fi
     (cd /tmp/immudex && git show $(cat /run/live/medium/live/version))
+  elif [ "$1" ] && [ "$1" = "--packages-upgradable" ]; then
+    apt update;
+    if [ "$2" ] && [ "$2" = "--security" ]; then
+      apt list --upgradable | grep 'security';
+    else
+      apt list --upgradable;
+    fi
   else
     help;
     exit 1;
