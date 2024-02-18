@@ -97,10 +97,18 @@ if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 echo "-==Setting version for immudex image: $(date)==-" >> immudex_build.log;
 echo -n "Setting version for this immudex image...";
 (cd ${HOME}/immudex && git log --pretty=oneline) | head -1 | awk '{printf $1}' | tee ${HOME}/build/immudex-${debver}/${arch}/staging/live/version >> immudex_build.log 2>&1;
+echo >> immudex_build.log;
 versionShort=$(cut -c 1-7 ${HOME}/build/immudex-${debver}/${arch}/staging/live/version);
 if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
+#Setting compilation date for this image:
+echo "-==Setting compilaztion date for immudex image: $(date)==-" >> immudex_build.log;
+echo -n "Setting compilation date for this immudex image...";
+date | tee ${HOME}/build/immudex-${debver}/${arch}/staging/live/compilation_date >> immudex_build.log 2>&1;
+if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
+
 #Getting and copying bootloader files
+echo "-==Getting and copying bootloader files: $(date)==-" >> immudex_build.log;
 echo -n "Copying bootloader files...";
 arch2=$(echo $1 | sed 's/-//g');
 cp -v ${HOME}/immudex/isolinux/${arch2}/* ${HOME}/build/immudex-${debver}/${arch}/staging/isolinux >> immudex_build.log 2>&1;
