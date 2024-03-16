@@ -145,7 +145,7 @@ useradd -m -s /bin/bash $username;
 cp -r /etc/skel/.??* /home/${username};
 chown -R ${username}:${username} /home/${username};
 passwd $username;
-usermod -aG sudo,libvirt,libvirt-qemu $username;
+usermod -aG sudo $username;
 
 
 dd if=/dev/random bs=1M of=random count=1;
