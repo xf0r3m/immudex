@@ -1,0 +1,40 @@
+#!/bin/bash
+
+apt install -y distrobox;
+
+cat >> /usr/local/sbin/immudex-distrobox-swap-root << EOF
+#!/bin/bash
+
+if [ ! "\$1" ]; then echo "Target directory is required."; exit 1; fi
+
+if [ ! -d \${1}/distrobox ]; then
+	mkdir -p \${1}/distrobox/{var,run};
+	sudo cp -prvv /var/lib/containers \${1}/distrobox/var;
+	sudo cp -prvv /run/containers \${1}/distrobox/run;
+fi
+
+sudo mount -B \${1}/distrobox/var/containers /var/lib/containers;
+sudo mount -B \${1}/distrobox/run/containers /run/containers;
+EOF
+chown root:root /usr/local/sbin/immudex-distrobox-swap-root;
+chmod 544 /usr/local/sbin/immudex-distrobox-swap-root;
+
+cat >> /usr/local/bin/immudex-distrobox-unlock-ds << EOF
+#!/bin/bash
+
+userCT=\$(distrobox-list | grep 'Up' | awk '{printf \$3" "}');
+rootCT=\$(distrobox-list --root | grep 'Up' | awk '{printf \$3" "}');
+
+if [ "\$userCT" ]; then distrobox-stop --all; fi
+
+if [ "\$rootCT" ]; then 
+	distrobox-stop --root --all;
+
+	sudo umount /var/lib/containers;
+	sudo umount /run/containers;
+fi
+
+catatonitPID=\$(pidof catatonit);
+if [ "\$catatonitPID" ]; then sudo kill \$(pidof catatonit); fi
+EOF
+chmod 755 /usr/local/bin/immudex-distrobox-unlock-ds;

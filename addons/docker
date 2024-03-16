@@ -1,0 +1,37 @@
+#!/bin/bash
+
+apt install -y docker.io;
+u=$(grep '1000' /etc/passwd | cut -d ":" -f 1);
+usermod -aG docker $u;
+
+cat >> /usr/local/sbin/immudex-docker-swap-root << EOF
+#!/bin/bash
+
+if [ ! "\$1" ]; then echo "Target directory is required."; exit 1; fi
+
+sudo systemctl stop docker.socket
+sudo systemctl stop docker.service
+sudo systemctl stop containerd.service
+
+sudo sed -i "s,dockerd,dockerd --data-root=\${1}/docker," /lib/systemd/system/docker.service
+
+if [ ! -d \${1}/docker ]; then sudo cp -prvv /var/lib/docker \${1}; fi
+
+sudo systemctl daemon-reload
+
+sudo systemctl start containerd.service
+sudo systemctl start docker.socket
+sudo systemctl start docker.service
+EOF
+chown root:root /usr/local/sbin/immudex-docker-swap-root;
+chmod 544 /usr/local/sbin/immudex-docker-swap-root;
+
+cat >> /usr/local/sbin/immudex-docker-unlock-ds << EOF
+#!/bin/bash
+
+sudo systemctl stop docker.socket
+sudo systemctl stop docker.service
+sudo systemctl stop containerd.service
+EOF
+chown root:root /usr/local/sbin/immudex-docker-unlock-ds;
+chmod 544 /usr/local/sbin/immudex-docker-unlock-ds;

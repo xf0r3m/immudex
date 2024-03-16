@@ -1,0 +1,6 @@
+#!/bin/bash
+
+apt install -y qemu-kvm libvirt-clients libvirt-daemon-system bridge-utils virtinst libvirt-daemon virt-manager;
+
+u=$(grep '1000' /etc/passwd | cut -d ":" -f 1)
+usermod -aG libvirt,libvirt-qemu $u;
