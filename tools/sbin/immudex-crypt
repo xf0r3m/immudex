@@ -19,7 +19,7 @@ function help() {
 
 function list() {
 
-  mapperDeviceList=$(ls /dev/mapper --hide=control | awk '{printf $1" "}');
+  mapperDeviceList=$(ls /dev/mapper | grep 'immudex-*' | awk '{printf $1" "}');
   
   echo "==============================================================";
   echo -e "Opened devices:";

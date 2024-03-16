@@ -35,7 +35,7 @@ function unlock() {
 
 function lock() {
 
-  mapperDeviceList=$(ls /dev/mapper --hide=control | awk '{printf $1" "}');
+  mapperDeviceList=$(ls /dev/mapper | grep 'immudex-*' | awk '{printf $1" "}');
 
   if [ "$mapperDeviceList" ]; then
 	  for dmDevice in $mapperDeviceList; do
@@ -64,7 +64,7 @@ function lock() {
   fi 
 }
 
-mapperDeviceList=$(ls /dev/mapper --hide=control | awk '{printf $1" "}');
+mapperDeviceList=$(ls /dev/mapper | grep 'immudex-*' | awk '{printf $1" "}');
 
 if [ "$mapperDeviceList" ]; then lock;
 else unlock;
