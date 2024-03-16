@@ -59,6 +59,10 @@ fi
 if [ -f /usr/bin/youtube-dl ]; then rm /usr/bin/youtube-dl; fi
 ln -s /usr/bin/yt-dlp /usr/bin/youtube-dl;
 
+ytdlpVer=$(curl https://github.com/yt-dlp/yt-dlp/releases.atom 2>/dev/null | grep '<title>.*</title>$' | sed -n '2p' | sed 's/\ /\n/g' | tail -1 | sed 's,</title>,,');
+wget https://github.com/yt-dlp/yt-dlp/releases/download/${ytdlpVer}/yt-dlp -O /usr/bin/yt-dlp
+
+
 cd;
 
 git clone https://github.com/xf0r3m/xfcedebian;
