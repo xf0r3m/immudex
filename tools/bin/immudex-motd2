@@ -40,7 +40,7 @@ else
     echo -e "  \tUPTIME: 0h ${utime}m";
   fi
 fi
-echo -e " \t$(uptime | grep -o "load.*$" | tr [a-z] [A-Z])";
+echo -e " \t$(uptime | grep -o "load.*$" | tr '[a-z]' '[A-Z]')";
 echo;
 echo -e "morketsmerke.org @ 2023 https://github.com/xf0r3m/immudex";
 echo;
