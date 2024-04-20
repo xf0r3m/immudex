@@ -3,12 +3,9 @@
 cd /tmp
 mv /usr/lib/python3.11/EXTERNALLY-MANAGED /usr/lib/python3.11/EXTERNALLY-MANAGED.old
 #wget https://archive.chirpmyradio.com/chirp_next/next-20240319/chirp-20240319-py3-none-any.whl
-chirpRepoURL=$(wget -v "https://archive.chirpmyradio.com/download?stream=next" 2>&1 | grep 'Lokaliza
-cja:' | head -1 | awk '{printf $2}');
-chirpVer=$(basename $chirpRepoURL | cut -d "-" -f 2);
-chirpFilename="chirp-${chirpVer}-py3-none-any.whl";
-wget ${chirpRepoURL}/${chirpFilename};
-pip3 install $chirpFilename;
+chirpURL="https://ftp.morketsmerke.org/chirp/chirp-20240419-py3-none-any.whl"
+wget ${chirpURL};
+pip3 install $(basename $chirpURL);
 apt install -y python-wxtools
 
 wget https://ftp.morketsmerke.org/chirp/chirp.desktop -O /usr/share/applications/chirp.desktop;
