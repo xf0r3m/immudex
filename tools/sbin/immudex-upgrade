@@ -57,17 +57,44 @@ if [ "$1" ]; then
       done
       echo "Copying immudex files to the disk...";
       cp -vv /mnt/live/* ${mountPoint}/live;
+      if [ $? -eq 0 ]; then
+        echo -e "Copying immudex files to the disk...[ ${GREEN}OK${ENDCOLOR} ]";
+      else
+        echo -e "Copying immudex files to the disk...[ ${RED}FAIL${ENDCOLOR} ]";
+      fi
     else
-      echo "Mounting immudex partition...";
+      echo -n "Mounting immudex partition...";
       mount $part /mnt >> /dev/null 2>&1;
       if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
       echo "Copying immudex files to the disk...";
       cp -vv /run/live/medium/live/* /mnt/live;
+      if [ $? -eq 0 ]; then
+        echo -e "Copying immudex files to the disk...[ ${GREEN}OK${ENDCOLOR} ]";
+      else
+        echo -e "Copying immudex files to the disk...[ ${RED}FAIL${ENDCOLOR} ]";
+      fi
     fi
-    if [ $? -eq 0 ]; then
-      echo -e "Copying immudex files to the disk...[ ${GREEN}OK${ENDCOLOR} ]";
-    else
-      echo -e "Copying immudex files to the disk...[ ${RED}FAIL${ENDCOLOR} ]";
+    if $(sudo efibootmgr > /dev/null 2>&1); then
+	    echo "Copying grub config to the disk...";
+      if [ "$mountPoint" ]; then
+        cp -vv /mnt/boot/grub/grub.cfg ${mountPoint}/boot/grub/grub.cfg;
+        if [ $? -eq 0 ]; then 
+          echo -e "Copying grub config to the disk...[ ${GREEN}OK${ENDCOLOR} ]";
+          sed -i '/set\ timeout=/ s/30/5/' ${mountPoint}/boot/grub/grub.cfg;
+	        sed -i 's/bootfrom=removable //g' ${mountPoint}/boot/grub/grub.cfg;
+        else
+          echo -e "Copying grub config to the disk...[ ${RED}FAIL${ENDCOLOR} ]";
+        fi
+      else
+	      cp -vv /run/live/medium/boot/grub/grub.cfg /mnt/boot/grub/grub.cfg;
+	      if [ $? -eq 0 ]; then 
+          echo -e "Copying grub config to the disk...[ ${GREEN}OK${ENDCOLOR} ]";
+	        sed -i '/set\ timeout=/ s/30/5/' /mnt/boot/grub/grub.cfg;
+	        sed -i 's/bootfrom=removable //g' /mnt/boot/grub/grub.cfg;
+        else
+          echo -e "Copying grub config to the disk...[ ${RED}FAIL${ENDCOLOR} ]";
+        fi
+      fi
     fi
   elif [ "$1" ] && [ "$1" = "--myversion" ]; then
     if [ -d /tmp/immudex ]; then 
