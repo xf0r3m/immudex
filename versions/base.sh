@@ -107,7 +107,7 @@ cp -vv ~/immudex/files/redshift.conf /etc/skel/.config;
 cp -vv ~/immudex/files/redshift.desktop /etc/skel/.config/autostart;
 
 cp -rvv ~/immudex/files/sync.sh /usr/share;
-cp -vv ~/immudex/files/gtk-main.css /usr/share/xfce4-notes-plugin/gtk-3.0/;
+cp -vv ~/immudex/files/gtk-main.css /usr/share/xfce4/notes/gtk-3.0/gtk.css;
 if [ -f /usr/share/applications/qmmp.desktop ]; then
   ln -s /usr/share/applications/qmmp.desktop /usr/share/applications/qmmp-1.desktop;
 fi
