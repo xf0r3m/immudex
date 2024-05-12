@@ -38,7 +38,8 @@ dpkg-reconfigure console-setup;
 
 install_packages task-desktop task-xfce-desktop;
 
-install_packages firejail ufw cryptsetup lsof extlinux grub-efi-amd64 efibootmgr bash-completion etherwake wakeonlan cifs-utils wget figlet mpv vim-gtk3 redshift irssi nmap nfs-common remmina python3-pip ffmpeg debootstrap squashfs-tools xorriso syslinux-efi grub-pc-bin grub-efi-amd64-bin mtools dosfstools chrony python3-venv isolinux rsync mutt gimp openvpn netselect-apt gvfs-backends dnsutils lolcat;
+#Dodanie pakietu 'make' - wdrożenie projektu ytfzf - 12.05.2024;
+install_packages firejail ufw cryptsetup lsof extlinux grub-efi-amd64 efibootmgr bash-completion etherwake wakeonlan cifs-utils wget figlet mpv vim-gtk3 redshift irssi nmap nfs-common remmina python3-pip ffmpeg debootstrap squashfs-tools xorriso syslinux-efi grub-pc-bin grub-efi-amd64-bin mtools dosfstools chrony python3-venv isolinux rsync mutt gimp openvpn netselect-apt gvfs-backends dnsutils lolcat make;
 
 #Missing packages
 if [ $DEBVER = "testing" ]; then
@@ -83,7 +84,14 @@ cp -vv ~/immudex/tools/bin/immudex-pl /usr/local/bin;
 cp -vv ~/immudex/tools/bin/immudex-secured-firefox /usr/local/bin;
 cp -vv ~/immudex/tools/bin/immudex-shoutcasts /usr/local/bin;
 cp -vv ~/immudex/tools/bin/immudex-version /usr/local/bin;
-cp -vv ~/immudex/tools/bin/immudex-ytplay /usr/local/bin;
+
+#Wdrożenie projektu ytfzf - 12.05.2024;
+install_packages fzf jq ueberzug;
+git clone https://github.com/pystardust/ytfzf /tmp/ytfzf;
+(cd /tmp/ytfzf && make install doc)
+
+#Wyłącznie narzędzia immudex-ytplay - 12.05.2024;
+#cp -vv ~/immudex/tools/bin/immudex-ytplay /usr/local/bin;
 cp -vv ~/immudex/tools/bin/library.sh /usr/local/bin;
 cp -vv ~/immudex/tools/bin/idle-clic /usr/local/bin;
 cp -vv ~/immudex/tools/bin/sync.sh /usr/local/bin;
