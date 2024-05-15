@@ -2,7 +2,7 @@
 
 set -e
 
-DEBVER="$1";
+export DEBVER="$1";
 ARCH=$(dpkg --print-architecture);
 
 if [ $ARCH = "amd64" ]; then
@@ -42,27 +42,29 @@ install_packages task-desktop task-xfce-desktop;
 install_packages firejail ufw cryptsetup lsof extlinux grub-efi-amd64 efibootmgr bash-completion etherwake wakeonlan cifs-utils wget figlet mpv vim-gtk3 redshift irssi nmap nfs-common remmina python3-pip ffmpeg debootstrap squashfs-tools xorriso syslinux-efi grub-pc-bin grub-efi-amd64-bin mtools dosfstools chrony python3-venv isolinux rsync mutt gimp openvpn netselect-apt gvfs-backends dnsutils lolcat make;
 
 #Missing packages
+#Polityka antyfrankensteinowa - 13.05.2024
 if [ $DEBVER = "testing" ]; then
   install_packages xfce4-notes-plugin yt-dlp;
-  head -1 /etc/apt/sources.list | sed "s/${DEBVER}/stable/" > /etc/apt/sources.list.d/stable.list;
-  apt update;
-  install_packages newsboat;
-  rm /etc/apt/sources.list.d/stable.list;
-  apt update;
+  #head -1 /etc/apt/sources.list | sed "s/${DEBVER}/stable/" > /etc/apt/sources.list.d/stable.list;
+  #apt update;
+  #install_packages newsboat;
+  #rm /etc/apt/sources.list.d/stable.list;
+  #apt update;
 else
   install_packages newsboat;
-  head -1 /etc/apt/sources.list | sed "s/${DEBVER}/testing/" > /etc/apt/sources.list.d/testing.list;
-  apt update;
-  install_packages xfce4-notes-plugin yt-dlp;
-  rm /etc/apt/sources.list.d/testing.list;
-  apt update;
+  #head -1 /etc/apt/sources.list | sed "s/${DEBVER}/testing/" > /etc/apt/sources.list.d/testing.list;
+  #apt update;
+  #install_packages xfce4-notes-plugin yt-dlp;
+  #rm /etc/apt/sources.list.d/testing.list;
+  #apt update;
 fi
 if [ -f /usr/bin/youtube-dl ]; then rm /usr/bin/youtube-dl; fi
-ln -s /usr/bin/yt-dlp /usr/bin/youtube-dl;
 
 ytdlpVer=$(curl https://github.com/yt-dlp/yt-dlp/releases.atom 2>/dev/null | grep '<title>.*</title>$' | sed -n '2p' | sed 's/\ /\n/g' | tail -1 | sed 's,</title>,,');
 wget https://github.com/yt-dlp/yt-dlp/releases/download/${ytdlpVer}/yt-dlp -O /usr/bin/yt-dlp
 
+#Polityka antyfrankensteinowa - 13.05.2024
+ln -s /usr/bin/yt-dlp /usr/bin/youtube-dl;
 
 cd;
 
@@ -85,13 +87,19 @@ cp -vv ~/immudex/tools/bin/immudex-secured-firefox /usr/local/bin;
 cp -vv ~/immudex/tools/bin/immudex-shoutcasts /usr/local/bin;
 cp -vv ~/immudex/tools/bin/immudex-version /usr/local/bin;
 
-#Wdrożenie projektu ytfzf - 12.05.2024;
-install_packages fzf jq ueberzug;
-git clone https://github.com/pystardust/ytfzf /tmp/ytfzf;
-(cd /tmp/ytfzf && make install doc)
 
 #Wyłącznie narzędzia immudex-ytplay - 12.05.2024;
-#cp -vv ~/immudex/tools/bin/immudex-ytplay /usr/local/bin;
+#Polityka antyfrankensteinowa - 13.05.2024
+if [ "$DEBVER" != "oldstable" ]; then
+  #Wdrożenie projektu ytfzf - 12.05.2024;
+  install_packages fzf jq ueberzug;
+  git clone https://github.com/pystardust/ytfzf /tmp/ytfzf;
+  (cd /tmp/ytfzf && make install doc)
+else
+  cp -vv ~/immudex/tools/bin/immudex-ytplay /usr/local/bin;
+fi
+
+
 cp -vv ~/immudex/tools/bin/library.sh /usr/local/bin;
 cp -vv ~/immudex/tools/bin/idle-clic /usr/local/bin;
 cp -vv ~/immudex/tools/bin/sync.sh /usr/local/bin;
@@ -115,7 +123,12 @@ cp -vv ~/immudex/files/redshift.conf /etc/skel/.config;
 cp -vv ~/immudex/files/redshift.desktop /etc/skel/.config/autostart;
 
 cp -rvv ~/immudex/files/sync.sh /usr/share;
-cp -vv ~/immudex/files/gtk-main.css /usr/share/xfce4/notes/gtk-3.0/gtk.css;
+
+#Polityka antyfrankensteinowa - 13.05.2024
+if [ "$DEBVER" = "testing" ]; then 
+  cp -vv ~/immudex/files/gtk-main.css /usr/share/xfce4/notes/gtk-3.0/gtk.css;
+fi
+
 if [ -f /usr/share/applications/qmmp.desktop ]; then
   ln -s /usr/share/applications/qmmp.desktop /usr/share/applications/qmmp-1.desktop;
 fi

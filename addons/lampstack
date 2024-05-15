@@ -1,23 +1,29 @@
 #!/bin/bash
 
-baseVersion=$(head -1 /etc/apt/sources.list | awk '{print $3}')
+#Polityka antyfrankenstainowa - 13.05.2024
+if [ "$DEBVER" != "testing" ]; then
+  #baseVersion=$(head -1 /etc/apt/sources.list | awk '{print $3}')
 
-apt install lsb-release gnupg -y;
-wget https://dev.mysql.com/get/mysql-apt-config_0.8.29-1_all.deb
-dpkg -i mysql-apt-config_0.8.29-1_all.deb;
+  apt install lsb-release gnupg -y;
+  wget https://dev.mysql.com/get/mysql-apt-config_0.8.29-1_all.deb
+  dpkg -i mysql-apt-config_0.8.29-1_all.deb;
 
-sed -i "s/$baseVersion/bookworm/g" /etc/apt/sources.list;
+  #sed -i "s/$baseVersion/bookworm/g" /etc/apt/sources.list;
 
-apt update;
-apt install mysql-server -y
-apt-get install --fix-missing
-apt-mark hold libmecab2 libssl1.1 mecab-ipadic mecab-ipadic-utf8 mecab-utils mysql-client mysql-common mysql-community-client mysql-community-client-core mysql-community-client-plugins mysql-community-server mysql-community-server-core
+  apt update;
+  apt install mysql-server -y
+  apt-get install --fix-missing
+  apt-mark hold libmecab2 libssl1.1 mecab-ipadic mecab-ipadic-utf8 mecab-utils mysql-client mysql-common mysql-community-client mysql-community-client-core mysql-community-client-plugins mysql-community-server mysql-community-server-core
 
-sed -i "s/bookworm/$baseVersion/g" /etc/apt/sources.list; 
-apt update
-apt install apache2 libapache2-mod-php php php-mysql -y;
-apt autoremove;
-apt autoclean;
-apt clean;
+  #sed -i "s/bookworm/$baseVersion/g" /etc/apt/sources.list; 
+  apt update
+  apt install apache2 libapache2-mod-php php php-mysql -y;
+  apt autoremove;
+  apt autoclean;
+  apt clean;
 
-rm mysql-apt-config_0.8.29-1_all.deb;
+  rm mysql-apt-config_0.8.29-1_all.deb;
+else
+  echo "Lampstack installation is not supported for Debian testing.";
+  exit 1;
+fi
