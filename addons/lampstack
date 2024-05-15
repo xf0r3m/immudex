@@ -25,5 +25,4 @@ if [ "$DEBVER" != "testing" ]; then
   rm mysql-apt-config_0.8.29-1_all.deb;
 else
   echo "Lampstack installation is not supported for Debian testing.";
-  exit 1;
 fi
