@@ -1,68 +1,26 @@
 #!/bin/bash
 
 set -e 
+#Polityka antyfrankenstainowa - 13.05.2024
+if [ "$DEBVER" != "testing" ]; then
 
-if [ "$(uname -m)" != "x86_64" ]; then
-  echo "64-bit OS is required for sucessfull LibreWolf build. You can use";
-  echo "immudex-sdk for build librewolf for 32-bit system. For 32-bit (--i386)";
-  echo "result of this script, you get binary archive with LibreWolf and"
-  echo "the .desktop file, for browser appearance in menu.";
-  exit 1;
-fi 
+  if [ "$(uname -m)" != "x86_64" ]; then
+    echo "Other architectures than x86_64 (amd64) is not supported by this script";
+  fi
 
-wget https://codeberg.org/librewolf/source/tags.rss
-ver=$(grep 'title' tags.rss | sed -n '2p' | sed -e 's,<title>,,g' -e 's,</title>,,g' -e 's,^[[:space:]]*,,g')
-sourceURL="https://gitlab.com/api/v4/projects/32320088/packages/generic/librewolf-source/${ver}/librewolf-${ver}.source.tar.gz";
-wget $sourceURL
-tar -xf $(basename $sourceURL)
-cd librewolf-${ver} 
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-sudo apt install pkg-config build-essential python3-pip python3-distutils -y
-export PATH=${PATH}:${HOME}/.cargo/bin;
-if [ "$1" ] && [ "$1" = "--i386" ]; then
-	rustup target add i686-unknown-linux-gnu
-	sed -i '22s/.*/ac_add_options --target=i686-linux-gnu/' mozconfig
-fi
-./mach --no-interactive bootstrap --application-choice=browser
-./lw/setup-wasi-linux.sh
-./mach build
-./mach package
-if [ "$1" ] && [ "$1" = "--i386" ]; then
-	cp obj-i686-pc-linux-gnu/dist/librewolf-${ver}.en-US.linux-i686.tar.bz2 $HOME;
+  if [ "$DEBVER" = "stable" ]; then
+    LibreWolfRepo="https://deb.librewolf.net/pool/bookworm/";
+  else
+    LibreWolfRepo="https://deb.librewolf.net/pool/bullseye/";
+  fi
+
+  wget $LibreWolfRepo -O /tmp/index.html;
+  latestLink=$(grep -o '<a href=".*">' /tmp/index.html | sed 's/>/ /g' | cut -d " " -f 2 | sed -n '2,$p' | sed 's/"/ /g' | cut -d " " -f 2 | tail -1);
+  filename=$(basename $latestLink);
+
+  wget https://deb.librewolf.net${latestLink} -O /tmp/${filename};
+  apt install -y lsb-release libgdk-pixbuf2.0-0;
+  dpkg -i /tmp/${filename};
 else
-	tar -xf obj-x86_64-pc-linux-gnu/dist/librewolf-${ver}.en-US.linux-$(uname -m).tar.bz2 -C /usr/lib
-fi
-
-if [ $? -eq 0 ]; then
-        cd ..;
-        rm -rf librewolf-${ver};
-        rm $(basename $sourceURL);
-        rm tags.rss;
-	if [ "$1" ] && [ "$1" = "--i386" ]; then
-		desktopFileTarget="${HOME}/librewolf.desktop";
-    echo;
-    echo "You need to copy ${HOME}/librewolf.desktop file to the";
-    echo " /usr/share/applications.";
-	else
-		desktopFileTarget='/usr/share/applications/librewolf.desktop';
-	fi
-	cat >> $desktopFileTarget << EOF
-[Desktop Entry]
-Name=LibreWolf
-Name[pl]=LibreWolf
-Comment=Secure the World Wide Web Browsing
-Comment[pl]=Bezpieczene przeglądanie stron WWW
-GenericName=Secure Web Browser
-X-GNOME-FullName=LibreWolf Web Browser
-X-GNOME-FullName[pl]=Przeglądarka WWW LibreWolf
-Exec=/usr/lib/librewolf/librewolf %u
-Terminal=false
-X-MultipleArgs=false
-Type=Application
-Icon=/usr/lib/librewolf/browser/chrome/icons/default/default128.png
-Categories=Network;WebBrowser;
-MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/vnd.mozilla.xul+xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;
-StartupWMClass=Firefox-esr
-StartupNotify=true
-EOF
+  echo "LibreWolf installation is not supported for Debian testing.";
 fi
