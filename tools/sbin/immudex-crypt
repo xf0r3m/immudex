@@ -48,11 +48,12 @@ function list() {
   echo "==============================================================";
   echo -e "crypt_LUKS devices:";
   echo "==============================================================";
-  echo -e "Device:\t\tMapper name:\t\tMount point:";
+  echo -e "Device:\t\t\tSize:";
 
   if [ "$luksDevicesList" ]; then
     for lDevice in $luksDevicesList; do
-      echo -e "$lDevice";
+      lDeviceSize=$(lsblk | grep "$(basename $lDevice)" | awk '{printf $4}');
+      echo -e "$lDevice\t\t$lDeviceSize";
     done
   else
     echo "No crypt device was found";
