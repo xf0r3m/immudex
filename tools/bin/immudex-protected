@@ -1,0 +1,12 @@
+#!/bin/bash
+
+mapperDevice=$(ls /dev/mapper --hide=control | head -1 | awk '{printf $1" "}')
+
+if [ "$mapperDevice" ]; then
+  if mount | grep -q "$mapperDevice"; then
+    notify-send "Protected" "The $(basename $1) cannot be run, because your LUKS partitions are open" --icon=dialog-error
+    exit 1;
+  fi
+else
+  $1;
+fi

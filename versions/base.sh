@@ -84,6 +84,8 @@ cp -vv ~/immudex/tools/bin/immudex-motd2 /usr/local/bin;
 cp -vv ~/immudex/tools/bin/immudex-padlock /usr/local/bin;
 cp -vv ~/immudex/tools/bin/immudex-pl /usr/local/bin;
 cp -vv ~/immudex/tools/bin/immudex-secured-firefox /usr/local/bin;
+cp -vv ~/immudex/tools/bin/immudex-protected /usr/local/bin;
+cp -vv ~/immudex/tools/bin/immudex-protected-firefox /usr/local/bin;
 cp -vv ~/immudex/tools/bin/immudex-shoutcasts /usr/local/bin;
 cp -vv ~/immudex/tools/bin/immudex-version /usr/local/bin;
 
@@ -137,6 +139,15 @@ cp -vv ~/immudex/files/immudex_hostname.service /etc/systemd/system;
 tar -xf ~/immudex/files/mozilla.tgz -C /etc/skel;
 
 cp -vv ~/immudex/launchers/16844254192.desktop /etc/skel/.config/xfce4/panel/launcher-5;
+
+update-alternatives --remove x-www-browser /usr/bin/firefox-esr;
+mv /usr/bin/firefox /usr/bin/firefox.old;
+chmod -x /usr/bin/firefox.old;
+rm /usr/bin/firefox-esr;
+ln -s /usr/local/bin/immudex-protected-firefox /usr/bin/firefox-esr;
+sed -i "s,Exec=/usr/lib/firefox-esr/firefox-esr %u,Exec=/usr/local/bin/immudex-protected /usr/lib/firefox-esr/firefox-esr," /usr/share/applications/firefox-esr.desktop;
+sed -i "s,Exec=exo-open --launch WebBrowser %u,Exec=/usr/local/bin/immudex-protected /usr/lib/firefox-esr/firefox-esr,g" /usr/share/applications/xfce4-web-browser.desktop;
+update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/local/bin/immudex-protected-firefox 70;
 
 systemctl enable immudex_hostname.service;
 
