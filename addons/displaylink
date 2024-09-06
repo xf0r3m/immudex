@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ $(uname -m) = "x86_64" ]; then
+  INSTALLED_KERNEL_VERSION="$(apt-cache policy linux-image-amd64 | sed -n '2p' | awk '{printf $2}')";
+  RUNNING_KERNEL_VERSION="$(uname -v | awk '{printf $5}')";
+
+  if [ ! "$INSTALLED_KERNEL_VERSION" = "$RUNNING_KERNEL_VERSION" ]; then
+    echo "You need up to date your kernel first.";
+    exit 1;
+  else
+    if $(mount > /dev/null 2>&1); then 
+      mkdir /tmp/displaylink;
+      cd /tmp/displaylink;
+      wget "https://ftp.morketsmerke.org/displaylink/DisplayLink%20USB%20Graphics%20Software%20for%20Ubuntu6.0-EXE.zip";
+      unzip "DisplayLink USB Graphics Software for Ubuntu6.0-EXE.zip"
+      chmod 775 displaylink-driver-6.0.0-24.run;
+      ./displaylink-driver-6.0.0-24.run;
+    else
+      echo "Compilation requires primary system interfaces as /dev /dev/pts /proc /run and /sys";
+      exit 1;
+  fi
+fi
