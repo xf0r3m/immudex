@@ -18,5 +18,6 @@ if [ $(uname -m) = "x86_64" ]; then
     else
       echo "Compilation requires primary system interfaces as /dev /dev/pts /proc /run and /sys";
       exit 1;
+    fi
   fi
 fi
