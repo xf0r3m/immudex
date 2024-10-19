@@ -12,7 +12,7 @@ cp -vv /etc/apt/sources.list /etc/apt/sources.list.d/iwlwifi.list;
 sed -e 's/main/contrib non-free non-free-firmware/g' -i /etc/apt/sources.list.d/iwlwifi.list;
 
 apt update;
-apt install firmware-iwlwifi;
+apt install firmware-iwlwifi -y;
 rm /etc/apt/sources.list.d/iwlwifi.list;
 apt update;
 
