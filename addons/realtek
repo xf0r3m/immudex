@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -e
+
+if [ ! -d /boot ]; then
+  mkdir /boot;
+	apt purge linux-image* --purge -y;
+	apt install linux-image-amd64;
+fi
+
+cp -vv /etc/apt/sources.list /etc/apt/sources.list.d/realtek.list;
+sed -e 's/main/contrib non-free non-free-firmware/g' -i /etc/apt/sources.list.d/realtek.list;
+
+apt update;
+apt install firmware-realtek -y;
+rm /etc/apt/sources.list.d/realtek.list;
+apt update;
+
+apt-get autoclean;
+apt-get autoremove;
+apt-get clean;
