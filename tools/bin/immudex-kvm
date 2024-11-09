@@ -1,0 +1,147 @@
+#!/bin/bash
+
+#immudex-kvm -L|[-R URI] help|[command] [arg1]..[argX]
+
+if [ "$1" ] && [ "$1" = "-L" ] || [ "$1" = "-R" ]; then
+  if [ "$1" = "-R" ]; then 
+    export CONNECT="$2";
+    shift 2;
+  else
+    if $(sudo virsh net-list --all | grep -q '\ nieaktywne\ '); then
+      sudo virsh net-start default;
+    fi
+    export CONNECT="qemu:///system";
+    shift;
+  fi
+else
+  if $(sudo virsh net-list --all | grep -q '\ nieaktywne\ '); then
+      sudo virsh net-start default;
+  fi
+  export CONNECT="qemu:///system";
+fi
+
+function immudex-kvm-help() {
+  echo "immudex-kvm - script for KVM management.";
+  echo "morketsmerke.org @ 2024";
+  echo;
+  echo "SYNTAX:";
+  echo "$ immudex-kvm -L|[-R URI] help|[command] [arg1]..[argX]";
+  echo;
+  echo "CONNECT:";
+  echo "  -L - connect with local KVM instance (qemu:///system)";
+  echo "  -R <URI> - connect with remote KVM instance (requires URI)";
+  echo;
+  echo "COMMANDS:";
+  echo "  list - list of KVM virtual machines on this instance";
+  echo "    List args: <vms/os-types/networks>";
+  echo "  create - create VM, with defaults settings.";
+  echo "    Create args: <name> <os-type> <vcpus> <memory in MB> <iso/installer path> <disk path> <disk size in GB>";
+  echo "  import - create VM, with default settings, but use already existing disk.";
+  echo "    Import args: <name> <os-type> <vcpus> <memory in MB> <disk path>";
+  echo "  start - run KVM objects.";
+  echo "    Start args: vm <name>/network <network name>";
+  echo "  connect - connect with VM console.";
+  echo "    Connect args: <name>";
+  echo "  restart - force reboot for VM.";
+  echo "    Restart args: <name>";
+  echo "  shutdown - shutting down the VM.";
+  echo "    Shutdown args: <name>";
+  echo "  poweroff - power off the VM.";
+  echo "    Power off args: <name>";
+  echo "  delete - deletes VM.";
+  echo "    Delete args: <name> [delete-disk]";
+}
+
+function immudex-kvm-list() {
+  if [ "$1" ]; then
+    case $1 in
+      'vms') virsh -c $CONNECT list --all;;
+      'os-types') if ! $(echo $CONNECT | grep -q 'ssh'); then 
+          osinfo-query -f short-id,name os | grep "$2";
+        else
+          KEYFILE=$(echo $CONNECT | cut -d "=" -f 2);
+          USER_HOSTNAME=$(echo $CONNECT | cut -d "/" -f 3 | cut -d ":" -f 1);
+          PORT=$(echo $CONNECT | egrep -o ":[0-9]+");
+          if [ "$KEYFILE" ]; then
+            ssh -p ${PORT:=22} -i $KEYFILE $USER_HOSTNAME "osinfo-query -f short-id,name os | grep \"$2\"";
+          else
+            ssh -p ${PORT:=22} $USER_HOSTNAME "osinfo-query -f short-id,name os | grep \"$2\"";
+          fi
+        fi;;
+      'networks') sudo virsh -c $CONNECT net-list --all;;   
+      *) immudex-kvm-help;;
+    esac
+  fi
+}
+
+function immudex-kvm-create() {
+  virt-install --connect $CONNECT --name=$1 --vcpus=$3 --memory=$4 --cdrom=$5 --disk=${6},bus=sata,size=${7} --graphics vnc --os-variant=$2
+}
+
+function immudex-kvm-import() {
+  virt-install --connect $CONNECT --name=$1 --vcpus=$3 --memory=$4 --disk=${5},bus=sata --os-variant=$2 --import --boot hd
+}
+
+function immudex-kvm-connect() {
+  virt-viewer -c $CONNECT $1;
+}
+
+function immudex-kvm-start() {
+  if [ "$1" ]; then
+    case $1 in
+      'vm') shift;
+        virsh -c $CONNECT start $1;;
+      'network') shift;
+        sudo virsh -c $CONNECT net-start $1;;  
+      *) immudex-kvm-help;;
+    esac
+  fi
+  }
+
+function immudex-kvm-restart() {
+  virsh -c $CONNECT reset $1;
+  #polite: virsh -c $CONNECT reboot $1
+}
+
+function immudex-kvm-shutdown() {
+  virsh -c $CONNECT shutdown $1;
+}
+
+function immudex-kvm-poweroff() {
+  virsh -c $CONNECT destroy $1;
+}
+
+function immudex-kvm-delete() {
+  if [ "$2" ] && [ "$2" = "delete-disk" ]; then
+    virsh -c $CONNECT undefine $1 --storage sda;
+  else
+    virsh -c $CONNECT undefine $1;
+  fi
+}
+
+if [ "$1" ] && [ "$1" = "--debug" ]; then
+  shift;
+  echo "Connect: $CONNECT";
+fi
+
+case "$1" in
+  'list') shift;
+    immudex-kvm-list $@;;
+  'create') shift;
+    immudex-kvm-create $@;;
+  'import') shift;
+    immudex-kvm-import $@;;
+  'connect') shift;
+    immudex-kvm-connect $1;;
+  'start') shift;
+    immudex-kvm-start $@;;
+  'restart') shift;
+    immudex-kvm-restart $1;;
+  'shutdown') shift;
+    immudex-kvm-shutdown $1;;
+  'poweroff') shift;
+    immudex-kvm-poweroff $1;;
+  'delete') shift;
+    immudex-kvm-delete $@;;
+  *) immudex-kvm-help;;
+esac 

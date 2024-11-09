@@ -2,3 +2,5 @@
 
 apt install -y --no-install-recommends virt-manager;
 apt install -y libosinfo-bin
+
+cp -vv ~/immudex/tools/bin/immudex-kvm /usr/local/bin;
