@@ -59,6 +59,12 @@ function make_changelog_file() {
 
   echo "ARCH=\"${ARCH}\"" > $FILE;
   echo "DEBVER=\"${DEBVER}\"" >> $FILE;
+  if [ "$cname" ]; then
+    echo "CANONICAL_NAME=\"${cname}\"";
+  fi
+  if [ "$version" ]; then
+    echo "VERSION=\"${version}\"";
+  fi
   echo "COMPILATION_DATE=\"${COMPILATION_DATE}\"" >> $FILE;
   echo "COMMIT=\"${COMMIT}\"" >> $FILE;
   echo "ADDONS=\"${ADDONS}\"" >> $FILE;

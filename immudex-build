@@ -41,8 +41,8 @@ case $2 in
   *) help; exit 1;;
 esac
 
-if [ "$3" ]; then cname=$3; fi
-if [ "$4" ]; then version=$4; fi
+if [ "$3" ]; then export cname=$3; fi
+if [ "$4" ]; then export version=$4; fi
 
 if [ ! -f /sbin/debootstrap ]; then
   create_enviroment 
