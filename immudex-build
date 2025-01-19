@@ -41,6 +41,9 @@ case $2 in
   *) help; exit 1;;
 esac
 
+if [ "$3" ]; then cname=$3; fi
+if [ "$4" ]; then version=$4; fi
+
 if [ ! -f /sbin/debootstrap ]; then
   create_enviroment 
 fi
@@ -163,8 +166,16 @@ sudo mmd -i efiboot.img efi efi/boot >> ${oldcwd}/immudex_build.log 2>&1;
 sudo mcopy -vi efiboot.img ${HOME}/build/immudex-${debver}/${arch}/staging/EFI/boot/bootx64.efi ::efi/boot >> ${oldcwd}/immudex_build.log 2>&1;
 if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
+if [ "$cname" ] && [ "$version" ]; then
+ isofilename="immudex-${debver}${arch}_${cname}_${version}.iso";
+elif [ "$cname" ]; then
+  isofilename="immudex-${debver}${arch}_${cname}.iso";
+else
+  isofilename="immudex-${debver}${arch}_${versionShort}.iso";
+fi 
+volid="$(basename $isofilename .iso)";
 #Create iso image:
 cd $oldcwd;
 echo -n "Creating iso image...";
-xorriso as mkisofs -iso-level 3 -o "immudex-${debver}${arch}_${versionShort}.iso" -full-iso9660-filenames -volid "immudex-${debver}${arch}_${versionShort}" -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin -eltorito-boot isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table --eltorito-catalog isolinux/isolinux.cat -eltorito-alt-boot -e /boot/grub/efiboot.img -no-emul-boot -isohybrid-gpt-basdat -append_partition 2 0xef ${HOME}/build/immudex-${debver}/${arch}/staging/boot/grub/efiboot.img ${HOME}/build/immudex-${debver}/${arch}/staging >> immudex_build.log 2>&1;
+xorriso as mkisofs -iso-level 3 -o "${isofilename}" -full-iso9660-filenames -volid "${volid}" -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin -eltorito-boot isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table --eltorito-catalog isolinux/isolinux.cat -eltorito-alt-boot -e /boot/grub/efiboot.img -no-emul-boot -isohybrid-gpt-basdat -append_partition 2 0xef ${HOME}/build/immudex-${debver}/${arch}/staging/boot/grub/efiboot.img ${HOME}/build/immudex-${debver}/${arch}/staging >> immudex_build.log 2>&1;
 if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
