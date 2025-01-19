@@ -50,3 +50,18 @@ function set_default_wallpaper() {
   ln -s /usr/share/images/desktop-base/$1 /usr/share/images/desktop-base/default;
 }
 
+function make_changelog_file() {
+  ARCH=$1;
+  DEBVER=$debver;
+  COMPILATION_DATE=$(date);
+  COMMIT=$(cd ${HOME}/immudex && git log --pretty=oneline | head -1);
+  ADDONS=$(grep 'bash ~/immudex/addons' versions/base.sh | grep -v '^#' | cut -d "/" -f4 | sed 's/;//g' | awk '{printf $1" "}');
+
+  echo "ARCH=\"${ARCH}\"" > $FILE;
+  echo "DEBVER=\"${DEBVER}\"" >> $FILE;
+  echo "COMPILATION_DATE=\"${COMPILATION_DATE}\"" >> $FILE;
+  echo "COMMIT=\"${COMMIT}\"" >> $FILE;
+  echo "ADDONS=\"${ADDONS}\"" >> $FILE;
+  echo "-== Diffrences in version file ==-" >> $FILE;
+  git diff versions/base.sh >> $FILE;
+}

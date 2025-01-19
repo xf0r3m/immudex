@@ -1,3 +1,4 @@
 #!/bin/bash
 
-cat /run/live/medium/live/version | cut -c 1-7
+eval $(grep '^COMMIT' /run/live/medium/live/chaneglog)
+echo $COMMIT | awk '{printf $1}' | cut -c 1-7

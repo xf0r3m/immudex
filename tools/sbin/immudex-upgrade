@@ -17,7 +17,8 @@ function help() {
   echo "Options:";
   echo " --check - check there are upgrades for immudex";
   echo " --upgrade - upgrade immudex from given source";
-  echo " --myversion - prints images current commit message";
+  #echo " --myversion - prints images current commit message";
+  echo " --myversion - prints image details";
   echo " --compilation-date - prints date of image creation";
   echo " --packages-upgradable [--security] - updates apt (packages) list and";
   echo "   prints available to upgrade packages, with --security modificator";
@@ -97,12 +98,13 @@ if [ "$1" ]; then
       fi
     fi
   elif [ "$1" ] && [ "$1" = "--myversion" ]; then
-    if [ -d /tmp/immudex ]; then 
-      (cd /tmp/immudex && git pull > /dev/null 2>&1)
-    else
-      git clone https://github.com/xf0r3m/immudex /tmp/immudex;
-    fi
-    (cd /tmp/immudex && git show $(cat /run/live/medium/live/version))
+    #if [ -d /tmp/immudex ]; then 
+    #  (cd /tmp/immudex && git pull > /dev/null 2>&1)
+    #else
+    #  git clone https://github.com/xf0r3m/immudex /tmp/immudex;
+    #fi
+    #(cd /tmp/immudex && git show $(cat /run/live/medium/live/version))
+    cat /run/live/medium/live/changelog;
   elif [ "$1" ] && [ "$1" = "--packages-upgradable" ]; then
     apt update;
     if [ "$2" ] && [ "$2" = "--security" ]; then
@@ -111,7 +113,8 @@ if [ "$1" ]; then
       apt list --upgradable;
     fi
   elif [ "$1" ] && [ "$1" = "--compilation-date" ]; then
-    echo "Image was created: $(cat /run/live/medium/live/compilation_date)";
+    eval $(grep '^COMPILATION_DATE' /run/live/medium/live/changelog);    
+    echo "Image was created: $COMPILATION_DATE";
   else
     help;
     exit 1;
