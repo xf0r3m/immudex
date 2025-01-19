@@ -1,4 +1,4 @@
 #!/bin/bash
 
-eval $(grep '^COMMIT' /run/live/medium/live/chaneglog)
+eval $(grep '^COMMIT' /run/live/medium/live/changelog)
 echo $COMMIT | awk '{printf $1}' | cut -c 1-7
