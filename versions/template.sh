@@ -55,7 +55,7 @@ function make_changelog_file() {
   DEBVER=$debver;
   COMPILATION_DATE=$(date);
   COMMIT=$(cd ${HOME}/immudex && git log --pretty=oneline | head -1);
-  ADDONS=$(grep 'bash ~/immudex/addons' versions/base.sh | grep -v '^#' | cut -d "/" -f4 | sed 's/;//g' | awk '{printf $1" "}');
+  ADDONS=$(grep 'bash ~/immudex/addons' ${HOME}/immudex/versions/base.sh | grep -v '^#' | cut -d "/" -f4 | sed 's/;//g' | awk '{printf $1" "}');
 
   echo "ARCH=\"${ARCH}\"" > $FILE;
   echo "DEBVER=\"${DEBVER}\"" >> $FILE;
@@ -69,5 +69,5 @@ function make_changelog_file() {
   echo "COMMIT=\"${COMMIT}\"" >> $FILE;
   echo "ADDONS=\"${ADDONS}\"" >> $FILE;
   echo "-== Diffrences in version file ==-" >> $FILE;
-  git diff versions/base.sh >> $FILE;
+  (cd ${HOME}/immudex; git diff versions/base.sh) >> $FILE;
 }

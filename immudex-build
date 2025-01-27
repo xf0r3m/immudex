@@ -102,7 +102,7 @@ export arch2=$(echo $1 | sed 's/-//g');
 #Setting changelog file for this image:
 echo "-==Setting changelog file for this image: $(date)==-" >> immudex_build.log;
 echo -n "Setting changelog file for this image...";
-(source versions/template.sh; make_changelog_file $arch2;)
+(source ${HOME}/immudex/versions/template.sh; make_changelog_file $arch2;)
 if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
 eval $(grep '^COMMIT' $FILE);
