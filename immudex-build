@@ -1,6 +1,8 @@
 #!/bin/bash
 
+RED="\e[31m";
 GREEN="\e[32m";
+YELLOW="\e[33m";
 ENDCOLOR="\e[0m";
 
 set -e
@@ -50,6 +52,25 @@ fi
 
 #Removing old immudex build directory structure:
 if [ -d ${HOME}/build/immudex-${debver}/${arch} ]; then
+  #Unmounting potentialy mounted system interfaces:
+  echo "Unmount system interfaces...";
+  for i in /dev/pts /proc /run /sys /dev; do
+    if [ "$i" = "/run" ]; then
+      #number of Elements
+      noE=8;
+    elif [ "$i" = "/dev" ]; then
+      noE=14;
+    else
+      noE=0;
+    fi
+    if [ $(ls ${HOME}/build/immudex-${debver}/${arch}/chroot$i | wc -w ) -gt $noE ]; then 
+      sudo umount ${HOME}/build/immudex-${debver}/${arch}/chroot$i >> /dev/null 2>&1;
+      echo -e "Umount system interface: ${i} [ ${YELLOW}Unmounted${ENDCOLOR} ]";
+    else
+      echo -e "System interface: ${i} [ ${GREEN}Not mounted${ENDCOLOR} ]";
+    fi
+  done
+  echo -e "Unmount system interfaces...[ ${GREEN}OK${ENDCOLOR} ]";
   echo -n "Removing old immudex build directory structure...";
   sudo rm -rvf ${HOME}/build/immudex-${debver}/${arch} >> immudex_build.log 2>&1;
   if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
@@ -72,8 +93,18 @@ echo -n "Copying chroot script to chroot directory...";
 sudo cp -vv ${HOME}/immudex/versions/base.sh ${HOME}/build/immudex-${debver}/${arch}/chroot >> immudex_build.log 2>&1;
 if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
+#Mount system interfaces - required for build some addons.
+for i in /dev /dev/pts /proc /run /sys; do
+  sudo mount -B $i ${HOME}/build/immudex-${debver}/${arch}/chroot$i;
+done
+
 #Executing chroot script, at least i trying:
 sudo chroot ${HOME}/build/immudex-${debver}/${arch}/chroot /bin/bash /base.sh $debver;
+
+#Try to umount system interfaces it may fail.
+for i in /dev/pts /proc /run /sys /dev; do
+  sudo umount ${HOME}/build/immudex-${debver}/${arch}/chroot$i;
+done
 
 #Removing chroot script.
 echo -n "Remove chroot script...";
