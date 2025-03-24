@@ -1,0 +1,96 @@
+#!/bin/bash
+
+RED="\e[31m";
+GREEN="\e[32m";
+YELLOW="\e[33m";
+ENDCOLOR="\e[0m";
+
+function fillTo8bits() {
+  OCT_BITS=$2;
+  FLAG=0;
+  if [ $OCT_BITS -lt 8 ]; then
+    while [ $OCT_BITS -lt 8 ]; do
+      if [ $FLAG -eq 1 ]; then 
+        OCT="0${OCT}";
+      else
+        OCT="0${1}";
+      fi
+      OCT_BITS=$(echo -n $OCT | wc -c | awk '{printf $1}');
+      FLAG=1;
+    done
+    echo "$OCT";
+  else
+    echo "$OCT";
+  fi
+}
+
+function getBinaryOCT() {
+  OCT=$(echo "obase=2;${1}" | bc);
+  OCT_BITS=$(echo -n $OCT | wc -c | awk '{printf $1}');
+  echo "$(fillTo8bits $OCT $OCT_BITS)";
+}
+
+function printHelp() {
+  echo "immudex-nf - script to search host in network by IP or MAC address";
+  echo "morketsmerke.org @ 2025";
+  echo;
+  echo "Usage: ";
+  echo "# immudex-nf <IP or MAC address>";
+}
+
+if [ "$1" ]; then
+
+  IFACE=$(cat /proc/net/route | sed -n '2p' | awk '{printf $1}');
+  IP=$(ip addr show dev ${IFACE} | grep 'inet\ ' | awk '{printf $2}' | cut -d "/" -f 1);
+  CIDR=$(ip addr show dev ${IFACE} | grep 'inet\ ' | awk '{printf $2}' | cut -d "/" -f 2);
+
+  OCT1=$(getBinaryOCT $(echo $IP | grep -o '[0-9]*' | sed -n '1p'));
+  OCT2=$(getBinaryOCT $(echo $IP | grep -o '[0-9]*' | sed -n '2p'));
+  OCT3=$(getBinaryOCT $(echo $IP | grep -o '[0-9]*' | sed -n '3p'));
+  OCT4=$(getBinaryOCT $(echo $IP | grep -o '[0-9]*' | sed -n '4p'));
+
+  binIP="${OCT1}${OCT2}${OCT3}${OCT4}";
+  ipAfterCut=$(echo -n $binIP | cut -c 1-$CIDR);
+  netBinIPBits=$CIDR;
+
+  netBinIP=$ipAfterCut;
+  while [ $netBinIPBits -lt 32 ]; do
+    netBinIP="${netBinIP}0";
+    netBinIPBits=$(echo -n $netBinIP | wc -c | awk '{printf $1}');
+  done
+
+  netOCT1=$(echo -n $netBinIP | cut -c 1-8);
+  netOCT2=$(echo -n $netBinIP | cut -c 9-16);
+  netOCT3=$(echo -n $netBinIP | cut -c 17-24);
+  netOCT4=$(echo -n $netBinIP | cut -c 25-32);
+
+  networkBinIP="${netOCT1}.${netOCT2}.${netOCT3}.${netOCT4}";
+  #echo $networkBinIP;
+
+  netDecOCT1=$(echo "ibase=2;${netOCT1}" | bc);
+  netDecOCT2=$(echo "ibase=2;${netOCT2}" | bc);
+  netDecOCT3=$(echo "ibase=2;${netOCT3}" | bc);
+  netDecOCT4=$(echo "ibase=2;${netOCT4}" | bc);
+
+  networkIP="${netDecOCT1}.${netDecOCT2}.${netDecOCT3}.${netDecOCT4}";
+  echo "Network IP: $networkIP";
+  echo "Scanning...";
+  file="/tmp/immudex-nf_result.txt";
+  sudo nmap -sP "${networkIP}/${CIDR}" | sudo tee ${file} >> /dev/null;
+  if [ $? -eq 0 ]; then echo -e "Scanning...[ ${GREEN}OK${ENDCOLOR} ]"; fi
+  query=$1;
+  if $(echo $query | grep -q '\:'); then
+    offset="- 2";
+    field=5;
+  else
+    offset="+ 2";
+    field="3-";
+  fi
+
+  foundLine=$(grep -n $query $file | cut -d ":" -f 1);
+  lineNumber=$(expr $foundLine $offset);
+  result=$(sed -n "${lineNumber}p" $file | cut -d " " -f ${field});
+  echo "Result: $result";
+else
+  printHelp;
+fi

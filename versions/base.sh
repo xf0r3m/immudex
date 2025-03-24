@@ -112,6 +112,7 @@ cp -vv ~/immudex/tools/sbin/immudex-crypt /usr/local/sbin;
 cp -vv ~/immudex/tools/sbin/immudex-hostname /usr/local/sbin;
 cp -vv ~/immudex/tools/sbin/immudex-install /usr/local/sbin;
 cp -vv ~/immudex/tools/sbin/immudex-upgrade /usr/local/sbin;
+cp -vv ~/immudex/tools/sbin/immudex-nf /usr/local/sbin;
 chown root:root /usr/local/sbin/*;
 chmod 544 /usr/local/sbin/*;
 
