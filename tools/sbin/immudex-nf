@@ -34,63 +34,75 @@ function printHelp() {
   echo "immudex-nf - script to search host in network by IP or MAC address";
   echo "morketsmerke.org @ 2025";
   echo;
+  echo "Options: ";
+  echo "  --is-free <host_ip_address> - SYN and UDP scan for check is given IP address is free and useable";
+  echo;
   echo "Usage: ";
   echo "# immudex-nf <IP or MAC address>";
 }
 
 if [ "$1" ]; then
 
-  IFACE=$(cat /proc/net/route | sed -n '2p' | awk '{printf $1}');
-  IP=$(ip addr show dev ${IFACE} | grep 'inet\ ' | awk '{printf $2}' | cut -d "/" -f 1);
-  CIDR=$(ip addr show dev ${IFACE} | grep 'inet\ ' | awk '{printf $2}' | cut -d "/" -f 2);
+  if [ "$1" = "--is-free" ]; then
+    echo "Scanning...";
+    sudo nmap -sS $2 | sudo tee /tmp/immudex-nf_syn.txt > /dev/null 2>&1;
+    if [ $? -eq 0 ]; then echo -e "SYN Scanning...[ ${GREEN}OK${ENDCOLOR} ]"; fi
+    sudo nmap -sU $2 | sudo tee /tmp/immudex-nf-udp.txt > /dev/null 2>&1;
+    if [ $? -eq 0 ]; then echo -e "UDP Scanning...[ ${GREEN}OK${ENDCOLOR} ]"; fi
+    cat /tmp/immudex-nf_syn.txt /tmp/immudex-nf-udp.txt;
+  else 
+    IFACE=$(cat /proc/net/route | sed -n '2p' | awk '{printf $1}');
+    IP=$(ip addr show dev ${IFACE} | grep 'inet\ ' | awk '{printf $2}' | cut -d "/" -f 1);
+    CIDR=$(ip addr show dev ${IFACE} | grep 'inet\ ' | awk '{printf $2}' | cut -d "/" -f 2);
 
-  OCT1=$(getBinaryOCT $(echo $IP | grep -o '[0-9]*' | sed -n '1p'));
-  OCT2=$(getBinaryOCT $(echo $IP | grep -o '[0-9]*' | sed -n '2p'));
-  OCT3=$(getBinaryOCT $(echo $IP | grep -o '[0-9]*' | sed -n '3p'));
-  OCT4=$(getBinaryOCT $(echo $IP | grep -o '[0-9]*' | sed -n '4p'));
+    OCT1=$(getBinaryOCT $(echo $IP | grep -o '[0-9]*' | sed -n '1p'));
+    OCT2=$(getBinaryOCT $(echo $IP | grep -o '[0-9]*' | sed -n '2p'));
+    OCT3=$(getBinaryOCT $(echo $IP | grep -o '[0-9]*' | sed -n '3p'));
+    OCT4=$(getBinaryOCT $(echo $IP | grep -o '[0-9]*' | sed -n '4p'));
 
-  binIP="${OCT1}${OCT2}${OCT3}${OCT4}";
-  ipAfterCut=$(echo -n $binIP | cut -c 1-$CIDR);
-  netBinIPBits=$CIDR;
+    binIP="${OCT1}${OCT2}${OCT3}${OCT4}";
+    ipAfterCut=$(echo -n $binIP | cut -c 1-$CIDR);
+    netBinIPBits=$CIDR;
 
-  netBinIP=$ipAfterCut;
-  while [ $netBinIPBits -lt 32 ]; do
-    netBinIP="${netBinIP}0";
-    netBinIPBits=$(echo -n $netBinIP | wc -c | awk '{printf $1}');
-  done
+    netBinIP=$ipAfterCut;
+    while [ $netBinIPBits -lt 32 ]; do
+      netBinIP="${netBinIP}0";
+      netBinIPBits=$(echo -n $netBinIP | wc -c | awk '{printf $1}');
+    done
 
-  netOCT1=$(echo -n $netBinIP | cut -c 1-8);
-  netOCT2=$(echo -n $netBinIP | cut -c 9-16);
-  netOCT3=$(echo -n $netBinIP | cut -c 17-24);
-  netOCT4=$(echo -n $netBinIP | cut -c 25-32);
+    netOCT1=$(echo -n $netBinIP | cut -c 1-8);
+    netOCT2=$(echo -n $netBinIP | cut -c 9-16);
+    netOCT3=$(echo -n $netBinIP | cut -c 17-24);
+    netOCT4=$(echo -n $netBinIP | cut -c 25-32);
 
-  networkBinIP="${netOCT1}.${netOCT2}.${netOCT3}.${netOCT4}";
-  #echo $networkBinIP;
+    networkBinIP="${netOCT1}.${netOCT2}.${netOCT3}.${netOCT4}";
+    #echo $networkBinIP;
 
-  netDecOCT1=$(echo "ibase=2;${netOCT1}" | bc);
-  netDecOCT2=$(echo "ibase=2;${netOCT2}" | bc);
-  netDecOCT3=$(echo "ibase=2;${netOCT3}" | bc);
-  netDecOCT4=$(echo "ibase=2;${netOCT4}" | bc);
+    netDecOCT1=$(echo "ibase=2;${netOCT1}" | bc);
+    netDecOCT2=$(echo "ibase=2;${netOCT2}" | bc);
+    netDecOCT3=$(echo "ibase=2;${netOCT3}" | bc);
+    netDecOCT4=$(echo "ibase=2;${netOCT4}" | bc);
 
-  networkIP="${netDecOCT1}.${netDecOCT2}.${netDecOCT3}.${netDecOCT4}";
-  echo "Network IP: $networkIP";
-  echo "Scanning...";
-  file="/tmp/immudex-nf_result.txt";
-  sudo nmap -sP "${networkIP}/${CIDR}" | sudo tee ${file} >> /dev/null;
-  if [ $? -eq 0 ]; then echo -e "Scanning...[ ${GREEN}OK${ENDCOLOR} ]"; fi
-  query=$1;
-  if $(echo $query | grep -q '\:'); then
-    offset="- 2";
-    field=5;
-  else
-    offset="+ 2";
-    field="3-";
+    networkIP="${netDecOCT1}.${netDecOCT2}.${netDecOCT3}.${netDecOCT4}";
+    echo "Network IP: $networkIP";
+    echo "Scanning...";
+    file="/tmp/immudex-nf_result.txt";
+    sudo nmap -sP "${networkIP}/${CIDR}" | sudo tee ${file} >> /dev/null;
+    if [ $? -eq 0 ]; then echo -e "Scanning...[ ${GREEN}OK${ENDCOLOR} ]"; fi
+    query=$1;
+    if $(echo $query | grep -q '\:'); then
+      offset="- 2";
+      field=5;
+    else
+      offset="+ 2";
+      field="3-";
+    fi
+
+    foundLine=$(grep -n $query $file | cut -d ":" -f 1);
+    lineNumber=$(expr $foundLine $offset);
+    result=$(sed -n "${lineNumber}p" $file | cut -d " " -f ${field});
+    echo "Result: $result";
   fi
-
-  foundLine=$(grep -n $query $file | cut -d ":" -f 1);
-  lineNumber=$(expr $foundLine $offset);
-  result=$(sed -n "${lineNumber}p" $file | cut -d " " -f ${field});
-  echo "Result: $result";
 else
   printHelp;
 fi
