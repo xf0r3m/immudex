@@ -57,7 +57,11 @@ if [ -d ${HOME}/build/immudex-${debver}/${arch} ]; then
   for i in /dev/pts /proc /run /sys /dev; do
     if [ "$i" = "/run" ]; then
       #number of Elements
-      noE=8;
+      if [ "$debver" = "oldstable" ]; then
+        noE=8;
+      else
+        noE=9;
+      fi
     elif [ "$i" = "/dev" ]; then
       noE=14;
     else
