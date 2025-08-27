@@ -39,7 +39,7 @@ dpkg-reconfigure console-setup;
 install_packages task-desktop task-xfce-desktop;
 
 #Dodanie pakietu 'make' - wdrożenie projektu ytfzf - 12.05.2024;
-install_packages firejail ufw cryptsetup lsof extlinux grub-efi-amd64 efibootmgr bash-completion etherwake wakeonlan cifs-utils wget figlet mpv vim-gtk3 redshift irssi nmap nfs-common remmina python3-pip ffmpeg debootstrap squashfs-tools xorriso syslinux-efi grub-pc-bin grub-efi-amd64-bin mtools dosfstools chrony python3-venv isolinux rsync mutt gimp openvpn netselect-apt gvfs-backends dnsutils lolcat make;
+install_packages firejail ufw cryptsetup lsof extlinux grub-efi-amd64 efibootmgr bash-completion etherwake wakeonlan cifs-utils wget figlet mpv vim-gtk3 redshift irssi nmap nfs-common remmina python3-pip ffmpeg debootstrap squashfs-tools xorriso syslinux-efi grub-pc-bin grub-efi-amd64-bin mtools dosfstools chrony python3-venv isolinux rsync mutt gimp openvpn netselect-apt gvfs-backends dnsutils lolcat make cdparanoia icedax;
 
 #Missing packages
 #Polityka antyfrankensteinowa - 13.05.2024
@@ -88,6 +88,8 @@ cp -vv ~/immudex/tools/bin/immudex-protected /usr/local/bin;
 cp -vv ~/immudex/tools/bin/immudex-protected-firefox /usr/local/bin;
 cp -vv ~/immudex/tools/bin/immudex-shoutcasts /usr/local/bin;
 cp -vv ~/immudex/tools/bin/immudex-version /usr/local/bin;
+#Nowe narzędzie immudex-cdrip - 27.08.2025;
+cp -vv ~/immudex/tools/bin/immudex-cdrip /usr/local/bin;
 
 
 #Wyłącznie narzędzia immudex-ytplay - 12.05.2024;

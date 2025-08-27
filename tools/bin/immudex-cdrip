@@ -1,0 +1,126 @@
+#!/bin/bash
+
+function XMLScrap() {
+  echo -n $(grep -o "<${1}>.*</${1}>" $2 \
+  | sed "s,<${1}>,," \
+  | sed "s,</${1}>,," \
+  | sed 's,&amp;,and,g');
+}
+
+function help() {
+  echo "immudex-cdrip - bash script for collection audio tracks from Audio CD.";
+  echo "morketsmerke.org @ 2025";
+  echo;
+  echo "Usage:";
+  echo "  $ immudex-cdrip --rip-n-rename";
+  echo;
+  echo "Options:";
+  echo "  --rip-only - Rips audio tracks from Audio CD, without quering CDIndex";
+  echo "  (MusicBrainz) database.";
+  echo;
+  echo "  --get-disc-info - Getting info from CDIndex (MusicBrainz) database";
+  echo "  about Audio CD without ripping.";
+  echo;
+  echo "  --rip-n-rename - Rips audio tracks from Audio CD, create Artist/Album folders";
+  echo "  and rename tracks according to data get CDIndex (MusicBrainz)";
+  echo "  database (normal usage).";
+  echo;
+  echo "Script using CDDA2WAV tool from icedax package and libparanoia library (GNU/Linux Debian).";
+}
+
+function multipleArtistDisc() {
+
+  FILE="$1";
+  ARTIST="VA";
+  ALBUM=$(XMLScrap "Title" $FILE);
+  NUMTRACKS=$(XMLScrap "NumTracks" $FILE);
+  TRACKPATH="${ARTIST} - ${ALBUM}";
+
+  mkdir -vp "${TRACKPATH}";
+
+  i=1;
+  while [ $i -le $NUMTRACKS ]; do
+    artist=$(grep -o "<Artist>.*</Artist>" $FILE \
+    | sed -n "${i}p" \
+    | sed 's,<Artist>,,' \
+    | sed 's,</Artist>,,');
+ 
+    trackName=$(grep -o "<Name>.*</Name>" $FILE \
+    | sed -n "${i}p" \
+    | sed 's,<Name>,,' \
+    | sed 's,</Name>,,');
+  
+    if [ $i -lt 10 ]; then
+      trackNumber="0${i}";
+    else
+      trackNumber=${i};
+    fi
+
+    audioFilename="audio_${trackNumber}.wav";
+    infFilename=$(echo $audioFilename | sed 's/wav/inf/');
+     
+    mv -v $audioFilename "${TRACKPATH}/${trackNumber}. ${artist} - ${trackName}.wav";
+    rm -v ${infFilename};
+    i=$(expr $i + 1);
+  done
+
+  rm -v audio.cddb;
+  rm -v ${FILE};  
+}
+
+if [ ! -x /usr/bin/cdda2wav ]; then
+  sudo apt-get install icedax cdparanoia -y;
+fi
+
+if [ "$1" ] && [ "$1" = "--rip-only" ]; then
+  cdda2wav -vall cddb=-1 speed=4 -paranoia paraopts=no-verify -B -D /dev/sr0;
+  exit 0;
+fi
+
+if [ "$1" ] && [ "$1" = "--get-disc-info" ]; then
+  cdda2wav -J -D /dev/sr0;
+  exit 0;
+fi
+
+if [ "$1" ] && [ "$1" = "--rip-n-rename" ]; then
+  cdda2wav -vall cddb=1 speed=4 -paranoia paraopts=no-verify -B -D /dev/sr0;
+
+  FILE="audio.cdindex";
+
+  if $(grep -q '<MultipleArtistCD>' $FILE); then
+    multipleArtistDisc $FILE;
+  else  
+    ARTIST=$(XMLScrap "Artist" $FILE);
+    ALBUM=$(XMLScrap "Title" $FILE);
+    NUMTRACKS=$(XMLScrap "NumTracks" $FILE);
+    TRACKPATH="${ARTIST}/${ALBUM}";
+
+    mkdir -vp "${TRACKPATH}";
+
+    i=1;
+    while [ $i -le $NUMTRACKS ]; do
+      trackName=$(grep -o "<Name>.*</Name>" $FILE \
+      | sed -n "${i}p" \
+      | sed 's,<Name>,,' \
+      | sed 's,</Name>,,');
+
+      if [ $i -lt 10 ]; then
+        audioFilename="audio_0${i}.wav";
+        trackNumber="0${i}";
+      else
+        audioFilename="audio_${i}.wav";
+        trackNumber="${i}";
+      fi
+      infFilename=$(echo "$audioFilename" | sed 's/wav/inf/');
+      mv -v $audioFilename "${TRACKPATH}/${trackNumber}. ${ARTIST} - ${trackName}.wav";
+      rm -v $infFilename;
+      i=$(expr $i + 1);
+    done
+ 
+    rm -v audio.cddb;
+    rm -v audio.cdindex;
+  fi
+  exit 0;
+fi
+
+help;
