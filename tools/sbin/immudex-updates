@@ -1,0 +1,75 @@
+#!/bin/bash
+
+RED="\e[31m";
+GREEN="\e[32m";
+YELLOW="\e[33m";
+ENDCOLOR="\e[0m";
+
+#FILE="/tmp/immudex-updates.txt";
+
+function getVerFromRSSFeed() {
+  URL=$1;
+  echo $(curl $URL 2> /dev/null | grep '<title>' | sed -n '2p' | sed -e 's/<title>//g' -e 's,</title>,,g' | awk '{printf $1}')
+}
+echo "Obtaining updates information:";
+echo "  |";
+if [ -x /usr/bin/librewolf ]; then
+  URL="https://codeberg.org/librewolf/source/releases.rss";
+  newLibrewolfVer=$(getVerFromRSSFeed $URL);
+  currentLibrewolfVer=$(apt list --installed 2>/dev/null | grep 'librewolf' | awk '{printf $2}');
+  if ! [ "$currentLibrewolfVer" = "$newLibrewolfVer" ]; then
+    echo -e "  \`- New Librewolf version (${GREEN}${newLibrewolfVer}${ENDCOLOR}) is available.";
+    echo "  |";
+  fi
+fi
+
+if [ -x /usr/local/bin/ncspot ]; then
+  URL="https://github.com/hrkfdn/ncspot/releases.atom";
+  newNcspotVer=$(getVerFromRSSFeed $URL);
+  currentNcspotVer=$(ncspot -V | awk '{printf $2}');
+  if ! [ "$currentNcspotVer" = "$newNcspotVer" ]; then
+    echo -e "  \`- New ncspot version (${GREEN}${newNcspotVer}${ENDCOLOR}) is available.";
+    echo "  |";
+  fi
+fi
+
+if [ -x /usr/local/bin/nu ]; then
+  URL="https://github.com/nushell/nushell/releases.atom";
+  newNushellVer=$(getVerFromRSSFeed $URL);
+  currentNushellVer=$(nu -v | awk '{printf $1}');
+  if ! [ "$currentNushellVer" = "$NewNushellVer" ]; then
+    echo -e "  \`- New nushell version (${GREEN}${newNushellVer}${ENDCOLOR}) is available.";
+    echo "  |";
+  fi
+fi
+
+if [ -x /usr/local/bin/nextcloud ]; then
+  currentNextcloudVersion=$(/usr/local/bin/nextcloud -v 2> /dev/null | grep '^Nextcloud version' | awk '{printf $3}');
+  URL="https://github.com/nextcloud-releases/desktop/releases.atom";
+  newNextcloudVersion=$(curl $URL 2> /dev/null | grep -o '<title>.*</title>' | grep -v 'rc' | sed -n '2p' | sed -e 's,<title>,,' -e 's,</title>,,' | awk '{printf $2}');
+  if ! [ "$currentNextcloudVersion" = "$newNextcloudVersion" ]; then
+    echo -e "  \`- New Nextcloud version (${GREEN}${newNextcloudVersion}${ENDCOLOR}) is available.";
+    echo "  |";
+  fi
+fi
+
+debianVersion=$(cut -d "." -f 1 /etc/debian_version);
+URL="https://micronews.debian.org/feeds/feed.rss";
+newDebianVersion=$(curl $URL 2>/dev/null | grep -o "Updated Debian ${debianVersion}: ${debianVersion}.[0-9]*" | sed -n '1p' | awk '{printf $4}');
+if [ "$newDebianVersion" ]; then
+  if ! [ "$newDebianVersion" = "$(cat /etc/debian_version)" ]; then
+    echo -e "  \`- New Debian version (${YELLOW}${newDebianVersion}${ENDCOLOR}).";
+    echo "  |";
+  fi
+fi
+
+sudo apt update > /dev/null 2>&1;
+packagesToUpdate=$(expr $(apt list --upgradable 2> /dev/null | wc -l) - 1);
+if [ $packagesToUpdate -lt 0 ]; then packagesToUpdate=0; fi
+
+if [ $packagesToUpdate -lt 10 ]; then color=${GREEN};
+elif [ $packagesToUpdate -lt 50 ]; then color=${YELLOW};
+else color=${RED};
+fi
+
+echo -e "  \`- ${color}${packagesToUpdate}${ENDCOLOR} packages ready to update."; 
