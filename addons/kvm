@@ -6,3 +6,7 @@ cp -vv ~/immudex/tools/bin/immudex-kvm /usr/local/bin;
 
 u=$(grep '1000' /etc/passwd | cut -d ":" -f 1)
 usermod -aG libvirt,libvirt-qemu $u;
+
+if [ "$DEBVER" = "stable" ]; then
+  sed -i '554i dynamic_ownership = 0' /etc/libvirt/qemu.conf;
+fi
