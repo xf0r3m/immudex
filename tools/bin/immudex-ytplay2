@@ -1,0 +1,98 @@
+#!/usr/bin/env python3
+
+import sys
+import subprocess
+from youtube_search import YoutubeSearch
+
+def usage():
+
+  print(
+  '''
+  immudex-ytplay - script which could play a video or audio track from youtube
+  @ 2023 (original bash script), 2025 (python script) morketsmerke.org
+  Options:
+    -s - search given keyword on youtube.
+    -v - play youtube video.
+    -a - play only youtube video audiotrack
+  Ommiting -s option, assume you are give a yt video link.
+  You have to put -v or -a before you paste a yt video link
+  When you put keywords in -s option, you need to choose
+  that you want listening an audiotrack (-a) oraz watch video (-v)
+  Usage:
+    $ immudex-ytplay -s -a [-f ytdl-format] 'lofi'
+    $ immudex-ytplay -v https://youtube.com/watch?v=... [-f ytdl-format]
+    $ immudex-ytplay -a https://youtube.com/watch?v=... [-f ytdl-format]
+  You can search again the same keywords puting 'r' or 'R' instead
+  of video numer  
+  ''')
+
+def ytSearch(keywords, maxResults=15):
+  
+  i = "r"
+  while isinstance(i, str) and (i == "r" or i == "R"):
+    subprocess.run('clear')
+    results = YoutubeSearch(keywords, max_results=maxResults).to_dict()
+
+    index = 1
+    for video in results:
+      print(f"\033[1m\033[91m{index}\033[0m. Title: \033[92m{video['title']}\033[0m")
+      print(f"  Channel: \033[93m{video['channel']}\033[0m, Duration: \033[94m{video['duration']}\033[0m, PubDate: \033[95m{video['publish_time']}\033[0m")
+      index += 1
+  
+    i = input("Put number of video you wanna watch or put 'r' to reload search result: ")
+
+  i = int(i) - 1
+  return(results[i]['id'], results[i]['title'], results[i]['channel'], results[i]['duration'], results[i]['publish_time']);
+
+if sys.argv[1] == '-s':
+  if len(sys.argv) > 2:
+    if sys.argv[2] == '-v':
+      mode = "video"
+    elif sys.argv[2] == '-a':
+      mode = "audio"
+    else:
+      usage()
+      sys.exit(2) 
+    if len(sys.argv) > 3:
+      if sys.argv[3][0:5] == "best[":
+        ytFormat=sys.argv[3]
+      else:
+        ytFormat = "best"
+        keywords=sys.argv[3]
+    if len(sys.argv) > 4: 
+      keywords = sys.argv[4]
+    
+    #link = f"https://youtube.com/watch?v={ytSearch(keywords)}"
+    video = ytSearch(keywords)
+    #print(video)
+    subprocess.run('clear')
+    print(f"\033[91m1\033[0m. Title: \033[92m{video[1]}\033[0m")
+    print(f"  Channel: \033[93m{video[2]}\033[0m, Duration: \033[94m{video[3]}\033[0m, PubDate: \033[95m{video[4]}\033[0m")
+    print("===================================================================")
+    if mode == 'audio':
+      ytFormat = "--no-video"
+    else:
+      ytFormat = "--ytdl-format=" + ytFormat
+
+    subprocess.run(['mpv', ytFormat, 'ytdl://' + video[0]])
+
+elif sys.argv[1] == '-a':
+  if len(sys.argv) > 2:
+    link=sys.argv[2]
+    ytFormat="--no-video"
+    subprocess.run(['mpv', ytFormat, 'ytdl://' + link])
+  else:
+    usage()
+    sys.exit(2)
+
+elif sys.argv[1] == '-v':
+  if len(sys.argv) > 2:
+    link=sys.argv[2]
+    if len(sys.argv) > 3:
+      ytFormat="--ytdl-format=" + sys.argv[3]
+    else:
+      ytFormat="--ytdl-format=best"
+    subprocess.run(['mpv', ytFormat, 'ytdl://' + link])
+  else:
+    usage()
+    sys.exit(2)   

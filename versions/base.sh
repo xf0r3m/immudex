@@ -94,15 +94,24 @@ cp -vv ~/immudex/tools/bin/immudex-cdrip /usr/local/bin;
 
 #Wyłącznie narzędzia immudex-ytplay - 12.05.2024;
 #Polityka antyfrankensteinowa - 13.05.2024
-if [ "$DEBVER" != "oldstable" ]; then
+#if [ "$DEBVER" != "oldstable" ]; then
   #Wdrożenie projektu ytfzf - 12.05.2024;
-  install_packages fzf jq ueberzug;
-  git clone https://github.com/pystardust/ytfzf /tmp/ytfzf;
-  (cd /tmp/ytfzf && make install doc)
-else
-  cp -vv ~/immudex/tools/bin/immudex-ytplay /usr/local/bin;
-fi
+#  install_packages fzf jq ueberzug;
+#  git clone https://github.com/pystardust/ytfzf /tmp/ytfzf;
+#  (cd /tmp/ytfzf && make install doc)
+#else
+#  cp -vv ~/immudex/tools/bin/immudex-ytplay /usr/local/bin;
+#fi
+#Wyłączenie projektu ytfzf. Projekt jest martwy. - 13.09.2025
 
+#Właczenie nowej wersji immudex-ytplay (immudex-ytplay2) - 13.09.2025
+pythonVersion=$(python3 -V | awk '{printf $2}' | cut -d "." -f 1-2);
+mv /usr/lib/python${pythonVersion}/EXTERNALLY-MANAGED /usr/lib/python${pythonVersion}/EXTERNALLY-MANAGED.old;
+wget https://ftp.morketsmerke.org/youtube-search/youtube_search-2.1.2-py3-none-any.whl -O /tmp/youtube_search-2.1.2-py3-none-any.whl;
+pip install /tmp/youtube_search-2.1.2-py3-none-any.whl;
+mv /usr/lib/python${pythonVersion}/EXTERNALLY-MANAGED.old /usr/lib/python${pythonVersion}/EXTERNALLY-MANAGED;
+cp -vv ~/immudex/tools/bin/immudex-ytplay2 /usr/local/bin;
+ln -s /usr/local/bin/immudex-ytplay2 /usr/local/bin/immudex-ytplay;
 
 cp -vv ~/immudex/tools/bin/library.sh /usr/local/bin;
 cp -vv ~/immudex/tools/bin/idle-clic /usr/local/bin;
