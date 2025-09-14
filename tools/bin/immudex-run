@@ -1,0 +1,43 @@
+#!/bin/bash
+
+function help() {
+  echo "immudex-run - execute external apps which require home dir configuration";
+  echo "@ 2025 morketsmerke.org";
+  echo;
+  echo "Database and its configuration: ";
+  echo "By default immudex-run database is shell script file, containing 4 variables";
+  echo "NATIVE_HOME_DIR - pointing normal user home dirs - /home/USER";
+  echo "WORKING_HOME_DIR - pointing first immudex-crypt device - /ic0";
+  echo "APPS - array, containing apps commands configured to execute via immudex-run";
+  echo "CONFIG_DIRS - array, with app configuration path, usually stored in user home dir";
+  echo;
+  echo "Usage: ";
+  echo "$ immudex-run <app_command>";
+}
+
+if [ "$1" ]; then
+  EXE_APP=$1;
+  source /usr/local/share/immudex-run/immudex-run.base;
+  i=0;
+  for a in ${APPS[@]}; do
+    if [ "$a" = "$EXE_APP" ]; then
+      index=$i;
+      configDirsList=$(echo ${CONFIG_DIRS[$index]} | sed 's/,/\ /g');
+      for configDir in $configDirsList; do
+        cp -prvv ${WORKING_HOME_DIR}/$configDir ${NATIVE_HOME_DIR}/${configDir};
+      done
+      export HOME=$WORKING_HOME_DIR;
+      $EXE_APP; 
+    fi
+    i=$(expr $i + 1);
+  done
+  if [ ! "$index" ]; then
+    echo "Application doesn't appear in database.";
+    echo "Configure /usr/local/share/immudex-run/immudex-run.base file";
+    exit 1;
+  fi
+  #echo "index: $index";  
+else
+  help;
+  exit 1;
+fi

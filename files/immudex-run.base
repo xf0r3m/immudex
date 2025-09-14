@@ -1,0 +1,9 @@
+#!/bin/bash
+
+NATIVE_HOME_DIR="/home/${USER}";
+WORKING_HOME_DIR="/ic0";
+
+#APPS=("nextcloud" "keepassxc");
+APPS=();
+#CONFIG_DIRS=(".config/Nextcloud,.cache/Nextcloud,.local/share/Nextcloud" ".config/keepassxc,.cache/keepassxc");
+CONFIG_DIRS=();

@@ -90,6 +90,10 @@ cp -vv ~/immudex/tools/bin/immudex-shoutcasts /usr/local/bin;
 cp -vv ~/immudex/tools/bin/immudex-version /usr/local/bin;
 #Nowe narzędzie immudex-cdrip - 27.08.2025;
 cp -vv ~/immudex/tools/bin/immudex-cdrip /usr/local/bin;
+#Nowe narzędzie immudex-run - 14.09.2025;
+mkdir -p /usr/local/share/immudex-run;
+cp -vv ~/immudex/files/immudex-run.base /usr/local/share/immudex-run/immudex-run.base;
+cp -vv ~/immudex/tools/bin/immudex-run /usr/local/bin;
 
 
 #Wyłącznie narzędzia immudex-ytplay - 12.05.2024;
