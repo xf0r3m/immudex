@@ -70,7 +70,7 @@ cd;
 
 git clone https://github.com/xf0r3m/xfcedebian;
 cd xfcedebian;
-bash install.sh;
+bash install.sh --immudex;
 
 cd;
 
