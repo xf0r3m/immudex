@@ -1,43 +1,51 @@
 #!/bin/bash
 
 function help() {
-  echo "immudex-run - execute external apps which require home dir configuration";
-  echo "@ 2025 morketsmerke.org";
+  echo "This script allows to run a program with pointed home dir on first";
+  echo "opened LUKS partition via immudex-crypt tool. The most programs in";
+  echo "Linux write some data in users home dirs. Doing this persistentaly";
+  echo "in immudex is imposible, because all default users home dirs came back";
+  echo "to state from image and wroted date are gone. Running programs via this";
+  echo "scripts makes possible to save this date on first 'crypt'.";
+  echo "This script can be use to make your own activators easlly.";
   echo;
-  echo "Database and its configuration: ";
-  echo "By default immudex-run database is shell script file, containing 4 variables";
-  echo "NATIVE_HOME_DIR - pointing normal user home dirs - /home/USER";
-  echo "WORKING_HOME_DIR - pointing first immudex-crypt device - /ic0";
-  echo "APPS - array, containing apps commands configured to execute via immudex-run";
-  echo "CONFIG_DIRS - array, with app configuration path, usually stored in user home dir";
+  echo "Usage: immudex-run [--help] [--version] program_name [program_args]";
   echo;
-  echo "Usage: ";
-  echo "$ immudex-run <app_command>";
+  echo "Examples:";
+  echo "  immudex-run firefox-esr       Run given program";
+  echo "  immudex-run --help            Print this message";
+  echo "  immudex-run --version         Print information about version, author and copyrights";
+  echo;
+  echo "Report bugs to <xf0r3m@gmail.com>";           
+}
+
+function version(){
+  echo "immudex-run 1.0";
+  echo;
+  echo "Copyright (C) 2026 morketsmerke.org";
+  echo "This is free software; see the source for copying conditions.  There is NO";
+  echo "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.";
+  echo;
+  echo "Written by xf0r3m.";
 }
 
 if [ "$1" ]; then
-  EXE_APP=$1;
-  source /usr/local/share/immudex-run/immudex-run.base;
-  i=0;
-  for a in ${APPS[@]}; do
-    if [ "$a" = "$EXE_APP" ]; then
-      index=$i;
-      configDirsList=$(echo ${CONFIG_DIRS[$index]} | sed 's/,/\ /g');
-      for configDir in $configDirsList; do
-        cp -prvv ${WORKING_HOME_DIR}/$configDir ${NATIVE_HOME_DIR}/${configDir};
-      done
-      export HOME=$WORKING_HOME_DIR;
-      $EXE_APP; 
-    fi
-    i=$(expr $i + 1);
-  done
-  if [ ! "$index" ]; then
-    echo "Application doesn't appear in database.";
-    echo "Configure /usr/local/share/immudex-run/immudex-run.base file";
-    exit 1;
+  if [ "$1" = "--help" ]; then
+      help;
+      exit 0;
+  elif [ "$1" = "--version" ]; then
+      version;
+      exit 0;
   fi
-  #echo "index: $index";  
-else
-  help;
-  exit 1;
 fi
+
+export HOME=/ic0;
+export XDG_CONFIG_HOME=/ic0;
+export XDG_CACHE_HOME=/ic0/.cache;
+export XDG_CONFIG_DIRS=/ic0/.config;
+
+program=$1;
+shift;
+args="$@";
+
+$(which $program) ${args}; 

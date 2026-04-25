@@ -1,24 +1,42 @@
 #!/bin/bash
 
 function help() {
-  echo "immudex-import-sshkeys - script for copying ssh keys into user native home directory.";
-  echo "@ 2025 morketsmerke.org";
+  echo "it's a script for copying OpenSSH client files such as keys and config file into user native home directory.";
+  echo "This command should be run in other home directory, where ssh keys are stored.";
   echo;
-  echo "Usage:";
-  echo "$ immudex-import-sshkeys"
-  echo "This comman should be run in other home directory, where ssh keys are stored.";
+  echo "Usage: immudex-import-sshkeys [--import-hosts] [--help] [--version]";
   echo;
   echo "Options:";
-  echo "  --help - print this message.";
-  echo "  --import-hosts - import hostnames and adresses to /etc/host file (sudo required)";
-  echo "  from SSH config file if exist.";
+  echo "  --import-hosts    Import hostnames and adresses to /etc/host file (sudo required) from SSH config file if exist.";
+  echo "  --help            Print this message.";
+  echo "  --version         Print information about version, author and copyrights.";
+  echo;
+  echo "Examples:";
+  echo "  immudex-import-sshkeys                  Import OpenSSH client files into user native home dir.";
+  echo "  immudex-import-sshkeys --import-hosts   Import OpenSSH client files and create DNS resolve database in /etc/hosts by taking data from OpenSSH client config file, if exist.";
+  echo "  immudex-import-sshkeys --help           Print this message.";
+  echo "  immudex-import-sshkeys --version        Print information about version, author and copyrights."
+  echo;
+  echo "Report bugs to <xf0r3m@gmail.com>"; 
 }
 
-if [ "$1" ] && [ "$1" = "--help" ]; then
-  help;
-  exit 1;
-fi
+function version() {
+  echo "immudex-import-sshkeys 1.0";
+  echo;
+  echo "Copyright (C) 2026 morketsmerke.org";
+  echo "This is free software; see the source for copying conditions.  There is NO";
+  echo "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.";
+  echo;
+  echo "Written by xf0r3m.";
+}
 
+if [ "$1" ]; then
+  if [ "$1" = "--help" ]; then
+    help;
+  elif [ "$1" = "--version" ]; then
+    version;
+  fi
+else
 if $(ls $HOME | grep -q '.*_rsa.*'); then
   if [ -d /home/$USER/.ssh ]; then
     cp -v ~/*_rsa* /home/$USER/.ssh;
@@ -41,4 +59,5 @@ if $(ls -w1 $HOME | grep -q '^config$'); then
     done
   fi
   chmod 600 /home/$USER/.ssh/config;
+fi
 fi

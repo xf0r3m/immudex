@@ -8,24 +8,36 @@ function XMLScrap() {
 }
 
 function help() {
-  echo "immudex-cdrip - bash script for collection audio tracks from Audio CD.";
-  echo "morketsmerke.org @ 2025";
+  echo "immudex-cdrip it's a bash script for collect audio tracks from Audio CD's.";
+  echo "Script apart form ripping Audio CD's, reads metadata, check it on music";
+  echo "databases and creates properly named directories and audio files.";
   echo;
-  echo "Usage:";
-  echo "  $ immudex-cdrip --rip-n-rename";
+  echo "Usage: immudex-cdrip [--rip-only] [--get-disc-info] [--rip-n-rename] [--help] [--version]";
   echo;
   echo "Options:";
-  echo "  --rip-only - Rips audio tracks from Audio CD, without quering CDIndex";
-  echo "  (MusicBrainz) database.";
+  echo "  --rip-only        Rips audio tracks from Audio CD, without quering CDIndex (MusicBrainz) database.";
+  echo "  --get-disc-info   Getting info from CDIndex (MusicBrainz) database about Audio CD without ripping.";
+  echo "  --rip-n-rename    Rips audio tracks from Audio CD, create Artist/Album folders and rename tracks according to data get CDIndex (MusicBrainz) database (normal usage).";
+  echo "  --help            Print this message.";
+  echo "  --version         Print information about version, author and copyrights.";
   echo;
-  echo "  --get-disc-info - Getting info from CDIndex (MusicBrainz) database";
-  echo "  about Audio CD without ripping.";
+  echo "Examples:";
+  echo "  immudex-cdrip                   Print this message";
+  echo "  immudex-cdrip --get-disc-info   Check is in MusicBrainz DB, are there any data about puted CD in drive.";
+  echo "                                  Could be useful with less popular artists.";
+  echo "  immudex-cdrip --rip-n-rename    Rips Audio CD and names dirs and files with MusicBrainz data.";
   echo;
-  echo "  --rip-n-rename - Rips audio tracks from Audio CD, create Artist/Album folders";
-  echo "  and rename tracks according to data get CDIndex (MusicBrainz)";
-  echo "  database (normal usage).";
+  echo "Report bugs to <xf0r3m@gmail.com>";
+}
+
+function version() {
+  echo "immudex-cdrip 1.0";
   echo;
-  echo "Script using CDDA2WAV tool from icedax package and libparanoia library (GNU/Linux Debian).";
+  echo "Copyright (C) 2026 morketsmerke.org";
+  echo "This is free software; see the source for copying conditions.  There is NO";
+  echo "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.";
+  echo;
+  echo "Written by xf0r3m.";
 }
 
 function multipleArtistDisc() {
@@ -68,9 +80,9 @@ function multipleArtistDisc() {
   rm -v ${FILE};  
 }
 
-if [ ! -x /usr/bin/cdda2wav ]; then
-  sudo apt-get install icedax cdparanoia -y;
-fi
+#if [ ! -x /usr/bin/cdda2wav ]; then
+#  exit 1;
+#fi
 
 if [ "$1" ] && [ "$1" = "--rip-only" ]; then
   cdda2wav -vall cddb=-1 speed=4 -paranoia paraopts=no-verify -B -D /dev/sr0;
@@ -120,6 +132,16 @@ if [ "$1" ] && [ "$1" = "--rip-n-rename" ]; then
     rm -v audio.cddb;
     rm -v audio.cdindex;
   fi
+  exit 0;
+fi
+
+if [ "$1" ] && [ "$1" = "--help" ]; then
+  help;
+  exit 0;
+fi
+
+if [ "$1" ] && [ "$1" = "--version" ]; then
+  version;
   exit 0;
 fi
 

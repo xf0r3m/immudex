@@ -2,33 +2,65 @@
 
 GREEN="\e[32m";
 RED="\e[31m";
+YELLOW="\e[33m";
 ENDCOLOR="\e[0m";
+SYSTEM_CC=$(echo $LANG | cut -c 1-2);
+
+function help() {
+  echo "immudex-pl opening (play) links. Script creates menu from link list, which";
+  echo "can be open via mpv (with yt-dlp hook). Normally links are open as";
+  echo "audio stream. Script work in loop, which means you can change playback";
+  echo "while the current one is still playing. When you need to exit type any letter instead of number.";
+  echo "Script is not only for YouTube Links, it can also open";
+  echo "internet radios or shoutcasts. The link list can be downloaded and does";
+  echo "not need to be stored on the target device. Script will delete the";
+  echo "file at the end of its execution. ";
+  echo;
+  echo "Usage: immudex-pl [--video --format=240p...1080p] [--help] [--version] link-list"; 
+  echo;
+  echo "Options:";
+  echo "  --video --format=240p...1080p   Open link as video.";
+  echo "  --help                        Print this message.";
+  echo "  --version                     Print information about version, author and copyrights.";
+  echo;
+  echo "Files:";
+  echo "  /usr/share/doc/immudex-pl/links.list.example    Example link list file.";
+  echo;
+  echo "Examples:"
+  echo "  immudex-pl ~/radio-links.txt    Open given link list as audio stream.";
+  echo "  immudex-pl --video --format=360p ./yt-links   Open given link list as video in 360p format.";
+  echo;
+  echo "Report bugs to <xf0r3m@gmail.com>";
+}
+
+function version() {
+  echo "immudex-pl 1.0-1";
+  echo;
+  echo "Copyright (C) 2026 morketsmerke.org";
+  echo "This is free software; see the source for copying conditions.  There is NO";
+  echo "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.";
+  echo;
+  echo "Written by xf0r3m.";
+}
 
 if [ "$1" ] && [ $1 = "--video" ]; then
   video=1;
   shift;
-  if [ $# -gt 1 ]; then format="--ytdl-format=$1"; shift; file=$1;
-  else format="--ytdl-forma=best"; file=$1; fi
+  if $(echo $1 | grep -q '\-\-format'); then
+    format=$(echo $1 | grep -o '[0-9]' | awk '{printf $1}')
+  fi
+  shift; 
+  file=$1;
+elif [ "$1" ] && [ $1 = "--help" ]; then
+  help;
+  exit 0;
+elif [ "$1" ] && [ $1 = "--version" ]; then
+  version;
+  exit 0;
 else
   file=$1;
 fi
 
-function help() {
-  echo "immudex-pl - Play Links. Skrypt to odtwarzania multimediów z listy linków";
-  echo "@ 2023 morketsmerke.org";
-  echo;
-  echo "Opcje:";
-  echo;
-  echo -e "\t--video [format] - możliwość odtwarzania linków jako filmów. Format";
-  echo -e "\tjest opcjonalny, w przypadku jego braku, domyślnym formatem jest";
-  echo -e "\t'best'.";
-  echo;
-  echo "Użycie:";
-  echo -e "\t$ pl [http(s)://adres/lub/]sciezka/do/listy/linkow";
-  echo;
-  echo "Format listy:";
-  echo -e "\tnazwa linku: https://youtube.com/...";
-}
 
 if echo $file | grep -q 'http'; then
   echo -n "Getting link list...";
@@ -49,20 +81,54 @@ if [ "$file" ]; then
   select name in $linkNames; do
     if [ "$MPVPID" ]; then kill $MPVPID; fi
     if [ ! "$name" ]; then break; fi
-    link=$(grep "$name" $file | cut -d ":" -f 2-);
+    link=$(grep "$name" $file | cut -d ":" -f 2-3);
     if [ ! "$link" ]; then
       linkName=$(echo $name | sed 's/_/\ /g');
-      link=$(grep "$linkName" $file | cut -d ":" -f 2-);
+      link=$(grep "$linkName" $file | cut -d ":" -f 2-3);
     fi
     if echo $link | grep -q "youtube"; then
       link=$(echo $link | sed 's/\ //g');
       if [ "$video" ]; then
         #ytplay -v $link -f $format
-        mpv $format ytdl://$link > /dev/null 2>&1 & MPVPID=$!
+        #format="--ytdl-format=$(grep "$link" $file | cut -d ":" -f 4-)";
+        echo "Getting requested video format ID...";
+        video=$(yt-dlp --list-formats $link 2>/dev/null | grep "$format" | sed -n '1p' | awk '{printf $1}')
+        if [ ! "$video" ]; then 
+          echo -e "Getting requested video format ID...[ ${RED}FAILED${ENDCOLOR} ]";
+          exit 1;
+        else
+          echo -e "Getting requested video format ID...[ ${GREEN}OK${ENDCOLOR} ]"; 
+        fi
+
+        echo "Getting appropiate audio format ID for video...";
+        audio=$(yt-dlp --list-formats $link 2>/dev/null | grep 'audio only' | grep "$SYSTEM_CC" | sed -n '1p' | awk '{printf $1}');
+        if [ ! "$audio" ]; then
+          echo -e "Getting audio format based on your locales...[ ${RED}FAILED${ENDCOLOR} ]";
+          echo "Getting high quality audio stream format...";
+          audio=$(yt-dlp --list-formats $link 2>/dev/null | grep 'audio only' | grep "high" | sed -n '1p' | awk '{printf $1}');
+          if [ ! "$audio" ]; then
+            echo -e "No audio stream found...[ ${RED}FAILED${ENDCOLOR} ]";
+            echo -e "There is no separate audio stream...[ ${YELLOW}FINE${ENDCOLOR} ]";
+            #exit 1;
+          else
+            echo -e "Getting high quality audio stream format...[ ${GREEN}OK${ENDCOLOR} ]";
+          fi
+        else
+          echo -e "Getting audio format based on your locales...[ ${GREEN}OK${ENDCOLOR} ]";
+        fi
+        if [ ! "$audio" ]; then
+          fmat="--ytdl-format=${video}";
+        else
+          fmat="--ytdl-format=${video}+${audio}";
+        fi
+        echo "MPV is starting up...";
+        mpv $fmat $link > /dev/null 2>&1 & MPVPID=$!
+
       else
         #ytplay -a $link -f best[height=360]
-        format="--no-video --ytdl-format=best[height=360]"; 
-        mpv $format ytdl://$link > /dev/null 2>&1 & MPVPID=$!
+        format="--no-video"; 
+        echo "MPV is starting up...";
+        mpv $format $link > /dev/null 2>&1 & MPVPID=$!
       fi
     else
       mpv --no-video $link > /tmp/pl.log 2>&1 & MPVPID=$!;

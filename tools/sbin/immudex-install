@@ -4,6 +4,63 @@ RED="\e[31m";
 GREEN="\e[32m";
 ENDCOLOR="\e[0m";
 
+function help() {
+  echo "it's a script for installation immudex LiveCD images on computer hard";
+  echo "disk. This program runs interactivly and the one thing you need to do";
+  echo "is choose a right disk for installation. That's all, but if you using";
+  echo "custom images, you may need change partition size for immudex image."
+  echo "It's hard to imagine, how it's possible to create images bigger than 3";
+  echo "GB. It would happens. More space in this partition is also needed for";
+  echo "upgrades tasks. So if your image is bigger than 2 GiB, you need to ";
+  echo "change size of this partition before you start instalation.";
+  echo "Recomended size is 3 times the image size. The partition size can be";
+  echo "changed via below described option.";
+  echo "This script requires superuser (root) privileges.";
+  echo;
+  echo "Usage: immudex-install [--partition-size=3G] [--help] [--version]";
+  echo;
+  echo "Options:";
+  echo "  --partition-size=3G   This option change a partition size with immudex image. Usefull for custom builds. By default it's 3GB.";
+  echo "  --help                Print this message.";
+  echo "  --version             Print information about version, author and copyrights.";
+  echo;
+  echo "Examples:";
+  echo "  immudex-install                       Standard execution, instalation immudex LiveCD on computer hard disk.";
+  echo "  immudex-install --partition-size=6G   Run install script for custom immudex image build.";
+  echo "  immudex-install --help                Print this message.";
+  echo "  immudex-install --version             Print information about version, author and copyrights.";
+  echo;
+  echo "Report bugs to <xf0r3m@gmail.com>"; 
+}
+
+function version() {
+  echo "immudex-install 1.1";
+  echo;
+  echo "Copyright (C) 2026 morketsmerke.org";
+  echo "This is free software; see the source for copying conditions.  There is NO";
+  echo "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.";
+  echo;
+  echo "Written by xf0r3m.";
+
+}
+
+if [ "$1" ]; then
+  if [ "$1" = "--help" ]; then
+    help;
+  elif [ "$1" = "--version" ]; then
+    version;
+  fi
+fi
+if [ "$1" ]; then
+  if $(echo $1 | grep -q 'partition-size'); then
+    idxPartSize=$(echo $1 | cut -d "=" -f2);
+  else
+    idxPartSize="3G"; 
+  fi
+else
+  idxPartSize="3G"; 
+fi
+
 if [ $UID -ne 0 ]; then
   echo "Permission denied!";
   exit 1;
@@ -46,7 +103,7 @@ if $(sudo efibootmgr > /dev/null 2>&1); then
 	parted /dev/$disk mklabel msdos > /dev/null 2>&1;
 	parted /dev/$disk mkpart primary 1 101M > /dev/null 2>&1;
 	parted /dev/$disk set 1 boot on > /dev/null 2>&1;
-	parted /dev/$disk mkpart primary 101M 3G > /dev/null 2>&1;
+	parted /dev/$disk mkpart primary 101M $idxPartSize > /dev/null 2>&1;
 
   if $(echo $disk | egrep -qo "mmc|nvme"); then disk="${disk}p"; fi
 	
@@ -106,7 +163,7 @@ else
   dd if=/dev/zero bs=1M of=/dev/$disk count=1 2> /dev/null
 
   parted /dev/$disk mklabel msdos > /dev/null 2>&1;
-	parted /dev/$disk mkpart primary 1 3G > /dev/null 2>&1;
+	parted /dev/$disk mkpart primary 1 $idxPartSize > /dev/null 2>&1;
 	parted /dev/$disk set 1 boot on > /dev/null 2>&1;
 	
   if $(echo $disk | egrep -qo "mmc|nvme"); then disk="${disk}p"; fi

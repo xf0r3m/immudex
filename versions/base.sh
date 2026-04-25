@@ -38,33 +38,7 @@ dpkg-reconfigure console-setup;
 
 install_packages task-desktop task-xfce-desktop;
 
-#Dodanie pakietu 'make' - wdrożenie projektu ytfzf - 12.05.2024;
-install_packages firejail ufw cryptsetup lsof extlinux grub-efi-amd64 efibootmgr bash-completion etherwake wakeonlan cifs-utils wget figlet mpv vim-gtk3 redshift irssi nmap nfs-common remmina python3-pip ffmpeg debootstrap squashfs-tools xorriso syslinux-efi grub-pc-bin grub-efi-amd64-bin mtools dosfstools chrony python3-venv isolinux rsync mutt gimp openvpn netselect-apt gvfs-backends dnsutils lolcat make cdparanoia icedax;
-
-#Missing packages
-#Polityka antyfrankensteinowa - 13.05.2024
-if [ $DEBVER = "testing" ]; then
-  install_packages xfce4-notes-plugin yt-dlp;
-  #head -1 /etc/apt/sources.list | sed "s/${DEBVER}/stable/" > /etc/apt/sources.list.d/stable.list;
-  #apt update;
-  #install_packages newsboat;
-  #rm /etc/apt/sources.list.d/stable.list;
-  #apt update;
-else
-  install_packages newsboat;
-  #head -1 /etc/apt/sources.list | sed "s/${DEBVER}/testing/" > /etc/apt/sources.list.d/testing.list;
-  #apt update;
-  #install_packages xfce4-notes-plugin yt-dlp;
-  #rm /etc/apt/sources.list.d/testing.list;
-  #apt update;
-fi
-if [ -f /usr/bin/youtube-dl ]; then rm /usr/bin/youtube-dl; fi
-
-ytdlpVer=$(curl https://github.com/yt-dlp/yt-dlp/releases.atom 2>/dev/null | grep '<title>.*</title>$' | sed -n '2p' | sed 's/\ /\n/g' | tail -1 | sed 's,</title>,,');
-wget https://github.com/yt-dlp/yt-dlp/releases/download/${ytdlpVer}/yt-dlp -O /usr/bin/yt-dlp
-
-#Polityka antyfrankensteinowa - 13.05.2024
-ln -s /usr/bin/yt-dlp /usr/bin/youtube-dl;
+install_packages firejail ufw cryptsetup lsof extlinux grub-efi-amd64 efibootmgr bash-completion etherwake wakeonlan cifs-utils wget figlet redshift irssi nmap nfs-common remmina python3-pip ffmpeg debootstrap squashfs-tools xorriso syslinux-efi grub-pc-bin grub-efi-amd64-bin mtools dosfstools chrony python3-venv isolinux rsync mutt gimp openvpn netselect-apt gvfs-backends dnsutils lolcat cdparanoia icedax mc minicom;
 
 cd;
 
@@ -72,65 +46,33 @@ git clone https://github.com/xf0r3m/xfcedebian;
 cd xfcedebian;
 bash install.sh --immudex;
 
+if [ -f /usr/bin/youtube-dl ]; then rm /usr/bin/youtube-dl; fi
+
+ytdlpVer=$(curl https://github.com/yt-dlp/yt-dlp/releases.atom 2>/dev/null | grep '<title>.*</title>$' | sed -n '2p' | sed 's/\ /\n/g' | tail -1 | sed 's,</title>,,');
+wget https://github.com/yt-dlp/yt-dlp/releases/download/${ytdlpVer}/yt-dlp -O /usr/bin/yt-dlp
+
+#Zapewnienie kompatybilnosci wstecznej dla programów korzystających youtube-dl;
+ln -s /usr/bin/yt-dlp /usr/bin/youtube-dl;
+
 cd;
 
-cp -vv ~/immudex/tools/bin/immudex-autostart-x4notes /usr/local/bin;
-cp -vv ~/immudex/tools/bin/immudex-branch /usr/local/bin;
-cp -vv ~/immudex/tools/bin/immudex-import-gpgkeys /usr/local/bin;
-cp -vv ~/immudex/tools/bin/immudex-import-sshkeys /usr/local/bin;
-cp -vv ~/immudex/tools/bin/immudex-meteo /usr/local/bin;
-cp -vv ~/immudex/tools/bin/immudex-morketsmerke /usr/local/bin;
-cp -vv ~/immudex/tools/bin/immudex-motd2 /usr/local/bin;
-cp -vv ~/immudex/tools/bin/immudex-padlock /usr/local/bin;
-cp -vv ~/immudex/tools/bin/immudex-pl /usr/local/bin;
-cp -vv ~/immudex/tools/bin/immudex-secured-firefox /usr/local/bin;
-cp -vv ~/immudex/tools/bin/immudex-protected /usr/local/bin;
-cp -vv ~/immudex/tools/bin/immudex-protected-firefox /usr/local/bin;
-cp -vv ~/immudex/tools/bin/immudex-shoutcasts /usr/local/bin;
-cp -vv ~/immudex/tools/bin/immudex-version /usr/local/bin;
-#Nowe narzędzie immudex-cdrip - 27.08.2025;
-cp -vv ~/immudex/tools/bin/immudex-cdrip /usr/local/bin;
-#Nowe narzędzie immudex-run - 14.09.2025;
-mkdir -p /usr/local/share/immudex-run;
-cp -vv ~/immudex/files/immudex-run.base /usr/local/share/immudex-run/immudex-run.base;
-cp -vv ~/immudex/tools/bin/immudex-run /usr/local/bin;
+wget https://ftp.morketsmerke.org/youtube-search/python3-youtube-search_2.2.0.deb;
+apt install ./python3-youtube-search_2.2.0.deb -y
 
-
-#Wyłącznie narzędzia immudex-ytplay - 12.05.2024;
-#Polityka antyfrankensteinowa - 13.05.2024
-#if [ "$DEBVER" != "oldstable" ]; then
-  #Wdrożenie projektu ytfzf - 12.05.2024;
-#  install_packages fzf jq ueberzug;
-#  git clone https://github.com/pystardust/ytfzf /tmp/ytfzf;
-#  (cd /tmp/ytfzf && make install doc)
-#else
-#  cp -vv ~/immudex/tools/bin/immudex-ytplay /usr/local/bin;
-#fi
-#Wyłączenie projektu ytfzf. Projekt jest martwy. - 13.09.2025
-
-#Właczenie nowej wersji immudex-ytplay (immudex-ytplay2) - 13.09.2025
-pythonVersion=$(python3 -V | awk '{printf $2}' | cut -d "." -f 1-2);
-mv /usr/lib/python${pythonVersion}/EXTERNALLY-MANAGED /usr/lib/python${pythonVersion}/EXTERNALLY-MANAGED.old;
-wget https://ftp.morketsmerke.org/youtube-search/youtube_search-2.1.2-py3-none-any.whl -O /tmp/youtube_search-2.1.2-py3-none-any.whl;
-pip install /tmp/youtube_search-2.1.2-py3-none-any.whl;
-mv /usr/lib/python${pythonVersion}/EXTERNALLY-MANAGED.old /usr/lib/python${pythonVersion}/EXTERNALLY-MANAGED;
-cp -vv ~/immudex/tools/bin/immudex-ytplay2 /usr/local/bin;
-ln -s /usr/local/bin/immudex-ytplay2 /usr/local/bin/immudex-ytplay;
-
-cp -vv ~/immudex/tools/bin/library.sh /usr/local/bin;
-cp -vv ~/immudex/tools/bin/idle-clic /usr/local/bin;
-cp -vv ~/immudex/tools/bin/sync.sh /usr/local/bin;
+cp -vv ~/immudex/tools/bin/* /usr/local/bin;
 chmod +x /usr/local/bin/*;
 
-cp -vv ~/immudex/tools/sbin/immudex-create-media /usr/local/sbin;
-cp -vv ~/immudex/tools/sbin/immudex-crypt /usr/local/sbin;
-cp -vv ~/immudex/tools/sbin/immudex-hostname /usr/local/sbin;
-cp -vv ~/immudex/tools/sbin/immudex-install /usr/local/sbin;
-cp -vv ~/immudex/tools/sbin/immudex-upgrade /usr/local/sbin;
-cp -vv ~/immudex/tools/sbin/immudex-nf /usr/local/sbin;
-cp -vv ~/immudex/tools/sbin/immudex-updates /usr/local/sbin;
+cp -vv ~/immudex/tools/sbin/* /usr/local/sbin;
 chown root:root /usr/local/sbin/*;
 chmod 544 /usr/local/sbin/*;
+
+mkdir /usr/share/doc/immudex-motd;
+cp -vv ~/immudex/tools/misc/motd.conf /usr/share/doc/immudex-motd/motd.conf.sample;
+cp -vv ~/immudex/tools/misc/immudex-hostname.service /etc/systemd/system;
+systemctl enable immudex-hostname.service;
+
+if [ ! -d /usr/share/man/man1 ]; then mkdir /usr/share/man/man1; fi
+cp -vv ~/immudex/tools/man/* /usr/share/man/man1;
 
 mkdir /etc/skel/.irssi
 
@@ -141,42 +83,20 @@ cp -vv ~/immudex/files/firejail.config /etc/firejail;
 cp -vv ~/immudex/files/redshift.conf /etc/skel/.config;
 cp -vv ~/immudex/files/redshift.desktop /etc/skel/.config/autostart;
 
-cp -rvv ~/immudex/files/sync.sh /usr/share;
-
-#Polityka antyfrankensteinowa - 13.05.2024
-if [ "$DEBVER" = "testing" ]; then 
-  cp -vv ~/immudex/files/gtk-main.css /usr/share/xfce4/notes/gtk-3.0/gtk.css;
+if [ -h /usr/share/applications/qmmp-1.desktop ]; then
+  rm /usr/share/applications/qmmp-1.desktop;
 fi
-
-if [ -f /usr/share/applications/qmmp.desktop ]; then
-  ln -s /usr/share/applications/qmmp.desktop /usr/share/applications/qmmp-1.desktop;
-fi
-cp -vv ~/immudex/files/immudex_hostname.service /etc/systemd/system;
 
 tar -xf ~/immudex/files/mozilla.tgz -C /etc/skel;
 
-cp -vv ~/immudex/launchers/16844254192.desktop /etc/skel/.config/xfce4/panel/launcher-5;
-
-update-alternatives --remove x-www-browser /usr/bin/firefox-esr;
-mv /usr/bin/firefox /usr/bin/firefox.old;
-chmod -x /usr/bin/firefox.old;
-rm /usr/bin/firefox-esr;
-ln -s /usr/local/bin/immudex-protected-firefox /usr/bin/firefox-esr;
-sed -i "s,Exec=/usr/lib/firefox-esr/firefox-esr %u,Exec=/usr/local/bin/immudex-protected /usr/lib/firefox-esr/firefox-esr," /usr/share/applications/firefox-esr.desktop;
-sed -i "s,Exec=exo-open --launch WebBrowser %u,Exec=/usr/local/bin/immudex-protected /usr/lib/firefox-esr/firefox-esr,g" /usr/share/applications/xfce4-web-browser.desktop;
-update-alternatives --install /usr/bin/x-www-browser x-www-browser /usr/local/bin/immudex-protected-firefox 70;
-
-systemctl enable immudex_hostname.service;
-
 cat >> /etc/bash.bashrc << EOL
 if [ ! -f /tmp/.motd ]; then
-/usr/local/bin/immudex-motd2
+/usr/local/bin/immudex-motd
 touch /tmp/.motd;
 fi
 EOL
 
 echo "alias immudex-chhome='export HOME=\$(pwd)'" >> /etc/bash.bashrc;
-echo "alias immudex-changelogs='immudex-upgrade --check --print'" >> /etc/bash.bashrc;
 echo "alias immudex-version='cat /run/live/medium/live/changelog'" >> /etc/bash.bashrc;
 
 chmod u+s /usr/bin/ping;

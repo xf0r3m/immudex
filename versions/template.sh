@@ -40,6 +40,7 @@ function tidy() {
   apt-get autoclean;
   rm -rf ~/immudex;
   if [ -d ~/xfcedebian ]; then rm -rf ~/xfcedebian; fi
+  rm ~/python3-youtube-search*.deb;
   rm /var/cache/apt/*.bin;
   echo > ~/.bash_history;
   history -c   

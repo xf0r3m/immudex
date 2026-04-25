@@ -9,4 +9,6 @@ usermod -aG libvirt,libvirt-qemu $u;
 
 if [ "$DEBVER" = "stable" ]; then
   sed -i '554i dynamic_ownership = 0' /etc/libvirt/qemu.conf;
+  sed -i "545i user = \"$u\"" /etc/libvirt/qemu.conf;
+  sed -i "549i group = \"$u\"" /etc/libvirt/qemu.conf;
 fi

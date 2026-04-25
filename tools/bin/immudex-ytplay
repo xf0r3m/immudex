@@ -1,135 +1,131 @@
-#!/bin/bash
+#!/usr/bin/env python3
 
-GREEN="\e[32m";
-YELLOW="\e[33m";
-BLUE="\e[34m";
-ENDCOLOR="\e[0m";
+import sys
+import subprocess
+import re
+from youtube_search import YoutubeSearch
 
-function help() {
-  echo "immudex-ytplay - script which could play a video or audio track from youtube";
-  echo "@ 2023 morketsmerke.org";
-  echo "Options:";
-  echo "  -s - search given keyword on youtube.";
-  echo "  -v - play youtube video."
-  echo "  -a - play only youtube video audiotrack";
-  echo "Ommiting -s option, assume you are give a yt video link.";
-  echo "You have to put -v or -a before you paste a yt video link";
-  echo "When you put keywords in -s option, you need to choose";
-  echo "that you want listening an audiotrack (-a) oraz watch video (-v)";
-  echo "Usage:";
-  echo "  $ ytplay -s -a [-f ytdl-format] 'lofi'";
-  echo "  $ ytplay -v https://youtube.com/watch?v=... [-f ytdl-format]";
-  echo "  $ ytplay -a https://youtube.com/watch?v=... [-f ytdl-format]";
-  echo "You can search again the same keywords puting 'r' or 'R' instead";
-  echo "of video numer";
-}
+def usage():
 
-function yt_search() {
-    query=$(echo $* | sed 's/ /+/g');
-    echo -n "Getting youtube site with search results...";
-    wget https://youtube.com/results?search_query=$query -O /tmp/yt.html 2> /dev/null
-    if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
-
-    sed -i 's/,/\n/g' /tmp/yt.html;
-
-    listOfVideos=$(grep -n '^{\"url' /tmp/yt.html | cut -d ":" -f 1 | awk '{printf $1" "}');
-
-    numberOfListElements=$(echo $listOfVideos | wc -w);
-    i=1;
-    lp=1;
-    while [ $i -le $numberOfListElements ]; do
-      if [ $i -eq $numberOfListElements ]; then
-        ln1=$(echo $listOfVideos | cut -d " " -f $i);
-        ln2='$';
-      else
-        j=$((i + 1));
-        ln1=$(echo $listOfVideos | cut -d " " -f $i);
-        ln2=$(echo $listOfVideos | cut -d " " -f $j);
-      fi
-      #if sed -n "${ln1},${ln2}p" /tmp/yt.html | grep -q '"iconType":"LIVE"'; then
-       # i=$((i + 1)); continue;
-      #else
-        title=$(sed -n "${ln1},${ln2}p" /tmp/yt.html | grep 'title' | head -1 | cut -d '"' -f 8);
-        channel=$(sed -n "${ln1},${ln2}p" /tmp/yt.html | grep 'ownerText' | head -1 | cut -d '"' -f 8);
-        duration=$(sed -n "${ln1},${ln2}p" /tmp/yt.html | grep 'simpleText' | sed -n '2p' | cut -d '"' -f 4);
-        if [ "$duration" = "simpleText" ]; then duration="\e[31mLive\e[0m"; fi
-        videoid=$(sed -n "${ln1},${ln2}p" /tmp/yt.html | grep 'videoId' | sed -n '2p' | cut -d '"' -f 4);
-        if [ "$title" ] && [ "$channel" ] && [ "$duration" ] && [ "$videoid" ] && [ "$duration" != "SHORTS" ];  then
-          echo -e "${lp}. ${GREEN}${title}${ENDCOLOR}";
-          echo -e "   Channel: ${YELLOW}${channel}${ENDCOLOR}  Duration: ${BLUE}${duration}${ENDCOLOR}";
-          echo "${lp},${videoid},${title},${channel},${duration}" >> /tmp/yt.csv;
-        else
-          i=$((i + 1)); continue;
-        fi
-      #fi
-      i=$((i + 1));
-      lp=$((lp + 1));
-    done
-}
-
-if [ "$1" ]; then
-  if [ "$1" = "-a" ] || [ "$1" = "-v" ]; then
-    mode=$1;
-    shift;
-    link=$(echo $1 | sed 's@https://@@');
-    if [ $# -gt 1 ]; then
-      shift;
-      if [ "$1" = "-f" ]; then
-        shift;
-        if [ "$mode" = "-a" ]; then 
-          format="--no-video --ytdl-format=${1}";
-        else
-          format="--ytdl-format=${1}";
-        fi
-      fi
-    fi
-  elif [ "$1" = "-s" ]; then
-    if [ -f /tmp/yt.html ]; then rm /tmp/yt.html; fi
-    if [ -f /tmp/yt.csv ]; then rm /tmp/yt.csv; fi
-
-    shift;
-    mode=$1;
-    if ! ([ "$mode" = "-v" ] || [ "$mode" = "-a" ]); then help; exit 1; fi
-    shift;
-    if [ "$1" = "-f" ]; then
-      shift;
-      if [ "$mode" = "-a" ]; then 
-        format="--no-video --ytdl-format=${1}";
-      else
-        format="--ytdl-format=${1}";
-      fi
-    fi
-    while [ true ]; do
-      yt_search $*;
-      echo -n "Put number of which video you want to hear/watch: ";
-      read numberOfVideo;
-      if [[ $numberOfVideo -gt 0 ]]; then break;
-      elif [ "$numberOfVideo" = "r" ] || [ "$numberOfVideo" = "R" ]; then
-        continue;
-      else
-        help;
-        exit 1;
-      fi
-    done
-    title=$(sed -n "${numberOfVideo}p" /tmp/yt.csv | cut -d "," -f 3);
-    channel=$(sed -n "${numberOfVideo}p" /tmp/yt.csv | cut -d "," -f 4);
-    duration=$(sed -n "${numberOfVideo}p" /tmp/yt.csv | cut -d "," -f 5);
-    videoId=$(sed -n "${numberOfVideo}p" /tmp/yt.csv | cut -d "," -f 2);
-    clear;
-    echo -e "Title: ${GREEN}${title}${ENDCOLOR}";
-    echo -e "Channel: ${YELLOW}${channel}${ENDCOLOR} Duration: ${BLUE}${duration}${ENDCOLOR}";
-    echo "====================================================================";
-    link=${videoId}; 
-   else
-    help;
-    exit 1;
-  fi
+  print('''immudex-ytplay script for playing a video or audio track from YouTube. Script
+can search based on given keywords and return list of results. User choose
+one of result or repeats searching with 'r' || 'R' answer to number from
+list result. Then script quering YouTube for available formats and table
+with possible format are printed. User have to put video and audio quality
+from table in requested format: videoQualityID+audioQualityID. There are
+a hint. Script is half-interactive.
   
-  if [ "$mode" = "-a" ]; then 
-      if [ ! "$format" ]; then format="--no-video --ytdl-format=best[height=360]"; fi
-        mpv ${format} ytdl://${link};
-  elif [ "$mode" = "-v" ]; then mpv ${format} ytdl://${link}; fi
-else
-  help;
-  exit 1;
-fi
+Usage: immudex-ytplay [--search='keyword1...keywordN' --video | --audio] [--video youtube_link] [--audio youtube_link] [--help] [--version]
+
+Options:
+  --search='keyword1...keywordN' --video/--audio       Search given keywords on YouTube and play video or audiotrack.
+  --video YouTube_Link                                 Play YouTube video.
+  --audio YouTube_Link                                 Play only YouTube video audiotrack.
+  --help                                               Print this message.
+  --version                                            Print information about version, author and copyrights.
+
+Examples:
+  immudex-ytplay --search='lofi' --audio                  Script will be search a lofi keyword in YouTube and play only audio tracks from choosen video.
+  immudex-ytplay --video https://youtube.com/watch?v=...  Script will be play a video from given link, of course is publicly available.
+  immudex-ytplay --audio https://youtube.com/watch?v=...  Script will be play a audio track from given video link. The principle of video playback also applies here.
+
+Report bugs to <xf0r3m@gmail.com>''')
+
+def version():
+  print('''immudex-ytplay 1.0
+
+Copyright (C) 2026 morketsmerke.org
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Written by xf0r3m.''') 
+
+def ytSearch(keywords, maxResults=15):
+  
+  i = "r"
+  while isinstance(i, str) and (i == "r" or i == "R"):
+    subprocess.run('clear')
+    results = YoutubeSearch(keywords, max_results=maxResults).to_dict()
+
+    index = 1
+    for video in results:
+      print(f"\033[1m\033[91m{index}\033[0m. Title: \033[92m{video['title']}\033[0m")
+      print(f"  Channel: \033[93m{video['channel']}\033[0m, Duration: \033[94m{video['duration']}\033[0m, PubDate: \033[95m{video['publish_time']}\033[0m")
+      index += 1
+  
+    i = input("Put number of video you wanna watch or put 'r' | 'R' to reload search result or send any other key to quit: ")
+    if isinstance(i, str) and i != 'r' and i != 'R' and not re.search("[0-9]+", i):
+      sys.exit(0)
+
+  i = int(i) - 1
+  return(results[i]['id'], results[i]['title'], results[i]['channel'], results[i]['duration'], results[i]['publish_time'])
+
+def getFormat(videoID):
+  subprocess.run(['yt-dlp', '--list-formats', 'https://youtube.com/watch?v=' + videoID])
+  f = input("Please choose youtube video format, you need put video+audio ID of quality in this format or type anything else to quit:")
+  if not re.search("[0-9]{3}\+[0-9]{3}|[0-9]{2}", f):
+    sys.exit(0)
+  else:
+    return f 
+
+if len(sys.argv) == 2:
+  if sys.argv[1] == '--help':
+    usage()
+    sys.exit(0)
+  elif sys.argv[1] == '--version':
+    version()
+    sys.exit(0)
+
+if len(sys.argv) < 2:
+  usage()
+  sys.exit(2)
+  
+option=sys.argv[1].split("=", 1)[0]
+
+if option == '--search':
+  if len(sys.argv) > 2:
+    if sys.argv[2] == '--video':
+      mode = "video"
+    elif sys.argv[2] == '--audio':
+      mode = "audio"
+    else:
+      usage()
+      sys.exit(2)
+    keywords = sys.argv[1].split("=", 1)[1]
+    
+    video = ytSearch(keywords)
+    subprocess.run('clear')
+
+    if mode == 'audio':
+      ytFormat = "--no-video"
+    else:
+      ytFormat = "--ytdl-format=" + getFormat(video[0])
+
+    subprocess.run('clear') 
+    print(f"\033[91m1\033[0m. Title: \033[92m{video[1]}\033[0m")
+    print(f"  Channel: \033[93m{video[2]}\033[0m, Duration: \033[94m{video[3]}\033[0m, PubDate: \033[95m{video[4]}\033[0m")
+    print("===================================================================")
+    
+    subprocess.run(['mpv', ytFormat, 'https://youtube.com/watch?v=' + video[0]])
+  else:
+    usage()
+    sys.exit(2)
+
+elif sys.argv[1] == '--audio':
+  if len(sys.argv) > 2:
+    link=sys.argv[2]
+    ytFormat="--no-video"
+    subprocess.run(['mpv', ytFormat, link])
+  else:
+    usage()
+    sys.exit(2)
+
+elif sys.argv[1] == '--video':
+  if len(sys.argv) > 2:
+    link=sys.argv[2]
+    videoID=link[-11:]
+    ytFormat="--ytdl-format=" + getFormat(videoID)
+    subprocess.run(['mpv', ytFormat, link])
+  else:
+    usage()
+    sys.exit(2)   

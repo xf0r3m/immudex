@@ -1,17 +1,58 @@
 #!/bin/bash
 
-if [ $UID -ne 0 ]; then
-  echo "Permission denied!";
-  exit 1;
-fi
+function help() {
+  echo "immudex-hostname it's a main executional script for immudex-hostname";
+  echo "service. The script job is to change set appropriate name for this";
+  echo "host based on computer chassis and 7 last chars from boot ID."
+  echo;
+  echo "Usage: immudex-hostname [--help] [--version]";
+  echo;
+  echo "Options:";
+  echo "  --help      Print this message.";
+  echo "  --version   Print information about version, author and copyrights."
+  echo;
+  echo "Examples:";
+  echo "  immudex-hostname            Set apropriate hostname, usually executed by systemd.";
+  echo "  immudex-hostname --help     Print this message.";
+  echo "  immudex-hostname --version  Print information about version, author and copyrights.";
+  echo;
+  echo "Files:";
+  echo "  /usr/lib/systemd/system/immudex-hostname.service    Systemd unit file, to run immudex-hostname script as a service.";
+  echo;
+  echo "Report bugs to <xf0r3m@gmail.com>"; 
+}
 
-bootID=$(sed 's/-//g' /proc/sys/kernel/random/boot_id | cut -c 26-33);
-if hostnamectl > /dev/null 2>&1; then
-	hName="$(hostnamectl | grep 'Chassis' | cut -d ":" -f 2 | awk '{printf $1}')-${bootID}";
+function version() {
+  echo "immudex-hostname 1.0";
+  echo;
+  echo "Copyright (C) 2026 morketsmerke.org";
+  echo "This is free software; see the source for copying conditions.  There is NO";
+  echo "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.";
+  echo;
+  echo "Written by xf0r3m.";
+
+}
+
+if [ "$1" ]; then
+  if [ "$1" = "--help" ]; then
+    help;
+  elif [ "$1" = "--version" ]; then
+    version;
+  fi
 else
-	hName="$(dmidecode -s chassis-type | head -1 | tr [A-Z] [a-z])-${bootID}";
-fi
+  if [ $UID -ne 0 ]; then
+    echo "Permission denied!";
+    exit 1;
+  fi
 
-hostnamectl set-hostname $hName;
-sed -i "s/immudex/${hName}/g" /etc/hosts;
-echo $hName | sudo tee /etc/hostname > /dev/null;
+  bootID=$(sed 's/-//g' /proc/sys/kernel/random/boot_id | cut -c 26-33);
+  if hostnamectl > /dev/null 2>&1; then
+	  hName="$(hostnamectl | grep 'Chassis' | cut -d ":" -f 2 | awk '{printf $1}')-${bootID}";
+  else
+	  hName="$(dmidecode -s chassis-type | head -1 | tr [A-Z] [a-z])-${bootID}";
+  fi
+
+  hostnamectl set-hostname $hName;
+  sed -i "s/immudex/${hName}/g" /etc/hosts;
+  echo $hName | sudo tee /etc/hostname > /dev/null;
+fi

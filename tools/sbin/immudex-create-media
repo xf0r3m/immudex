@@ -5,15 +5,38 @@ YELLOW="\e[33m";
 ENDCOLOR="\e[0m";
 
 function help() {
-  echo "immudex-create-media - script used for write iso image to usb drive(mainly)";
-  echo "@ 2024 morketsmerke.org";
+  echo "immudex-create-media it's script used for write iso image to usb drive.";
+  echo "Script writes .iso file to usb stick - make it then bootable. This"
+  echo "script prepare usb disks for 32-bit EFI systems."
   echo "Superuser (root) privileges are required.";
+  echo;
+  echo "Usage: immudex-create-media [--help] [--version] [--i386-efi --disk=usb_disk --isofile=immudex.iso] [--nuke --disk=usb_disk] --disk=usb_disk --isofile=file.iso";
+  echo;
   echo "Options:";
-  echo "  --i386-efi - creating 32-bit EFI usb drive with iso image";
-  echo "  (comapatible with immudex only iso images)";
-  echo "  --nuke - write 0 to 1st megabyte of disk";
-  echo "Usage:";
-  echo "  $ immudex-create-media [--i386-efi] [--nuke] <usb_disk> [iso_image]";
+  echo "  --disk=/dev/sdX                           Indicates disk device.";
+  echo "  --isofile=file.iso                        Indicates iso file.";
+  echo "  --i386-efi --disk=/dev/sdX immudex.iso    Creating 32-bit EFI bootable usb drive with iso image. (Compatibile with immudex images only.)";
+  echo "  --nuke --disk=/dev/sdX                    Write 0's to 1st megabyte of disk, wiping partition table.";
+  echo "  --help                                    Print this message.";
+  echo "  --version                                 Print information about version, author and copyrights."; 
+  echo;
+  echo "Exmaples:";
+  echo "  immudex-create-media                                                    Print this message.";
+  echo "  immudex-create-media --disk=/dev/sdX --isofile=file.iso                 Writes iso file to usb stick, made it bootable."; 
+  echo "  immudex-create-media --i386-efi --disk=/dev/sdX --isofile=immudex.iso   Create 32-bit EFI bootable usb stick with immudex.";
+  echo "  immudex-create-media --nuke --disk=/dev/sdX                             Writes first MB with 0's, deleting partition table";
+  echo;
+  echo "Report bugs to <xf0r3m@gmail.com>"; 
+}
+
+function version() {
+  echo "immudex-create-media 1.0";
+  echo;
+  echo "Copyright (C) 2026 morketsmerke.org";
+  echo "This is free software; see the source for copying conditions.  There is NO";
+  echo "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.";
+  echo;
+  echo "Written by xf0r3m.";
 }
 
 if [ $UID -ne 0 ]; then
@@ -22,17 +45,20 @@ if [ $UID -ne 0 ]; then
   exit 1;
 fi
 
+if [ "$1" ] && [ "$1" = "--help" ]; then help; exit 0; fi
+if [ "$1" ] && [ "$1" = "--version" ]; then version; exit 0; fi
+
 if [ "$1" ] && [ "$1" = "--i386-efi" ]; then target="i386-efi"; shift; fi
 if [ "$1" ] && [ "$1" = "--nuke" ]; then target="nuke"; shift; fi
-if [ "$1" ] && echo $1 | grep -Eq '/dev/(sd[a-z]|vd[a-z]|mmcblk[0-9])'; then
-  disk=$1; shift;
+if [ "$1" ] && [ "$(echo $1 | cut -d "=" -f 1)" = "--disk" ]; then
+  disk=$(echo $1 | cut -d "=" -f 2); shift;
 else
   help;
   exit 1;
 fi
 if [ ! "$target" ] || [ "$target" != "nuke" ]; then
-  if [ "$1" ] && file $1 | grep -q 'ISO 9660'; then 
-    iso=$1;
+  if [ "$1" ] && [ "$(echo $1 | cut -d "=" -f 1)" = "--isofile" ]; then 
+    iso=$(echo $1 | cut -d "=" -f 2);
   else
     help;
     exit 1;

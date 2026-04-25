@@ -34,17 +34,20 @@ else
   help;
   exit 1;
 fi
+archArg=$1;
+shift;
 
 #Determinig vanilla debian version
-case $2 in
+case $1 in
   '--testing') debver="testing";;
   '--stable') debver="stable";;
   '--oldstable') debver="oldstable";;
   *) help; exit 1;;
 esac
+shift;
 
-if [ "$3" ]; then export cname=$3; fi
-if [ "$4" ]; then export version=$4; fi
+if [ "$1" ]; then export cname=$1; shift; fi
+if [ "$1" ]; then export version=$1; shift; fi
 
 if [ ! -f /sbin/debootstrap ]; then
   create_enviroment 
@@ -89,7 +92,7 @@ fi
 
 #Fetching vanilla Debian base system files:
 echo -n "Fetching ${debver} vanilla Debian base system files...";
-sudo /sbin/debootstrap --arch=$(echo $1 | sed 's/-//g') $debver ${HOME}/build/immudex-${debver}/${arch}/chroot http://deb.debian.org/debian >> immudex_build.log 2>&1;
+sudo /sbin/debootstrap --arch=$(echo $archArg | sed 's/-//g') $debver ${HOME}/build/immudex-${debver}/${arch}/chroot http://deb.debian.org/debian >> immudex_build.log 2>&1;
 if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
 #Copying chroot script to chroot directory:
@@ -107,7 +110,7 @@ sudo chroot ${HOME}/build/immudex-${debver}/${arch}/chroot /bin/bash /base.sh $d
 
 #Try to umount system interfaces it may fail.
 for i in /dev/pts /proc /run /sys /dev; do
-  sudo umount ${HOME}/build/immudex-${debver}/${arch}/chroot$i;
+  sudo umount -f ${HOME}/build/immudex-${debver}/${arch}/chroot$i;
 done
 
 #Removing chroot script.
@@ -132,12 +135,16 @@ cp -v $(ls -v ${HOME}/build/immudex-${debver}/${arch}/chroot/boot/initrd.img-* |
 if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
 export FILE="${HOME}/build/immudex-${debver}/${arch}/staging/live/changelog";
-export arch2=$(echo $1 | sed 's/-//g');
+export arch2=$(echo $archArg | sed 's/-//g');
 
 #Setting changelog file for this image:
 echo "-==Setting changelog file for this image: $(date)==-" >> immudex_build.log;
 echo -n "Setting changelog file for this image...";
 (source ${HOME}/immudex/versions/template.sh; make_changelog_file $arch2;)
+if [ $# -gt 0 ]; then
+  echo "-== User custom changelog ==-" >> $FILE;
+  echo "${version}: ${@};" >> $FILE;
+fi
 if [ $? -eq 0 ]; then echo -e "[ ${GREEN}OK${ENDCOLOR} ]"; fi
 
 eval $(grep '^COMMIT' $FILE);

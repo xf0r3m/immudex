@@ -1,21 +1,46 @@
 #!/bin/bash
 
 function help() {
-  echo "immudex-meteo - prognoza pogody z wttr.in"
-  echo "@ 2023 morketsmerke.org";
-  echo "Opcje:";
-  echo "  -s - format krótki (aktualna pogoda)";
-  echo "  -l - format długi (format krótki + 2 dniowa prognoza)" 
-  echo "Użycie:";
-  echo "$ meteo <miasto>";
+  echo "immudex-meteo script fetching weather status from wttr.in webpage."
+  echo "The weather status is availabel to get in 3 formats described below";
+  echo "in options.";
+  echo;
+  echo "Usage: immudex-meteo [--short | --long | --micro location] [--help] [--version]";
+  echo;
+  echo "Options:";
+  echo "  --short location    Short human readable format with one small ascii art.";
+  echo "  --long location     Long format, more readable, weather for every stage of the day and 2-day forecast";
+  echo "  --micro location    Micro format, one line with details (current weather)";
+  echo "  --help              Prints this message";
+  echo "  --version           Prints information about version, author and copyrights";
+  echo;
+  echo "Exmaples:";
+  echo "  immudex-meteo --short London    Current weather in London in short format.";
+  echo "  immudex-meteo --long Berlin     Weather for whole day in Berlin and 2-day forecast.";
+  echo "  immudex-meteo --micro Warszawa  One line with weather information from Warsaw, good for motd's or resources monitors.";
+  echo;
+  echo "Report bugs to <xf0r3m@gmail.com>";
+}
+
+function version() {
+  echo "immudex-meteo 1.0-1";
+  echo;
+  echo "Copyright (C) 2026 morketsmerke.org";
+  echo "This is free software; see the source for copying conditions.  There is NO";
+  echo "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.";
+  echo;
+  echo "Written by xf0r3m.";
 }
 
 if [ "$1" ]; then
-  if [ "$1" = "-s" ]; then
-    curl wttr.in/${2}?0\&lang=pl;
-  elif [ "$1" = "-l" ]; then
-    curl wttr.in/${2}?lang=pl;
-  fi
+  case $1 in
+    "--short") curl wttr.in/${2}?0\&lang=pl;;
+    "--long") curl wttr.in/${2}?lang=pl;;
+    "--micro") curl wttr.in/${2}?format=4;;
+    "--help") help; exit 0;;
+    "--version") version; exit 0;;
+    *) help; exit 1;;
+  esac
 else
   help;
   exit 1;

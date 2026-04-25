@@ -30,7 +30,7 @@ przed stworzeniem obrazu płyty nie jest póki co wymagane.
   ```
   $ git clone https://github.com/xf0r3m/immudex
   $ cd immudex
-  $ ./immudex-build --<amd64/i386> --<testing/stable/oldstable> [nazwa_obrazu] [wersja_obrazu]
+  $ ./immudex-build --<amd64/i386> --<testing/stable/oldstable> [nazwa_obrazu] [wersja_obrazu] [changelog_użytkownika]
   ```
 
 ### Zastrzeżenia i uznanie autorstwa:

@@ -11,18 +11,31 @@ ENDCOLOR="\e[0m";
 root="/run/live/medium";
 
 function help() {
-  echo "immudex-upgrade - script for searching upgrades and upgrade immudex";
-  echo "@ 2024 morketsmerke.org";
+  echo "Script for searching upgrades and upgrade immudex.";
   echo "Superuser (root) privileges are required.";
+  echo;
+  echo "Usage: immudex-upgrade [--help] [--version] [--check] [--upgrade] [--myversion] [--compilation-date] [--packages-upgradable [--security]]";
+  echo;
   echo "Options:";
-  echo " --check - check there are upgrades for immudex";
-  echo " --upgrade - upgrade immudex from given source";
-  #echo " --myversion - prints images current commit message";
-  echo " --myversion - prints image details";
-  echo " --compilation-date - prints date of image creation";
-  echo " --packages-upgradable [--security] - updates apt (packages) list and";
-  echo "   prints available to upgrade packages, with --security modificator";
-  echo "   prints only pacakages from security repository branch";
+  echo "  --check                                  Check there are upgrades for immudex";
+  echo "  --upgrade                                Upgrade immudex from given source";
+  echo "  --myversion                              Prints image details";
+  echo "  --compilation-date                       Prints date of image creation";
+  echo "  --packages-upgradable [--security]       Updates apt (packages) list and prints available to upgrade packages, with --security modificator prints only pacakages from security repository branch";
+  echo "  --help                                   Prints this message.";
+  echo "  --version                                Prints information about version, author and copyrights."; 
+  echo;
+  echo "Report bugs to <xf0r3m@gmail.com>";
+}
+
+function version(){
+  echo "immudex-upgrade 1.0";
+  echo;
+  echo "Copyright (C) 2026 morketsmerke.org";
+  echo "This is free software; see the source for copying conditions.  There is NO";
+  echo "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.";
+  echo;
+  echo "Written by xf0r3m.";
 }
 
 if [ $UID -ne 0 ]; then
@@ -32,6 +45,13 @@ if [ $UID -ne 0 ]; then
 fi
 
 if [ "$1" ]; then
+  if [ "$1" = "--help" ]; then
+    help;
+    exit 0;
+  elif [ "$1" = "--version" ]; then
+    version;
+    exit 0;
+  fi
   if [ "$1" ] && [ "$1" = "--check" ]; then
     if check_distro_commit; then 
       echo -e "${GREEN}This${ENDCOLOR} is the latest version of immudex";
@@ -123,3 +143,4 @@ else
   help;
   exit 1;
 fi
+

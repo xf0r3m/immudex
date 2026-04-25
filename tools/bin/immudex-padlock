@@ -1,10 +1,51 @@
 #!/bin/bash
 
+function help(){
+  echo "it's a switch script. This script, if there is more than one cryptdisk";
+  echo "gives a change to choose a cryptdisk and starts opening him. After";
+  echo "sucessful opening, it spawns a terminal window with CWD sets up on";
+  echo "choosed cryptdisk mountpoint and change the launcher icon in the bottom";
+  echo "panel, which informs user, there are a opened cryptdisks. When user,";
+  echo "execute script once again, he close all opened cryptdisk either that";
+  echo "not open with this script. At least he tries. In some cases it will be";
+  echo "impossible, because there are processes which using this cryptdisk or";
+  echo "inside this mount point there is other mount point. This is signaled,";
+  echo "by apropriate notification.";
+  echo "This script needs superuser (root) privileges, but using sudo command";
+  echo "is implemented inside the script, you don't needed to launch this";
+  echo "via sudo.";
+  echo;
+  echo "Usage: immudex-padlock [--help] [--version]";
+  echo;
+  echo "Example:";
+  echo "  immudex-padlock             Standard script execution, explained above.";
+  echo "  immudex-padlock --help      Print this message.";
+  echo "  immudex-padlock --version   Print information about version, author and copyrights.";
+  echo;
+  echo "Files:";
+  echo "  /usr/share/icons/padlock-icon.png       Symlink, original launcher icon.";
+  echo "  /usr/share/icons/changes-prevent.png    Original, closed padlock icon.";
+  echo "  /usr/share/icons/changes-allow.png      Original, open padlock icon.";
+  echo "  /etc/skel/.config/xfce4/panel/launcher-14/16844255236.desktop   XFCE4 bottom panel script activator.";
+  echo;
+  echo "Report bugs to <xf0r3m@gmai.com>";
+}
+
+function version(){
+  echo "immudex-padlock 1.0";
+  echo;
+  echo "Copyright (C) 2026 morketsmerke.org";
+  echo "This is free software; see the source for copying conditions.  There is NO";
+  echo "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.";
+  echo;
+  echo "Written by xf0r3m.";
+}
+
 launcher="/home/${USER}/.config/xfce4/panel/launcher-14/16844255236.desktop";
 
 function main_unlock() {
-  sudo /usr/local/sbin/immudex-crypt open $1;
-  index=$(basename $(sudo /usr/local/sbin/immudex-crypt list | grep "$1" | head -1 | awk '{printf $2}' | grep -o '[0-9]'));
+  sudo /usr/local/sbin/immudex-crypt --open=$1;
+  index=$(basename $(sudo /usr/local/sbin/immudex-crypt --list | grep "$1" | head -1 | awk '{printf $2}' | grep -o '[0-9]'));
   #sudo mkdir -p /media/${USER}/$devName;
   #sudo mount /dev/mapper/$devName /media/${USER}/$devName;
   
@@ -64,8 +105,16 @@ function lock() {
   fi 
 }
 
-mapperDeviceList=$(ls /dev/mapper | grep 'immudex-*' | awk '{printf $1" "}');
+if [ "$1" ]; then
+  if [ "$1" = "--help" ]; then
+    help;
+  elif [ "$1" = "--version" ]; then
+    version;
+  fi
+else 
+  mapperDeviceList=$(ls /dev/mapper | grep 'immudex-*' | awk '{printf $1" "}');
 
-if [ "$mapperDeviceList" ]; then lock;
-else unlock;
+  if [ "$mapperDeviceList" ]; then lock;
+  else unlock;
+  fi
 fi

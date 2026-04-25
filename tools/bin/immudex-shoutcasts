@@ -1,28 +1,162 @@
 #!/bin/bash
 
-echo -n "What are you wanna listen? ";
-read search;
+GREEN="\e[32m";
+RED="\e[31m";
+ENDCOLOR="\e[0m";
+BOLD="\e[1m";
+BOLD_GREEN="\e[1;32m";
+BOLD_YELLOW="\e[1;33m";
+BOLD_BLUE="\e[1;34m";
+
+function help() {
+  echo "immudex-shoutcasts script that search internet radios or shoutcasts in two sources xiph.org icecast";
+  echo "directory and download .m3u file from radio-browser.info based on a space-separated keywords.";
+  echo "Data from radio-browser.info are limited to 30 results.";
+  echo;
+  echo "Usage: immudex-shoutcasts [--source=icecast | radio] [--help] [--version] --keywords=keyword1...keywordN";
+  echo;
+  echo "Options:";
+  echo "  --source=icecast/radio              This parameter specifies source, if we want define a source. It can be omitted, then both sources will be searched.";
+  echo "  --keywords=keyword1...keywordsN   This parameter is required, it pass keywords to search. Keywords are space-separated.";
+  echo "  --help                              Print this message.";
+  echo "  --version                           Print information about version, author and copyrights.";
+  echo;
+  echo "Examples:";
+  echo "  immudex-shoutcasts --keywords=Classic Rock          Script will be search internet radios and shoutcast for 'Classic Rock' keywords";
+  echo "  immudex-shoutcasts --source=radio --keywords=lofi   Script will be search internet radios (because source is given) for 'lofi' keyword";
+  echo;
+  echo "Files:"
+  echo "  /tmp/icecast.idx  Temporary file, store search results from icecast directory for parsing.";
+  echo "  /tmp/radio.idx    Temporary file, downloaded .m3u file from radio-browser.info store search results for parsing.";
+  echo;
+  echo "Report bugs to <xf0r3m@gmail.com>";
+}
+
+function version() {
+  echo "immudex-shoutcasts 1.0";
+  echo;
+  echo "Copyright (C) 2026 morketsmerke.org";
+  echo "This is free software; see the source for copying conditions.  There is NO";
+  echo "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.";
+  echo;
+  echo "Written by xf0r3m.";
+}
+
 
 function getDataBetweenHtmlMarks() {
   grep "$1" $2 | sed -n "${3}p" | cut -d ">" -f 2 | cut -d "<" -f 1;
 }
-wget http://dir.xiph.org/search?q=$search -O /tmp/shcast_dir.html >> /dev/null 2>&1;
-if [ ! -s /tmp/shcast_dir.html ]; then
-  echo -e "\e[31mThere is no internet connection.\e[0m";
-  exit 1;
-else
-  amountOfStations=$(grep 'card-title' /tmp/shcast_dir.html | wc -l);
+
+function listOfStations() {
+  query=$1;
+  src=$2;
+  
+  case $src in
+    "icecast") wget http://dir.xiph.org/search?q=$query -O /tmp/icecast.idx >> /dev/null 2>&1;
+                file="/tmp/icecast.idx";;
+    "radio") wget "https://de1.api.radio-browser.info/m3u/stations/search?limit=30&name=${query}&hidebroken=true&order=clickcount&reverse=true" -O /tmp/radio.idx >> /dev/null 2>&1;
+              file="/tmp/radio.idx";
+              dos2unix $file;
+  esac
+    
+  if [ ! -f $file ]; then
+    echo -e "${RED}There is no internet connection or sources are currently";
+    echo -e "unavailable.${ENDCOLOR}";
+    exit 1;
+  fi
+
+  case $src in
+    "icecast") amountOfStations=$(grep 'card-title' $file | wc -l);;
+    "radio") amountOfStations=$(grep '#EXTINF' $file | wc -l);;
+  esac
+
+  case $src in
+    "icecast") echo -e "${BOLD}Icecast directory:${ENDCOLOR}";;
+    "radio") echo -e "${BOLD}radio-browser.info:${ENDCOLOR}";;
+  esac
+
   i=1;
   while [ $i -le $amountOfStations ]; do
-    stationName=$(getDataBetweenHtmlMarks 'card-title' /tmp/shcast_dir.html ${i});
-    whatIsPlaying=$(getDataBetweenHtmlMarks 'card-subtitle' /tmp/shcast_dir.html ${i});
-    echo -e "${i}. \e[33m${stationName}\e[0m";
-    echo -e "   \e[32m${whatIsPlaying}\e[0m";
-    i=$((i + 1));
+    case $src in
+      "icecast") stationName=$(getDataBetweenHtmlMarks 'card-title' $file $i);;
+      "radio") stationName=$(grep '#EXTINF' $file | sed -n "${i}p" | cut -d "," -f 2-);;
+    esac
+    if [ "$src" = "icecast" ]; then
+      whatIsPlayingNow=$(getDataBetweenHtmlMarks 'card-subtitle' $file $i);
+    fi
+    case $src in
+      "icecast") link=$(grep 'Play' $file | sed -n "${i}p" | cut -d '"' -f 2);;
+      "radio") link=$(grep '://' $file | sed -n "${i}p");;
+    esac
+    echo -e "${BOLD}${i}.${ENDCOLOR} ${BOLD_YELLOW}${stationName}${ENDCOLOR}";
+    if [ "$whatIsPlayingNow" ]; then
+      echo -e "\t${BOLD}Now playing:${ENDCOLOR} ${BOLD_BLUE}${whatIsPlayingNow}${ENDCOLOR}";
+      unset whatIsPlayingNow;
+    fi
+    echo -e "\t${BOLD}Link:${ENDCOLOR} ${BOLD_GREEN}${link}${ENDCOLOR}";
+    i=$(expr $i + 1);
   done
-  echo -n "Pick a one: ";
-  read numberOfStation;
-  echo $(grep 'Play' /tmp/shcast_dir.html | sed -n "${numberOfStation}p" | cut -d '"' -f 2) | xclip -selection c;
-  echo "Station URL was copied to clipboard";
-  
+  unset i;
+  echo;
+}
+
+if [ "$1" ]; then
+
+  if [ "$1" ] && [ "$1" = "--help" ]; then
+    help;
+    exit 0;
+  elif [ "$1" ] && [ "$1" = "--version" ]; then
+    version;
+    exit 0;
+  fi
+
+  option=$(echo $1 | cut -d '=' -f 1);
+  if [ "$option" = "--source" ]; then
+    src=$(echo $1 | cut -d '=' -f 2);
+    search=$(echo $* | cut -d '=' -f 3-);
+  elif [ "$option" = "--keywords" ]; then
+    search=$(echo $* | cut -d "=" -f 2-);
+  fi
+else
+  help;
+  exit 1;
+fi
+
+if [ "$src" ]; then
+  listOfStations "$search" $src;
+  if [ "$src" = "icecast" ]; then
+    file="/tmp/icecast.idx";
+  else
+    file="/tmp/radio.idx";
+  fi
+else
+  listOfStations "$search" 'icecast';
+  listOfStations "$search" 'radio';
+
+  PS3="source? ";
+  select src in 'icecast' 'radio'; do
+    case $src in
+      'icecast') file="/tmp/icecast.idx";;
+      'radio') file="/tmp/radio.idx";;
+      *) exit 0;
+    esac
+    break
+  done
+fi
+
+echo -n "Station? ";
+read station;
+if $(echo $station | grep -q '[0-9]') && [ $station -le 30 ]; then
+  case $file in
+    '/tmp/icecast.idx') link=$(grep 'Play' $file | sed -n "${station}p" | cut -d '"' -f 2);;
+    '/tmp/radio.idx') link=$(grep '://' $file | sed -n "${station}p");;
+  esac
+  case $src in
+      "icecast") stationName=$(getDataBetweenHtmlMarks 'card-title' $file $station);;
+      "radio") stationName=$(grep '#EXTINF' $file | sed -n "${station}p" | cut -d "," -f 2-);;
+  esac
+  echo -e "${BOLD}Station:${ENDCOLOR} ${BOLD_YELLOW}${stationName}${ENDCOLOR}";
+  mpv --no-video $link;
+else
+  exit 0;
 fi
