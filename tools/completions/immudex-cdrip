@@ -1,0 +1,17 @@
+#!/bin/bash
+
+idx_cdrip_complete() {
+  local cur;
+  
+  COMPREPLY=()
+  cur=${COMP_WORDS[COMP_CWORD]};
+
+  if [ $COMP_CWORD -eq 1 ]; then
+    COMPREPLY=( $(compgen -W '-g -h -o -r -v' -- $cur) );
+  elif [ $COMP_CWORD -eq 2 ]; then
+    return 0;
+  fi
+  return 0;
+}
+
+complete -F idx_cdrip_complete immudex-cdrip

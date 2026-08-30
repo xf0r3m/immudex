@@ -5,16 +5,16 @@ function help() {
   echo "service. The script job is to change set appropriate name for this";
   echo "host based on computer chassis and 7 last chars from boot ID."
   echo;
-  echo "Usage: immudex-hostname [--help] [--version]";
+  echo "Usage: immudex-hostname [-h] [-v]";
   echo;
   echo "Options:";
-  echo "  --help      Print this message.";
-  echo "  --version   Print information about version, author and copyrights."
+  echo "  -h      Print this message.";
+  echo "  -v      Print information about version, author and copyrights."
   echo;
   echo "Examples:";
-  echo "  immudex-hostname            Set apropriate hostname, usually executed by systemd.";
-  echo "  immudex-hostname --help     Print this message.";
-  echo "  immudex-hostname --version  Print information about version, author and copyrights.";
+  echo "  immudex-hostname        Set apropriate hostname, usually executed by systemd.";
+  echo "  immudex-hostname -h     Print this message.";
+  echo "  immudex-hostname -v     Print information about version, author and copyrights.";
   echo;
   echo "Files:";
   echo "  /usr/lib/systemd/system/immudex-hostname.service    Systemd unit file, to run immudex-hostname script as a service.";
@@ -23,7 +23,7 @@ function help() {
 }
 
 function version() {
-  echo "immudex-hostname 1.0";
+  echo "immudex-hostname 1.1";
   echo;
   echo "Copyright (C) 2026 morketsmerke.org";
   echo "This is free software; see the source for copying conditions.  There is NO";
@@ -34,9 +34,9 @@ function version() {
 }
 
 if [ "$1" ]; then
-  if [ "$1" = "--help" ]; then
+  if [ "$1" = "-h" ]; then
     help;
-  elif [ "$1" = "--version" ]; then
+  elif [ "$1" = "-v" ]; then
     version;
   fi
 else

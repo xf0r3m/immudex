@@ -5,25 +5,25 @@ function help() {
   echo "The weather status is availabel to get in 3 formats described below";
   echo "in options.";
   echo;
-  echo "Usage: immudex-meteo [--short | --long | --micro location] [--help] [--version]";
+  echo "Usage: immudex-meteo [-h] [-l|-m|-s location] [-v]";
   echo;
   echo "Options:";
-  echo "  --short location    Short human readable format with one small ascii art.";
-  echo "  --long location     Long format, more readable, weather for every stage of the day and 2-day forecast";
-  echo "  --micro location    Micro format, one line with details (current weather)";
-  echo "  --help              Prints this message";
-  echo "  --version           Prints information about version, author and copyrights";
+  echo "  -h           Prints this message";
+  echo "  -l location  Long format, more readable, weather for every stage of the day and 2-day forecast";
+  echo "  -m location  Micro format, one line with details (current weather)";
+  echo "  -s location  Short human readable format with one small ascii art.";
+  echo "  -v           Prints information about version, author and copyrights";
   echo;
   echo "Exmaples:";
-  echo "  immudex-meteo --short London    Current weather in London in short format.";
-  echo "  immudex-meteo --long Berlin     Weather for whole day in Berlin and 2-day forecast.";
-  echo "  immudex-meteo --micro Warszawa  One line with weather information from Warsaw, good for motd's or resources monitors.";
+  echo "  immudex-meteo -s London    Current weather in London in short format.";
+  echo "  immudex-meteo -l Berlin     Weather for whole day in Berlin and 2-day forecast.";
+  echo "  immudex-meteo -m Warszawa  One line with weather information from Warsaw, good for motd's or resources monitors.";
   echo;
   echo "Report bugs to <xf0r3m@gmail.com>";
 }
 
 function version() {
-  echo "immudex-meteo 1.0-1";
+  echo "immudex-meteo 1.1";
   echo;
   echo "Copyright (C) 2026 morketsmerke.org";
   echo "This is free software; see the source for copying conditions.  There is NO";
@@ -34,11 +34,11 @@ function version() {
 
 if [ "$1" ]; then
   case $1 in
-    "--short") curl wttr.in/${2}?0\&lang=pl;;
-    "--long") curl wttr.in/${2}?lang=pl;;
-    "--micro") curl wttr.in/${2}?format=4;;
-    "--help") help; exit 0;;
-    "--version") version; exit 0;;
+    "-s") curl wttr.in/${2}?0\&lang=pl;;
+    "-l") curl wttr.in/${2}?lang=pl;;
+    "-m") curl wttr.in/${2}?format=4;;
+    "-h") help; exit 0;;
+    "-v") version; exit 0;;
     *) help; exit 1;;
   esac
 else

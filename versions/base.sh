@@ -38,7 +38,7 @@ dpkg-reconfigure console-setup;
 
 install_packages task-desktop task-xfce-desktop;
 
-install_packages firejail ufw cryptsetup lsof extlinux grub-efi-amd64 efibootmgr bash-completion etherwake wakeonlan cifs-utils wget figlet redshift irssi nmap nfs-common remmina python3-pip ffmpeg debootstrap squashfs-tools xorriso syslinux-efi grub-pc-bin grub-efi-amd64-bin mtools dosfstools chrony python3-venv isolinux rsync mutt gimp openvpn netselect-apt gvfs-backends dnsutils lolcat cdparanoia icedax mc minicom;
+install_packages firejail ufw cryptsetup lsof extlinux grub-efi-amd64 efibootmgr bash-completion etherwake wakeonlan cifs-utils wget figlet redshift irssi nmap nfs-common remmina python3-pip ffmpeg debootstrap squashfs-tools xorriso syslinux-efi grub-pc-bin grub-efi-amd64-bin mtools dosfstools chrony python3-venv isolinux rsync mutt gimp openvpn netselect-apt gvfs-backends dnsutils lolcat cdparanoia icedax mc minicom dos2unix;
 
 cd;
 
@@ -64,7 +64,7 @@ chmod +x /usr/local/bin/*;
 
 cp -vv ~/immudex/tools/sbin/* /usr/local/sbin;
 chown root:root /usr/local/sbin/*;
-chmod 544 /usr/local/sbin/*;
+chmod 555 /usr/local/sbin/*;
 
 mkdir /usr/share/doc/immudex-motd;
 cp -vv ~/immudex/tools/misc/motd.conf /usr/share/doc/immudex-motd/motd.conf.sample;
@@ -73,6 +73,10 @@ systemctl enable immudex-hostname.service;
 
 if [ ! -d /usr/share/man/man1 ]; then mkdir /usr/share/man/man1; fi
 cp -vv ~/immudex/tools/man/* /usr/share/man/man1;
+
+if [ -d /usr/share/bash-completion/completions ]; then
+  cp -vv ~/immudex/tools/completions/* /usr/share/bash-completion/completions;
+fi
 
 mkdir /etc/skel/.irssi
 

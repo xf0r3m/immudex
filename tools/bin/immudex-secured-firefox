@@ -4,18 +4,18 @@ function help() {
   echo "This tool running up a Firefox browser via firejail with sandboxing ";
   echo "and forcing network interface to that we use to internet connection.";
   echo;
-  echo "Usage: immudex-secured-firefox [--help] [--version]";
+  echo "Usage: immudex-secured-firefox [-h] [-v]";
   echo;
   echo "Exaples:";
-  echo "  immudex-secured-firefox             Run secured browser.";
-  echo "  immudex-secured-firefox --help      Print this message.";
-  echo "  immudex-secured-firefox --version   Print information about version, author and copyrights";
+  echo "  immudex-secured-firefox      Run secured browser.";
+  echo "  immudex-secured-firefox -h   Print this message.";
+  echo "  immudex-secured-firefox -v   Print information about version, author and copyrights";
   echo;
   echo "Report bugs to <xf0r3m@gmail.com>";
 }
 
 function version(){
-  echo "immudex-secured-firefox 1.0";
+  echo "immudex-secured-firefox 1.1";
   echo;
   echo "Copyright (C) 2026 morketsmerke.org";
   echo "This is free software; see the source for copying conditions.  There is NO";
@@ -25,10 +25,10 @@ function version(){
 }
 
 if [ "$1" ]; then
-  if [ "$1" = "--help" ]; then
+  if [ "$1" = "-h" ]; then
       help;
       exit 0;
-  elif [ "$1" = "--version" ]; then
+  elif [ "$1" = "-v" ]; then
       version;
       exit 0;
   fi

@@ -5,22 +5,22 @@ function help() {
   echo "used for build immudex. This information is used in 'Info:' section";
   echo "in conky widget as complement in name of immudex version.";
   echo;
-  echo "Usage: immudex-branch [--help] [--version]";
+  echo "Usage: immudex-branch [-h] [-v]";
   echo;
   echo "Options:";
-  echo "  --help    Print this message.";
-  echo "  --version Print information about version, author and copyrights.";
+  echo "  -h    Print this message.";
+  echo "  -v    Print information about version, author and copyrights.";
   echo;
   echo "Examples:";
   echo "  immudex-branch            Prints version of Debian used for immudex build with hyphen on start of."
-  echo "  immudex-branch --help     Prints this message.";
-  echo "  immudex-branch --version  Print information about version, author and copyrights.";
+  echo "  immudex-branch -h         Prints this message.";
+  echo "  immudex-branch -v         Print information about version, author and copyrights.";
   echo;
   echo "Report bugs to <xf0r3m@gmail.com>";
 }
 
 function version() {
-  echo "immudex-branch 1.0";
+  echo "immudex-branch 1.1";
   echo;
   echo "Copyright (C) 2026 morketsmerke.org";
   echo "This is free software; see the source for copying conditions.  There is NO";
@@ -31,9 +31,9 @@ function version() {
 }
 
 if [ "$1" ]; then
-  if [ "$1" = "--help" ]; then
+  if [ "$1" = "-h" ]; then
     help;
-  elif [ "$1" = "--version" ]; then
+  elif [ "$1" = "-v" ]; then
     version;
   fi
 else

@@ -2,16 +2,16 @@
 
 
 if [ "$1" ]; then
-  if [ "$1" = "--help" ]; then
+  if [ "$1" = "-h" ]; then
     echo "immudex-motd prints configurable message of the day.";
     echo "Information and its quantity can be changed via the configuration file.";
     echo "Script using figlet basic font and lolcat for print header of message.";
     echo;
-    echo "Usage: immudex-motd [--help] [--version]";
+    echo "Usage: immudex-motd [-h] [-v]";
     echo;
     echo "Options:";
-    echo "  --help        Print this message.";
-    echo "  --version     Print information about version, author and copyright";
+    echo "  -h        Print this message.";
+    echo "  -v        Print information about version, author and copyright";
     echo;
     echo "Files:";
     echo "  /etc/motd.conf                                  Script configuration file.";
@@ -23,8 +23,8 @@ if [ "$1" ]; then
     echo "Report bugs to <xf0r3m@gmail.com>";
     exit 0;
   fi
-  if [ "$1" = "--version" ]; then
-    echo "immudex-motd 1.0";
+  if [ "$1" = "-v" ]; then
+    echo "immudex-motd 1.1";
     echo;
     echo "Copyright (C) 2026 morketsmerke.org";
     echo "This is free software; see the source for copying conditions.  There is NO";
@@ -96,7 +96,7 @@ echo;
 if [ -x /usr/local/bin/immudex-meteo ]; then
 echo "Weather:";
   if [ "$LOCATION" ]; then
-    /usr/local/bin/immudex-meteo --micro $LOCATION;
+    /usr/local/bin/immudex-meteo -m $LOCATION;
   fi
 fi
 echo;

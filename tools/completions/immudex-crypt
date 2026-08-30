@@ -1,0 +1,41 @@
+#!/bin/bash
+
+return_ic_index() {
+  echo -n "$(ls /dev/mapper | grep 'immudex-crypt[0-9]*' | grep -o '[0-9]*' | awk '{printf $1" " }')";
+}
+
+part_list() {
+  i=0;
+  partList=();
+  for part in $(ls -l /dev/ | grep '^b' | grep -v '\ 0\ ' | grep -v 'dm' | awk '{printf $NF" "}'); do
+      partList[$i]="/dev/${part}";
+    i=$(expr $i + 1);
+  done
+  echo -n ${partList[@]};
+}
+
+cryptDevice_list() {
+  echo -n "$(/usr/sbin/blkid | grep 'crypto_LUKS' | awk '{printf $1" "}' | sed 's/://g')";
+}
+
+idx_crypt_complete() {
+  local cur prev
+
+  COMPREPLY=()
+  cur=${COMP_WORDS[COMP_CWORD]};
+  prev=${COMP_WORDS[COMP_CWORD-1]}
+
+  if [ $COMP_CWORD -eq 1 ]; then
+    COMPREPLY=( $(compgen -W '-c -f -h -l -o -v' -- $cur) );
+  elif [ $COMP_CWORD -eq 2 ]; then
+    case "$prev" in
+      '-c') COMPREPLY=( $(compgen -W "$(return_ic_index)" -- $cur) );;
+      '-f') COMPREPLY=( $(compgen -W "$(part_list)" -- $cur) );;
+      '-o') COMPREPLY=( $(compgen -W "$(cryptDevice_list)" -- $cur) );;
+      *) return 0;;
+    esac
+  fi
+  return 0;
+}
+
+complete -F idx_crypt_complete immudex-crypt

@@ -1,20 +1,29 @@
 #!/bin/bash
 
 function help() {
-  echo "======================================================================";
-  echo "immudex-morketsmerke - script for fetch and adjust morketsmerke.net site";
+  echo "script for fetch and adjust morketsmerke.org site";
   echo "as offline available source of information.";
-  echo "@ 2023 morketsmerke.org";
+  echo "By default script open downloaded site in terminal via W3M browser with";
+  echo "monochrome mode.";
+  echo;
+  echo "Usage: immudex-morketsmerke [-b] [-h] [-v]";
   echo;
   echo "Options:";
-  echo "  --browser - launching fetched site in default application for open"
-  echo "  html sites";
-  echo "  -[-]<any_other_chars_or_strings> - print this message";
-  echo "By default script open downloaded site in terminal via W3M browser with";
-  echo "monochrome mode";
+  echo "  -b        Launching fetched site in default application for open html sites.";
+  echo "  -h        Print this message.";
+  echo "  -v        Print information about version, author and copyrights";
   echo;
-  echo "Usage:";
-  echo "  $ morketsmerke [--browser]";
+  echo "Report bugs to <xf0r3m@gmail.com>";
+}
+
+function version() {
+  echo "immudex-morketsmerke 1.0";
+  echo;
+  echo "Copyright (C) 2026 morketsmerke.org";
+  echo "This is free software; see the source for copying conditions.  There is NO";
+  echo "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.";
+  echo;
+  echo "Written by xf0r3m.";
 }
 
 function R() {
@@ -55,16 +64,27 @@ function install_morketsmerke() {
 
 }
 
-/usr/bin/ping -c 1 wp.pl >> /dev/null 2>&1;
-if [ $? -eq 0 ]; then install_morketsmerke; fi
-
-morketsmerke_path=/usr/share/doc/morketsmerke;
-
-if [ "$1" ] && [ "$1" = "--browser" ]; then
-  xdg-open ${morketsmerke_path}/index.html;
-elif [ "$1" ]; then
+if [ "$1" ] && [ "$1" = "-h" ]; then
   help;
-  exit 1;
+  exit 0;
+elif [ "$1" ] && [ "$1" = "-v" ]; then
+  version;
+  exit
 else
-  w3m -M ${morketsmerke_path}/index.html;
+  morketsmerke_path=/usr/share/doc/morketsmerke;
+  
+  if [ ! -d $morketsmerke_path ]; then
+    /usr/bin/ping -c 1 wp.pl >> /dev/null 2>&1;
+    if [ $? -eq 0 ]; then 
+      install_morketsmerke;
+    else
+      echo "There is no internet connection.";
+      exit 1;
+    fi
+  fi
+  if [ "$1" ] && [ "$1" = "-b" ]; then
+    xdg-open ${morketsmerke_path}/index.html;
+  else
+    w3m -M ${morketsmerke_path}/index.html;
+  fi
 fi

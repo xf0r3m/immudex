@@ -12,26 +12,26 @@ function help() {
   echo "Script apart form ripping Audio CD's, reads metadata, check it on music";
   echo "databases and creates properly named directories and audio files.";
   echo;
-  echo "Usage: immudex-cdrip [--rip-only] [--get-disc-info] [--rip-n-rename] [--help] [--version]";
+  echo "Usage: immudex-cdrip [-g] [-h] [-o] [-r] [-v]";
   echo;
   echo "Options:";
-  echo "  --rip-only        Rips audio tracks from Audio CD, without quering CDIndex (MusicBrainz) database.";
-  echo "  --get-disc-info   Getting info from CDIndex (MusicBrainz) database about Audio CD without ripping.";
-  echo "  --rip-n-rename    Rips audio tracks from Audio CD, create Artist/Album folders and rename tracks according to data get CDIndex (MusicBrainz) database (normal usage).";
-  echo "  --help            Print this message.";
-  echo "  --version         Print information about version, author and copyrights.";
+  echo "  -g                 Getting metadata from Audio CD without ripping.";
+  echo "  -h                 Print this message.";
+  echo "  -o                 Rips audio tracks from Audio CD, without renaming based Audio CD metadata";
+  echo "  -r                 Rips audio tracks from Audio CD, create Artist/Album folders and rename tracks according to AudioCD metadata.";
+  echo "  -v                 Print information about version, author and copyrights.";
   echo;
   echo "Examples:";
   echo "  immudex-cdrip                   Print this message";
-  echo "  immudex-cdrip --get-disc-info   Check is in MusicBrainz DB, are there any data about puted CD in drive.";
-  echo "                                  Could be useful with less popular artists.";
-  echo "  immudex-cdrip --rip-n-rename    Rips Audio CD and names dirs and files with MusicBrainz data.";
+  echo "  immudex-cdrip -g                Get metadata from Audio CD";
+  echo "  immudex-cdrip -o                Rip tracks form Audio CD, without renaming. Could be useful with less popular artists.";
+  echo "  immudex-cdrip -r                Rips Audio CD and names dirs and files with Audio CD data.";
   echo;
   echo "Report bugs to <xf0r3m@gmail.com>";
 }
 
 function version() {
-  echo "immudex-cdrip 1.0";
+  echo "immudex-cdrip 1.1";
   echo;
   echo "Copyright (C) 2026 morketsmerke.org";
   echo "This is free software; see the source for copying conditions.  There is NO";
@@ -60,7 +60,8 @@ function multipleArtistDisc() {
     trackName=$(grep -o "<Name>.*</Name>" $FILE \
     | sed -n "${i}p" \
     | sed 's,<Name>,,' \
-    | sed 's,</Name>,,');
+    | sed 's,</Name>,,' \
+    | sed 's,amp;,,g');
   
     if [ $i -lt 10 ]; then
       trackNumber="0${i}";
@@ -68,11 +69,9 @@ function multipleArtistDisc() {
       trackNumber=${i};
     fi
 
-    audioFilename="audio_${trackNumber}.wav";
-    infFilename=$(echo $audioFilename | sed 's/wav/inf/');
+    audioFilename="track${trackNumber}.cdda.wav";
      
     mv -v $audioFilename "${TRACKPATH}/${trackNumber}. ${artist} - ${trackName}.wav";
-    rm -v ${infFilename};
     i=$(expr $i + 1);
   done
 
@@ -80,23 +79,7 @@ function multipleArtistDisc() {
   rm -v ${FILE};  
 }
 
-#if [ ! -x /usr/bin/cdda2wav ]; then
-#  exit 1;
-#fi
-
-if [ "$1" ] && [ "$1" = "--rip-only" ]; then
-  cdda2wav -vall cddb=-1 speed=4 -paranoia paraopts=no-verify -B -D /dev/sr0;
-  exit 0;
-fi
-
-if [ "$1" ] && [ "$1" = "--get-disc-info" ]; then
-  cdda2wav -J -D /dev/sr0;
-  exit 0;
-fi
-
-if [ "$1" ] && [ "$1" = "--rip-n-rename" ]; then
-  cdda2wav -vall cddb=1 speed=4 -paranoia paraopts=no-verify -B -D /dev/sr0;
-
+function renameWithFile() {
   FILE="audio.cdindex";
 
   if $(grep -q '<MultipleArtistCD>' $FILE); then
@@ -114,33 +97,118 @@ if [ "$1" ] && [ "$1" = "--rip-n-rename" ]; then
       trackName=$(grep -o "<Name>.*</Name>" $FILE \
       | sed -n "${i}p" \
       | sed 's,<Name>,,' \
-      | sed 's,</Name>,,');
+      | sed 's,</Name>,,' \
+      | sed 's,amp;,,g');
 
       if [ $i -lt 10 ]; then
-        audioFilename="audio_0${i}.wav";
+        audioFilename="track0${i}.cdda.wav";
         trackNumber="0${i}";
       else
-        audioFilename="audio_${i}.wav";
+        audioFilename="track${i}.cdda.wav";
         trackNumber="${i}";
       fi
-      infFilename=$(echo "$audioFilename" | sed 's/wav/inf/');
       mv -v $audioFilename "${TRACKPATH}/${trackNumber}. ${ARTIST} - ${trackName}.wav";
-      rm -v $infFilename;
       i=$(expr $i + 1);
     done
  
     rm -v audio.cddb;
     rm -v audio.cdindex;
   fi
+}
+
+function renameWithMusicBrainz() {
+  CDINDEX=$(cdda2wav -J -D /dev/sr0 -v catalog 2>&1 |\
+  grep '^CDINDEX' |\
+  awk '{printf $3}');
+
+  wget -q https://musicbrainz.org/cdtoc/${CDINDEX} -O /tmp/immudex-cdrip.html;
+
+  ARTIST=$(sed 's,</a>,\n,g' /tmp/immudex-cdrip.html |\
+  grep 'artist' |\
+  tail -1 |\
+  sed 's,>,\n,g' | tail -1);
+
+  RELEASE=$(sed 's,</a>,\n,g' /tmp/immudex-cdrip.html |\
+  grep 'release/' |\
+  grep -o '<bdi>.*</bdi>' |\
+  tail -1 |\
+  sed -e 's,<bdi>,,g' -e 's,</bdi>,,g');
+
+  TRACKSNo=$(sed 's,</td>,\n,g' /tmp/immudex-cdrip.html |\
+  grep 'Total\ tracks' |\
+  grep -o '[0-9]*');
+
+  TRACKList=$(sed -e 's,</a>,\n,g'\
+  -e 's,</span>,\n,g' /tmp/immudex-cdrip.html |\
+  grep 'recording/' |\
+  grep -o '<bdi>.*</bdi>' |\
+  tail -${TRACKSNo} |\
+  sed -e 's,<bdi>,,g'\
+  -e 's,</bdi>,,g'\
+  -e 's@\ /@,@g'\
+  -e "s,&#x27;,',g" |\
+  sed 's/\ /_/g');
+
+  if [ ! -d "$ARTIST" ]; then
+    mkdir -p "${ARTIST}/${RELEASE}";
+  else
+    if [ ! -d "${ARTIST}/${RELEASE}" ]; then
+      mkdir "${ARTIST}/${RELEASE}";
+    fi
+  fi
+
+  i=1;
+  for trackName in $TRACKList; do
+    if [ $i -lt 10 ]; then
+      mv -v track0${i}.cdda.wav "${ARTIST}/${RELEASE}/0${i}. ${ARTIST} - $(echo $trackName | sed 's/_/\ /g').wav";
+    else
+      mv -v track${i}.cdda.wav "${ARTIST}/${RELEASE}/${i}. ${ARTIST} - $(echo $trackName | sed 's/_/\ /g').wav";
+    fi
+    i=$(expr $i + 1);
+  done
+
+  rm /tmp/immudex-cdrip.html;
+}
+
+#if [ ! -x /usr/bin/cdda2wav ]; then
+#  exit 1;
+#fi
+
+if [ "$1" ] && [ "$1" = "-o" ]; then
+  #cdda2wav -vall cddb=-1 speed=4 -paranoia paraopts=no-verify -B -D /dev/sr0;
+  cdparanoia -A;
+  cdparanoia -XB;
+  rm cdparanoia.log;
   exit 0;
 fi
 
-if [ "$1" ] && [ "$1" = "--help" ]; then
+if [ "$1" ] && [ "$1" = "-g" ]; then
+  cdda2wav -J -D /dev/sr0;
+  exit 0;
+fi
+
+if [ "$1" ] && [ "$1" = "-r" ]; then
+  #cdda2wav -vall cddb=1 speed=4 -paranoia paraopts=no-verify -B -D /dev/sr0;
+  #Get disc info firs:
+  cdda2wav -J -D /dev/sr0;
+  cdparanoia -A;
+  cdparanoia -XB;
+  if [ -f audio.cdindex ]; then
+    renameWithFile;
+  else
+    renameWithMusicBrainz;
+  fi
+  rm cdparanoia.log;
+  rm audio_*.inf;
+  exit 0;
+fi
+
+if [ "$1" ] && [ "$1" = "-h" ]; then
   help;
   exit 0;
 fi
 
-if [ "$1" ] && [ "$1" = "--version" ]; then
+if [ "$1" ] && [ "$1" = "-v" ]; then
   version;
   exit 0;
 fi

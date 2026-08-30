@@ -1,0 +1,20 @@
+#!/bin/bash
+
+idx_pl_complete() {
+ local cur;
+
+  COMPREPLY=();
+  cur=${COMP_WORDS[COMP_CWORD]};
+
+  if [ $COMP_CWORD  -eq 1 ]; then
+    COMPREPLY=( $(compgen -W '-h -i -v' -- $cur) );
+  elif [ $COMP_CWORD -eq 2 ]; then
+    return 0;
+  else
+    _comp_compgen_filedir
+  fi
+  return 0;
+ 
+}
+
+complete -F idx_pl_complete immudex-pl

@@ -16,25 +16,25 @@ function help() {
   echo "not need to be stored on the target device. Script will delete the";
   echo "file at the end of its execution. ";
   echo;
-  echo "Usage: immudex-pl [--video --format=240p...1080p] [--help] [--version] link-list"; 
+  echo "Usage: immudex-pl [-h] [-i] [-v youtube_video_quality] link-list"; 
   echo;
   echo "Options:";
-  echo "  --video --format=240p...1080p   Open link as video.";
-  echo "  --help                        Print this message.";
-  echo "  --version                     Print information about version, author and copyrights.";
+  echo "  -v 240p...1080p   Open link as video.";
+  echo "  -h                Print this message.";
+  echo "  -i                Print information about version, author and copyrights.";
   echo;
   echo "Files:";
   echo "  /usr/share/doc/immudex-pl/links.list.example    Example link list file.";
   echo;
   echo "Examples:"
   echo "  immudex-pl ~/radio-links.txt    Open given link list as audio stream.";
-  echo "  immudex-pl --video --format=360p ./yt-links   Open given link list as video in 360p format.";
+  echo "  immudex-pl -v 360p ./yt-links   Open given link list as video in 360p format.";
   echo;
   echo "Report bugs to <xf0r3m@gmail.com>";
 }
 
 function version() {
-  echo "immudex-pl 1.0-1";
+  echo "immudex-pl 1.1";
   echo;
   echo "Copyright (C) 2026 morketsmerke.org";
   echo "This is free software; see the source for copying conditions.  There is NO";
@@ -43,18 +43,18 @@ function version() {
   echo "Written by xf0r3m.";
 }
 
-if [ "$1" ] && [ $1 = "--video" ]; then
+if [ "$1" ] && [ $1 = "-v" ]; then
   video=1;
   shift;
-  if $(echo $1 | grep -q '\-\-format'); then
-    format=$(echo $1 | grep -o '[0-9]' | awk '{printf $1}')
+  if $(echo $1 | grep -q '[0-9]*p'); then
+    format=$(echo $1 | sed 's/p//g')
   fi
   shift; 
   file=$1;
-elif [ "$1" ] && [ $1 = "--help" ]; then
+elif [ "$1" ] && [ $1 = "-h" ]; then
   help;
   exit 0;
-elif [ "$1" ] && [ $1 = "--version" ]; then
+elif [ "$1" ] && [ $1 = "-i" ]; then
   version;
   exit 0;
 else
@@ -75,7 +75,7 @@ if echo $file | grep -q 'http'; then
   fi
 fi
 
-if [ "$file" ]; then 
+if [ -f "$file" ]; then 
   PS3="Link: ";
   linkNames=$(cut -d ":" -f 1 $file | sed 's/\ /_/g' | awk '{printf $1" "}')
   select name in $linkNames; do
@@ -136,6 +136,20 @@ if [ "$file" ]; then
     fi
     #echo "MPV: $MPVPID";
   done
+elif [ -d "$file" ]; then
+  select p in $(ls $file); do
+    if [ "$MPVPID" ]; then kill $MPVPID; fi
+    if [ ! "$p" ]; then break; fi
+    case $format in
+      '240') scale='426:240';;
+      '360') scale='640:360';;
+      '480') scale='720:480';;
+      '720') scale='1280:720';;
+      '1080') scale='1920:1080';;
+      *) scale='640:360';; 
+    esac
+    mpv --vf=scale=${scale} ${file}/${p} > /dev/null 2>&1 & MPVPID=$!;
+  done 
 else
   help;
   exit 1;

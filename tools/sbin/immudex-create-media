@@ -10,27 +10,26 @@ function help() {
   echo "script prepare usb disks for 32-bit EFI systems."
   echo "Superuser (root) privileges are required.";
   echo;
-  echo "Usage: immudex-create-media [--help] [--version] [--i386-efi --disk=usb_disk --isofile=immudex.iso] [--nuke --disk=usb_disk] --disk=usb_disk --isofile=file.iso";
+  echo "Usage: immudex-create-media [-e32 immudex.iso /dev/sdX] [-h] [-l file.iso /dev/sdX] [-n /dev/sdX] [-v]";
   echo;
   echo "Options:";
-  echo "  --disk=/dev/sdX                           Indicates disk device.";
-  echo "  --isofile=file.iso                        Indicates iso file.";
-  echo "  --i386-efi --disk=/dev/sdX immudex.iso    Creating 32-bit EFI bootable usb drive with iso image. (Compatibile with immudex images only.)";
-  echo "  --nuke --disk=/dev/sdX                    Write 0's to 1st megabyte of disk, wiping partition table.";
-  echo "  --help                                    Print this message.";
-  echo "  --version                                 Print information about version, author and copyrights."; 
+  echo "  -e32 immudex.iso /dev/sdX    Creating 32-bit EFI bootable usb drive with iso image. (Compatibile with immudex images only.)";
+  echo "  --help                        Print this message.";
+  echo "  -l file.iso /dev/sdX          Load file.iso to /dev/sdX drive.";
+  echo "  -n /dev/sdX                   Write 0's to 1st megabyte of disk, wiping partition table.";
+  echo "  -v                            Print information about version, author and copyrights."; 
   echo;
   echo "Exmaples:";
-  echo "  immudex-create-media                                                    Print this message.";
-  echo "  immudex-create-media --disk=/dev/sdX --isofile=file.iso                 Writes iso file to usb stick, made it bootable."; 
-  echo "  immudex-create-media --i386-efi --disk=/dev/sdX --isofile=immudex.iso   Create 32-bit EFI bootable usb stick with immudex.";
-  echo "  immudex-create-media --nuke --disk=/dev/sdX                             Writes first MB with 0's, deleting partition table";
+  echo "  immudex-create-media                             Print this message.";
+  echo "  immudex-create-media -l /dev/sdX file.iso        Writes iso file to usb stick, made it bootable."; 
+  echo "  immudex-create-media -e32 /dev/sdX immudex.iso   Create 32-bit EFI bootable usb stick with immudex.";
+  echo "  immudex-create-media -n /dev/sdX                 Writes first MB with 0's, deleting partition table";
   echo;
   echo "Report bugs to <xf0r3m@gmail.com>"; 
 }
 
 function version() {
-  echo "immudex-create-media 1.0";
+  echo "immudex-create-media 1.1";
   echo;
   echo "Copyright (C) 2026 morketsmerke.org";
   echo "This is free software; see the source for copying conditions.  There is NO";
@@ -45,24 +44,20 @@ if [ $UID -ne 0 ]; then
   exit 1;
 fi
 
-if [ "$1" ] && [ "$1" = "--help" ]; then help; exit 0; fi
-if [ "$1" ] && [ "$1" = "--version" ]; then version; exit 0; fi
+if [ "$1" ] && [ "$1" = "-h" ]; then help; exit 0; fi
+if [ "$1" ] && [ "$1" = "-v" ]; then version; exit 0; fi
 
-if [ "$1" ] && [ "$1" = "--i386-efi" ]; then target="i386-efi"; shift; fi
-if [ "$1" ] && [ "$1" = "--nuke" ]; then target="nuke"; shift; fi
-if [ "$1" ] && [ "$(echo $1 | cut -d "=" -f 1)" = "--disk" ]; then
-  disk=$(echo $1 | cut -d "=" -f 2); shift;
+if [ "$1" ] && [ "$1" = "-e32" ]; then target="i386-efi"; shift; fi
+if [ "$1" ] && [ "$1" = "-n" ]; then target="nuke"; shift; fi
+if [ "$1" ] && [ "$1" = "-l" ]; then target="load"; shift; fi
+if [ "$1" ] && $(echo $1 | grep -q '\.iso'); then
+  iso=$1; shift;
+fi
+if [ "$1" ] && $(echo $1 | grep -q '/dev/'); then
+  disk=$1; shift;
 else
   help;
   exit 1;
-fi
-if [ ! "$target" ] || [ "$target" != "nuke" ]; then
-  if [ "$1" ] && [ "$(echo $1 | cut -d "=" -f 1)" = "--isofile" ]; then 
-    iso=$(echo $1 | cut -d "=" -f 2);
-  else
-    help;
-    exit 1;
-  fi
 fi
 
 if [ "$target" = "i386-efi" ]; then
@@ -126,7 +121,7 @@ elif [ "$target" = "nuke" ]; then
   dd if=/dev/zero bs=1M of=$disk count=1 > /dev/null 2>&1;
   if [ $? -eq 0 ]; then echo -e "[${GREEN}OK${ENDCOLOR}]"; fi
 
-else
+elif [ "$target" = "load" ]; then
   echo -n "Writing zeros to 1st megabyte on disk..."; 
   dd if=/dev/zero bs=1M of=$disk count=1 > /dev/null 2>&1;
   if [ $? -eq 0 ]; then echo -e "[${GREEN}OK${ENDCOLOR}]"; fi
@@ -134,4 +129,7 @@ else
   echo -n "Writing iso image to the disk..."
   dd if=$iso bs=1M of=$disk > /dev/null 2>&1;
   if [ $? -eq 0 ]; then echo -e "[${GREEN}OK${ENDCOLOR}]"; fi
+else
+  help;
+  exit 1;
 fi 

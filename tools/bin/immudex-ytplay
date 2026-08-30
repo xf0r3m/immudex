@@ -15,19 +15,19 @@ with possible format are printed. User have to put video and audio quality
 from table in requested format: videoQualityID+audioQualityID. There are
 a hint. Script is half-interactive.
   
-Usage: immudex-ytplay [--search='keyword1...keywordN' --video | --audio] [--video youtube_link] [--audio youtube_link] [--help] [--version]
+Usage: immudex-ytplay [-a youtube_link] [-h] [-i] [-s 'keyword1...keywordN' -v | -a] [-v youtube_link]   
 
 Options:
-  --search='keyword1...keywordN' --video/--audio       Search given keywords on YouTube and play video or audiotrack.
-  --video YouTube_Link                                 Play YouTube video.
-  --audio YouTube_Link                                 Play only YouTube video audiotrack.
-  --help                                               Print this message.
-  --version                                            Print information about version, author and copyrights.
+  -a YouTube_Link                     Play only YouTube video audiotrack.
+  -h                                  Print this message.
+  -i                                  Print information about version, author and copyrights.
+  -s 'keyword1...keywordN' -v/-a      Search given keywords on YouTube and play video or audiotrack.
+  -v YouTube_Link                     Play YouTube video.
 
 Examples:
-  immudex-ytplay --search='lofi' --audio                  Script will be search a lofi keyword in YouTube and play only audio tracks from choosen video.
-  immudex-ytplay --video https://youtube.com/watch?v=...  Script will be play a video from given link, of course is publicly available.
-  immudex-ytplay --audio https://youtube.com/watch?v=...  Script will be play a audio track from given video link. The principle of video playback also applies here.
+  immudex-ytplay -s 'lofi' -a                        Script will be search a lofi keyword in YouTube and play only audio tracks from choosen video.
+  immudex-ytplay -v https://youtube.com/watch?v=...  Script will be play a video from given link, of course is publicly available.
+  immudex-ytplay -a https://youtube.com/watch?v=...  Script will be play a audio track from given video link. The principle of video playback also applies here.
 
 Report bugs to <xf0r3m@gmail.com>''')
 
@@ -63,16 +63,16 @@ def ytSearch(keywords, maxResults=15):
 def getFormat(videoID):
   subprocess.run(['yt-dlp', '--list-formats', 'https://youtube.com/watch?v=' + videoID])
   f = input("Please choose youtube video format, you need put video+audio ID of quality in this format or type anything else to quit:")
-  if not re.search("[0-9]{3}\+[0-9]{3}|[0-9]{2}", f):
+  if not re.search(r"^[0-9]{3}\+[0-9]{3}$|^[0-9]{2}$", f):
     sys.exit(0)
   else:
     return f 
 
 if len(sys.argv) == 2:
-  if sys.argv[1] == '--help':
+  if sys.argv[1] == '-h':
     usage()
     sys.exit(0)
-  elif sys.argv[1] == '--version':
+  elif sys.argv[1] == '-i':
     version()
     sys.exit(0)
 
@@ -80,18 +80,18 @@ if len(sys.argv) < 2:
   usage()
   sys.exit(2)
   
-option=sys.argv[1].split("=", 1)[0]
+option=sys.argv[1]
 
-if option == '--search':
+if option == '-s':
   if len(sys.argv) > 2:
-    if sys.argv[2] == '--video':
+    if sys.argv[3] == '-v':
       mode = "video"
-    elif sys.argv[2] == '--audio':
+    elif sys.argv[3] == '-a':
       mode = "audio"
     else:
       usage()
       sys.exit(2)
-    keywords = sys.argv[1].split("=", 1)[1]
+    keywords = sys.argv[2]
     
     video = ytSearch(keywords)
     subprocess.run('clear')
@@ -111,7 +111,7 @@ if option == '--search':
     usage()
     sys.exit(2)
 
-elif sys.argv[1] == '--audio':
+elif sys.argv[1] == '-a':
   if len(sys.argv) > 2:
     link=sys.argv[2]
     ytFormat="--no-video"
@@ -120,7 +120,7 @@ elif sys.argv[1] == '--audio':
     usage()
     sys.exit(2)
 
-elif sys.argv[1] == '--video':
+elif sys.argv[1] == '-v':
   if len(sys.argv) > 2:
     link=sys.argv[2]
     videoID=link[-11:]

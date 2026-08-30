@@ -15,12 +15,12 @@ function help(){
   echo "is implemented inside the script, you don't needed to launch this";
   echo "via sudo.";
   echo;
-  echo "Usage: immudex-padlock [--help] [--version]";
+  echo "Usage: immudex-padlock [-h] [-v]";
   echo;
   echo "Example:";
   echo "  immudex-padlock             Standard script execution, explained above.";
-  echo "  immudex-padlock --help      Print this message.";
-  echo "  immudex-padlock --version   Print information about version, author and copyrights.";
+  echo "  immudex-padlock -h          Print this message.";
+  echo "  immudex-padlock -v          Print information about version, author and copyrights.";
   echo;
   echo "Files:";
   echo "  /usr/share/icons/padlock-icon.png       Symlink, original launcher icon.";
@@ -28,11 +28,11 @@ function help(){
   echo "  /usr/share/icons/changes-allow.png      Original, open padlock icon.";
   echo "  /etc/skel/.config/xfce4/panel/launcher-14/16844255236.desktop   XFCE4 bottom panel script activator.";
   echo;
-  echo "Report bugs to <xf0r3m@gmai.com>";
+  echo "Report bugs to <xf0r3m@gmail.com>";
 }
 
 function version(){
-  echo "immudex-padlock 1.0";
+  echo "immudex-padlock 1.1";
   echo;
   echo "Copyright (C) 2026 morketsmerke.org";
   echo "This is free software; see the source for copying conditions.  There is NO";
@@ -44,8 +44,8 @@ function version(){
 launcher="/home/${USER}/.config/xfce4/panel/launcher-14/16844255236.desktop";
 
 function main_unlock() {
-  sudo /usr/local/sbin/immudex-crypt --open=$1;
-  index=$(basename $(sudo /usr/local/sbin/immudex-crypt --list | grep "$1" | head -1 | awk '{printf $2}' | grep -o '[0-9]'));
+  sudo /usr/local/sbin/immudex-crypt -o $1;
+  index=$(basename $(sudo /usr/local/sbin/immudex-crypt -l | grep "$1" | head -1 | awk '{printf $2}' | grep -o '[0-9]'));
   #sudo mkdir -p /media/${USER}/$devName;
   #sudo mount /dev/mapper/$devName /media/${USER}/$devName;
   
@@ -106,9 +106,9 @@ function lock() {
 }
 
 if [ "$1" ]; then
-  if [ "$1" = "--help" ]; then
+  if [ "$1" = "-h" ]; then
     help;
-  elif [ "$1" = "--version" ]; then
+  elif [ "$1" = "-v" ]; then
     version;
   fi
 else 

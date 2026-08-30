@@ -1,0 +1,19 @@
+#!/bin/bash
+
+idx_install_complete() {
+ local cur;
+
+  COMPREPLY=();
+  cur=${COMP_WORDS[COMP_CWORD]};
+
+  if [ $COMP_CWORD  -eq 1 ]; then
+    COMPREPLY=( $(compgen -W '-h -p -v' -- $cur) );
+  elif [ $COMP_CWORD -eq 2 ]; then
+    return 0;
+  fi
+  return 0;
+ 
+}
+
+complete -F idx_install_complete immudex-install
+

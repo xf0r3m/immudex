@@ -1,0 +1,29 @@
+#!/bin/bash
+
+idx_meteo_complete() {
+local cur prev
+
+  COMPREPLY=()
+  cur=${COMP_WORDS[COMP_CWORD]};
+  prev=${COMP_WORDS[COMP_CWORD-1]}
+
+  if [ $COMP_CWORD -eq 1 ]; then
+    COMPREPLY=( $(compgen -W '-h -l -m -s -v' -- $cur) );
+  elif [ $COMP_CWORD -eq 2 ]; then
+    case "$prev" in
+      '-l'|'-m'|'-s') 
+        if [ -f /etc/motd.conf ]; then
+          source /etc/motd.conf;
+          COMPREPLY=( $(compgen -W "$LOCATION" -- $cur) )
+        else
+          return 0;
+        fi
+      ;;
+      *) return 0;;
+    esac
+  fi
+  return 0;
+}
+
+complete -F idx_meteo_complete immudex-meteo
+

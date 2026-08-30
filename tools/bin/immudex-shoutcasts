@@ -13,17 +13,17 @@ function help() {
   echo "directory and download .m3u file from radio-browser.info based on a space-separated keywords.";
   echo "Data from radio-browser.info are limited to 30 results.";
   echo;
-  echo "Usage: immudex-shoutcasts [--source=icecast | radio] [--help] [--version] --keywords=keyword1...keywordN";
+  echo "Usage: immudex-shoutcasts [-s icecast | radio] [-h] [-v] -k keyword1...keywordN";
   echo;
   echo "Options:";
-  echo "  --source=icecast/radio              This parameter specifies source, if we want define a source. It can be omitted, then both sources will be searched.";
-  echo "  --keywords=keyword1...keywordsN   This parameter is required, it pass keywords to search. Keywords are space-separated.";
-  echo "  --help                              Print this message.";
-  echo "  --version                           Print information about version, author and copyrights.";
+  echo "  -s icecast/radio              This parameter specifies source, if we want define a source. It can be omitted, then both sources will be searched.";
+  echo "  -k keyword1...keywordsN       This parameter is required, it pass keywords to search. Keywords are space-separated.";
+  echo "  -h                            Print this message.";
+  echo "  -v                            Print information about version, author and copyrights.";
   echo;
   echo "Examples:";
-  echo "  immudex-shoutcasts --keywords=Classic Rock          Script will be search internet radios and shoutcast for 'Classic Rock' keywords";
-  echo "  immudex-shoutcasts --source=radio --keywords=lofi   Script will be search internet radios (because source is given) for 'lofi' keyword";
+  echo "  immudex-shoutcasts -k Classic Rock    Script will be search internet radios and shoutcast for 'Classic Rock' keywords";
+  echo "  immudex-shoutcasts -s radio -k lofi   Script will be search internet radios (because source is given) for 'lofi' keyword";
   echo;
   echo "Files:"
   echo "  /tmp/icecast.idx  Temporary file, store search results from icecast directory for parsing.";
@@ -33,7 +33,7 @@ function help() {
 }
 
 function version() {
-  echo "immudex-shoutcasts 1.0";
+  echo "immudex-shoutcasts 1.1";
   echo;
   echo "Copyright (C) 2026 morketsmerke.org";
   echo "This is free software; see the source for copying conditions.  There is NO";
@@ -102,20 +102,23 @@ function listOfStations() {
 
 if [ "$1" ]; then
 
-  if [ "$1" ] && [ "$1" = "--help" ]; then
+  if [ "$1" ] && [ "$1" = "-h" ]; then
     help;
     exit 0;
-  elif [ "$1" ] && [ "$1" = "--version" ]; then
+  elif [ "$1" ] && [ "$1" = "-v" ]; then
     version;
     exit 0;
   fi
 
-  option=$(echo $1 | cut -d '=' -f 1);
-  if [ "$option" = "--source" ]; then
-    src=$(echo $1 | cut -d '=' -f 2);
-    search=$(echo $* | cut -d '=' -f 3-);
-  elif [ "$option" = "--keywords" ]; then
-    search=$(echo $* | cut -d "=" -f 2-);
+  option=$1;
+  if [ "$option" = "-s" ]; then
+    shift;
+    src=$1;
+    shift 2;
+    search=$*
+  elif [ "$option" = "-k" ]; then
+    shift;
+    search=$*;
   fi
 else
   help;

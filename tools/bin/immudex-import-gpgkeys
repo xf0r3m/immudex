@@ -7,22 +7,22 @@ function help() {
   echo "Script requires to store GPG keys in home dir or change home dir before";
   echo "execute a script.";
   echo;
-  echo "Usage: immudex-import-gpgkeys [--help] [--version]";
+  echo "Usage: immudex-import-gpgkeys [-h] [-v]";
   echo;
   echo "Options:";
-  echo "  --help      Print this message.";
-  echo "  --version   Print information about version, author and copyrights";
+  echo "  -h      Print this message.";
+  echo "  -v      Print information about version, author and copyrights";
   echo;
   echo "Examples:";
-  echo "  immudex-import-gpgkeys            Import GPG keys and owner trust.";
-  echo "  immudex-import-gpgkeys --help     Print this message.";
-  echo "  immudex-import-gpgkeys --version  Print information about version, author and copyrights.";
+  echo "  immudex-import-gpgkeys      Import GPG keys and owner trust.";
+  echo "  immudex-import-gpgkeys -h   Print this message.";
+  echo "  immudex-import-gpgkeys -v   Print information about version, author and copyrights.";
   echo;
   echo "Report bugs to <xf0r3m@gmail.com>";
 }
 
 function version() {
-  echo "immudex-import-gpgkeys 1.0";
+  echo "immudex-import-gpgkeys 1.1";
   echo;
   echo "Copyright (C) 2026 morketsmerke.org";
   echo "This is free software; see the source for copying conditions.  There is NO";
@@ -32,9 +32,9 @@ function version() {
 }
 
 if [ "$1" ]; then
-  if [ "$1" = "--help" ]; then
+  if [ "$1" = "-h" ]; then
     help;
-  elif [ "$1" = "--version" ]; then
+  elif [ "$1" = "-v" ]; then
     version;
   fi
 else

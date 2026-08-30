@@ -4,18 +4,18 @@ function help() {
   echo "immudex-secured-librewolf, support for LibreWolf version. LibreWolf isn't";
   echo "part of immudex, but this tool officialy existed as a part of project.";
   echo;
-  echo "Usage: immudex-secured-librewolf [--help] [--version]";
+  echo "Usage: immudex-secured-librewolf [-h] [-v]";
   echo;
   echo "Examples:";
-  echo "  immudex-secured-librewolf             Run sandboxed LibreWolf browser."
-  echo "  immudex-secured-librewolf --help      Print this messages."
-  echo "  immudex-secured-librewolf --version   Print information about version, author and copyrights.";
+  echo "  immudex-secured-librewolf      Run sandboxed LibreWolf browser."
+  echo "  immudex-secured-librewolf -h   Print this messages."
+  echo "  immudex-secured-librewolf -v   Print information about version, author and copyrights.";
   echo;
   echo "Report bugs to <xf0r3m@gmail.com>";
 }
 
 function version(){
-  echo "immudex-secured-librewolf 1.0";
+  echo "immudex-secured-librewolf 1.1";
   echo;
   echo "Copyright (C) 2026 morketsmerke.org";
   echo "This is free software; see the source for copying conditions.  There is NO";
@@ -25,10 +25,10 @@ function version(){
 }
 
 if [ "$1" ]; then
-  if [ "$1" = "--help" ]; then
+  if [ "$1" = "-h" ]; then
     help;
     exit;
-  elif [ "$1" = "--version" ]; then
+  elif [ "$1" = "-v" ]; then
     version;
     exit;
   fi

@@ -1,0 +1,37 @@
+#!/bin/bash
+
+disk_list() {
+  i=0;
+  diskList=();
+  for disk in $(ls -l /dev/ | grep 'disk' | grep '\ 0\ ' | awk '{printf $NF" "}'); do
+      diskList[$i]="/dev/${disk}";
+    i=$(expr $i + 1);
+  done
+  echo -n ${diskList[@]};
+}
+
+idx_create_media_complete() {
+  local cur prev
+
+  COMPREPLY=()
+  cur=${COMP_WORDS[COMP_CWORD]};
+  prev=${COMP_WORDS[COMP_CWORD-1]};
+
+  if [ $COMP_CWORD -eq 1 ]; then
+    COMPREPLY=( $(compgen -W '-e32 -h -l -n -v' -- $cur) );
+  elif [ $COMP_CWORD -eq 2 ]; then
+    case "$prev" in
+      '-e32' | '-l') COMPREPLY=( $(compgen -f -X "!*.iso" -- $cur) );;
+      '-n') COMPREPLY=( $(compgen -W "$(disk_list)" -- $cur) );;
+      *) return 0;;
+    esac
+  elif [ $COMP_CWORD -eq 3 ]; then
+    case "$prev" in
+     *.iso) COMPREPLY=( $(compgen -W "$(disk_list)" -- $cur) );;
+     *) return 0;; 
+    esac
+  fi
+  return 0
+}
+
+complete -F idx_create_media_complete immudex-create-media

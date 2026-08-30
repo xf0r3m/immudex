@@ -1,0 +1,19 @@
+#!/bin/bash
+
+idx_simple_options_complete() 
+{
+  local cur;
+
+  COMPREPLY=();
+  cur=${COMP_WORDS[COMP_CWORD]};
+
+  if [ $COMP_CWORD  -eq 1 ]; then
+    COMPREPLY=( $(compgen -W '-h -v' -- $cur) );
+  elif [ $COMP_CWORD -eq 2 ]; then
+    return 0;
+  fi
+  return 0;
+}
+
+complete -F idx_simple_options_complete immudex-motd
+

@@ -4,24 +4,24 @@ function help() {
   echo "it's a script for copying OpenSSH client files such as keys and config file into user native home directory.";
   echo "This command should be run in other home directory, where ssh keys are stored.";
   echo;
-  echo "Usage: immudex-import-sshkeys [--import-hosts] [--help] [--version]";
+  echo "Usage: immudex-import-sshkeys [-i] [-h] [-v]";
   echo;
   echo "Options:";
-  echo "  --import-hosts    Import hostnames and adresses to /etc/host file (sudo required) from SSH config file if exist.";
-  echo "  --help            Print this message.";
-  echo "  --version         Print information about version, author and copyrights.";
+  echo "  -i           Import hostnames and adresses to /etc/host file (sudo required) from SSH config file if exist.";
+  echo "  -h           Print this message.";
+  echo "  -v           Print information about version, author and copyrights.";
   echo;
   echo "Examples:";
-  echo "  immudex-import-sshkeys                  Import OpenSSH client files into user native home dir.";
-  echo "  immudex-import-sshkeys --import-hosts   Import OpenSSH client files and create DNS resolve database in /etc/hosts by taking data from OpenSSH client config file, if exist.";
-  echo "  immudex-import-sshkeys --help           Print this message.";
-  echo "  immudex-import-sshkeys --version        Print information about version, author and copyrights."
+  echo "  immudex-import-sshkeys              Import OpenSSH client files into user native home dir.";
+  echo "  immudex-import-sshkeys -i           Import OpenSSH client files and create DNS resolve database in /etc/hosts by taking data from OpenSSH client config file, if exist.";
+  echo "  immudex-import-sshkeys -h           Print this message.";
+  echo "  immudex-import-sshkeys -v           Print information about version, author and copyrights."
   echo;
   echo "Report bugs to <xf0r3m@gmail.com>"; 
 }
 
 function version() {
-  echo "immudex-import-sshkeys 1.0";
+  echo "immudex-import-sshkeys 1.1";
   echo;
   echo "Copyright (C) 2026 morketsmerke.org";
   echo "This is free software; see the source for copying conditions.  There is NO";
@@ -31,9 +31,9 @@ function version() {
 }
 
 if [ "$1" ]; then
-  if [ "$1" = "--help" ]; then
+  if [ "$1" = "-h" ]; then
     help;
-  elif [ "$1" = "--version" ]; then
+  elif [ "$1" = "-v" ]; then
     version;
   fi
 else

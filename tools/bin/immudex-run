@@ -9,18 +9,18 @@ function help() {
   echo "scripts makes possible to save this date on first 'crypt'.";
   echo "This script can be use to make your own activators easlly.";
   echo;
-  echo "Usage: immudex-run [--help] [--version] program_name [program_args]";
+  echo "Usage: immudex-run [-h] [-v] program_name [program_args]";
   echo;
   echo "Examples:";
   echo "  immudex-run firefox-esr       Run given program";
-  echo "  immudex-run --help            Print this message";
-  echo "  immudex-run --version         Print information about version, author and copyrights";
+  echo "  immudex-run -h                Print this message";
+  echo "  immudex-run -v                Print information about version, author and copyrights";
   echo;
   echo "Report bugs to <xf0r3m@gmail.com>";           
 }
 
 function version(){
-  echo "immudex-run 1.0";
+  echo "immudex-run 1.1";
   echo;
   echo "Copyright (C) 2026 morketsmerke.org";
   echo "This is free software; see the source for copying conditions.  There is NO";
@@ -30,10 +30,10 @@ function version(){
 }
 
 if [ "$1" ]; then
-  if [ "$1" = "--help" ]; then
+  if [ "$1" = "-h" ]; then
       help;
       exit 0;
-  elif [ "$1" = "--version" ]; then
+  elif [ "$1" = "-v" ]; then
       version;
       exit 0;
   fi

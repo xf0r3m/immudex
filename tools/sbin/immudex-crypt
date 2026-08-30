@@ -8,27 +8,27 @@ function help() {
   echo "opened device will have index equal 0, second = 1, and so on and on.";
   echo "Superuser (root) privileges are required.";
   echo;
-  echo "Usage: immudex-crypt [--list] [--create=/dev/partition] [--open=crypt_LUKS_device] [--close=index] [--help] [--version]";
+  echo "Usage: immudex-crypt [-c index] [-f /dev/partition] [-h] [-l] [-o /dev/crypt_LUKS_device] [-v]";
   echo;
   echo "Options:";
-  echo "  --list                                Prints list of opened and available crypt_LUKS devices.";
-  echo "  --create=/dev/partition               Preparing device for crypt_LUKS.";
-  echo "  --open=/dev/crypt_LUKS_device         Opening and mount crypt_LUKS device (create mount point, if not exist).";
-  echo "  --close=index                         Unmounting and close opened crypt_LUKS devices.";
-  echo "  --help                                Prints this message.";
-  echo "  --version                             Print information about version, author and copyrights.";
+  echo "  -c INDEX/icINDEX/immudex-cryptINDEX   Unmounting and close opened crypt_LUKS devices.";
+  echo "  -f /dev/partition                     Preparing device for crypt_LUKS.";
+  echo "  -h                                    Prints this message.";
+  echo "  -l                                    Prints list of opened and available crypt_LUKS devices.";
+  echo "  -o /dev/crypt_LUKS_device             Opening and mount crypt_LUKS device (it creates mount point, if not exist).";
+  echo "  -v                                    Print information about version, author and copyrights.";
   echo;
   echo "Examples:";
-  echo "  immudex-crypt --list              List available crypt_LUKS devices in the system.";
-  echo "  immudex-crypt --create=/dev/sdX   Create crypt_LUKS device from given partition.";
-  echo "  immudex-crypt --open=/dev/sdX     Open given crypt_LUKS device (with mounting file system, of course).";
-  echo "  immudex-crypt --close=0           Close first opened crypt_LUKS device in the system.";
+  echo "  immudex-crypt -l              List available crypt_LUKS devices in the system.";
+  echo "  immudex-crypt -f /dev/sdX     Create crypt_LUKS device from given partition.";
+  echo "  immudex-crypt -o /dev/sdX     Open given crypt_LUKS device (with mounting file system, of course).";
+  echo "  immudex-crypt -c 0            Close first opened crypt_LUKS device in the system.";
   echo;
   echo "Report bugs to <xf0r3m@gmail.com>";
 }
 
 function version() {
-  echo "immudex-crypt 1.0";
+  echo "immudex-crypt 1.1";
   echo;
   echo "Copyright (C) 2026 morketsmerke.org";
   echo "This is free software; see the source for copying conditions.  There is NO";
@@ -176,25 +176,25 @@ if [ "$1" ]; then
     export USER=$(grep "$RUID" /etc/passwd | cut -d ":" -f1);
   fi
 
-  option=$(echo $1 | cut -d '=' -f 1);
-  value=$(echo $1 | cut -d '=' -f 2-);
+  option=$1;
+  value=$2;
 
   case $option in
-    "--list") list;;
-    "--open") if [ "$value" ]; then open $value;
+    "-l") list;;
+    "-o") if [ "$value" ]; then open $value;
             else help; exit 1;
             fi;;
-    "--close") if [ "$value" ]; then close $value;
+    "-c") if [ "$value" ]; then close $value;
             else help; exit 1;
             fi;;
-    "--create") if [ "$value" ]; then 
+    "-f") if [ "$value" ]; then 
                 create $value;
                 open $value;
                 set_ownership $value; 
               else help; exit 1;
               fi;;
-    "--help") help; exit 0;;
-    "--version") version; exit 0;;
+    "-h") help; exit 0;;
+    "-v") version; exit 0;;
           *) help;;
   esac
 else

@@ -17,18 +17,18 @@ function help() {
   echo "changed via below described option.";
   echo "This script requires superuser (root) privileges.";
   echo;
-  echo "Usage: immudex-install [--partition-size=3G] [--help] [--version]";
+  echo "Usage: immudex-install [-h] [-p 3G] [-v]";
   echo;
   echo "Options:";
-  echo "  --partition-size=3G   This option change a partition size with immudex image. Usefull for custom builds. By default it's 3GB.";
-  echo "  --help                Print this message.";
-  echo "  --version             Print information about version, author and copyrights.";
+  echo "  -h             Print this message.";
+  echo "  -p 3G          This option change a partition size with immudex image. Usefull for custom builds. By default it's 3GB.";
+  echo "  -v             Print information about version, author and copyrights.";
   echo;
   echo "Examples:";
-  echo "  immudex-install                       Standard execution, instalation immudex LiveCD on computer hard disk.";
-  echo "  immudex-install --partition-size=6G   Run install script for custom immudex image build.";
-  echo "  immudex-install --help                Print this message.";
-  echo "  immudex-install --version             Print information about version, author and copyrights.";
+  echo "  immudex-install           Standard execution, instalation immudex LiveCD on computer hard disk.";
+  echo "  immudex-install -p 6G     Run install script for custom immudex image build.";
+  echo "  immudex-install -h        Print this message.";
+  echo "  immudex-install -v        Print information about version, author and copyrights.";
   echo;
   echo "Report bugs to <xf0r3m@gmail.com>"; 
 }
@@ -45,15 +45,21 @@ function version() {
 }
 
 if [ "$1" ]; then
-  if [ "$1" = "--help" ]; then
+  if [ "$1" = "-h" ]; then
     help;
-  elif [ "$1" = "--version" ]; then
+    exit 0;
+  elif [ "$1" = "-v" ]; then
     version;
+    exit 0;
   fi
 fi
 if [ "$1" ]; then
-  if $(echo $1 | grep -q 'partition-size'); then
-    idxPartSize=$(echo $1 | cut -d "=" -f2);
+  if $(echo $1 | grep -q "\-p"); then
+    if [ "$2" ]; then
+      idxPartSize=$2;
+    else
+      idxPartSize="3G";
+    fi
   else
     idxPartSize="3G"; 
   fi

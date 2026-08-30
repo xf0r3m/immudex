@@ -3,11 +3,11 @@
 function help() {
   echo "Script returns first 7 signs of immudex commit ID.";
   echo;
-  echo "Usage: immudex-version [--help] [--version]";
+  echo "Usage: immudex-commit [-h] [-v]";
   echo;
   echo "Options:";
-  echo "  --help      Print this message.";
-  echo "  --version   Print information about version, author and copyrights.";
+  echo "  -h   Print this message.";
+  echo "  -v   Print information about version, author and copyrights.";
   echo;
   echo "Files:";
   echo "  /run/live/medium/live/changelog   Stores information about currently running immudex image.";
@@ -16,7 +16,7 @@ function help() {
 }
 
 function version(){
-  echo "immudex-version 1.0";
+  echo "immudex-commit 1.0";
   echo;
   echo "Copyright (C) 2026 morketsmerke.org";
   echo "This is free software; see the source for copying conditions.  There is NO";
@@ -26,10 +26,10 @@ function version(){
 }
 
 if [ "$1" ]; then
-  if [ "$1" = "--help" ]; then
+  if [ "$1" = "-h" ]; then
     help;
     exit 0;
-  elif [ "$1" = "--version" ]; then
+  elif [ "$1" = "-v" ]; then
     version;
     exit 0;
   fi

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+idx_ytplay_complete() {
+ local cur;
+
+  COMPREPLY=();
+  cur=${COMP_WORDS[COMP_CWORD]};
+  prev=${COMP_WORDS[COMP_CWORD-2]};
+
+  if [ $COMP_CWORD  -eq 1 ]; then
+    COMPREPLY=( $(compgen -W '-a -h -i -s -v' -- $cur) );
+  elif [ $COMP_CWORD -eq 3 ]; then
+    case "$prev" in
+      '-s') COMPREPLY=( $(compgen -W '-a -v' -- $cur) );;
+      *) return 0;;
+    esac
+  fi
+  return 0;
+}
+
+complete -F idx_ytplay_complete immudex-ytplay
